@@ -1,0 +1,33 @@
+server:
+  port: 8084
+
+spring:
+  application:
+    name: diagnosis-service
+  data:
+    mongodb:
+      uri: mongodb+srv://nzouaghi15_db_user:Stendhal01%21@cluster0.5p2ews7.mongodb.net/diagnosis_db
+  servlet:
+    multipart:
+      max-file-size: 100MB
+      max-request-size: 100MB
+
+jwt:
+  secret: alzheimer2025SecretKeyForJWTToken!
+
+ai-service:
+  url: ${AI_SERVICE_URL:http://localhost:8000}
+
+mri:
+  storage-path: ${MRI_STORAGE_PATH:./mri-storage}
+
+kb:
+  # Knowledge-base document (PDF) storage for the RAG module.
+  storage-path: ${KB_STORAGE_PATH:./kb-storage}
+
+eureka:
+  client:
+    service-url:
+      defaultZone: ${EUREKA_URI:http://localhost:8761/eureka/}
+  instance:
+    prefer-ip-address: true

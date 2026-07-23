@@ -1,0 +1,21 @@
+--extra-index-url https://download.pytorch.org/whl/cpu
+
+fastapi
+uvicorn[standard]
+python-multipart
+pydantic
+
+# 2D MRI slice CNN (combined_images)
+torch
+torchvision
+numpy
+pillow
+
+# ClinicalBERT (NER) + RAG embeddings
+transformers
+sentence-transformers
+faiss-cpu
+pypdf
+
+# Ollama client (LLaMA report generation)
+httpx

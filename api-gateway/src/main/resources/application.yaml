@@ -1,0 +1,98 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: api-gateway
+  codec:
+    # WebFlux buffers the whole request in memory by default up to this
+    # limit - MRI .nii uploads (tens of MB) need it raised well past the
+    # 256KB default or the gateway rejects them with DataBufferLimitException
+    # before diagnosis-service ever sees the request.
+    max-in-memory-size: 100MB
+  cloud:
+    gateway:
+      server:
+        webflux:
+          # Let CORS be handled centrally here, since the browser now only
+          # ever talks to the gateway, never to the services behind it.
+          globalcors:
+            add-to-simple-url-handler-mapping: true
+            cors-configurations:
+              '[/**]':
+                allowedOrigins: "http://localhost:4200"
+                allowedMethods:
+                  - GET
+                  - POST
+                  - PUT
+                  - PATCH
+                  - DELETE
+                  - OPTIONS
+                allowedHeaders: "*"
+                allowCredentials: true
+          routes:
+            - id: auth-service
+              # lb:// means "ask Eureka for a healthy instance of this
+              # service and load-balance across them", instead of a
+              # hardcoded host:port.
+              uri: lb://auth-service
+              predicates:
+                - Path=/api/auth/**
+
+            - id: doctor-patients
+              # patient-service was retired - a doctor's patients are now
+              # just User accounts (role PATIENT) that chose this doctor as
+              # their referring doctor, which is auth-service's data.
+              uri: lb://auth-service
+              predicates:
+                - Path=/api/medecin/patients/**
+
+            - id: questionnaire-service
+              uri: lb://questionnaire-service
+              predicates:
+                - Path=/api/patient/questionnaire/**
+
+            - id: cognitive-questionnaire-service
+              # LLM-driven dynamic cognitive questionnaire (replaces the old
+              # doctor-administered MMSE) - also lives in questionnaire-service.
+              uri: lb://questionnaire-service
+              predicates:
+                - Path=/api/patient/cognitive/**,/api/medecin/cognitive/**
+
+            - id: dashboard-service
+              # Dashboard logic lives inside questionnaire-service (see
+              # step notes), so it routes to the same lb:// target under
+              # a different path. Scoped to this one sub-path (not
+              # /api/medecin/dashboard/**) so it doesn't shadow
+              # diagnosis-service's /api/medecin/dashboard/stats route below.
+              uri: lb://questionnaire-service
+              predicates:
+                - Path=/api/medecin/dashboard/recent-activity
+
+            - id: admin-service
+              # Admin (doctor/patient account management) lives inside
+              # auth-service, since it owns the User data being managed.
+              uri: lb://auth-service
+              predicates:
+                - Path=/api/admin/**
+
+            - id: diagnosis-service
+              # MRI upload/CNN results, clinical notes, AI assessments, the
+              # doctor validation workflow, and the RAG knowledge base.
+              # diagnosis-service orchestrates calls to ai-service (Python)
+              # internally - ai-service itself is never routed through the gateway.
+              uri: lb://diagnosis-service
+              predicates:
+                - Path=/api/medecin/mri/**,/api/medecin/notes/**,/api/medecin/assessments/**,/api/medecin/knowledge-base/**,/api/medecin/clinical-records/**,/api/medecin/dashboard/stats,/api/patient/mri/**
+
+            - id: notifications
+              uri: lb://diagnosis-service
+              predicates:
+                - Path=/api/notifications/**
+
+eureka:
+  client:
+    service-url:
+      defaultZone: ${EUREKA_URI:http://localhost:8761/eureka/}
+  instance:
+    prefer-ip-address: true

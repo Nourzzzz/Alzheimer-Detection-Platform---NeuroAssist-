@@ -1,0 +1,74 @@
+version: '3.8'
+
+# All 4 Spring Boot services share one Docker network, so they can reach
+# each other by service name (e.g. "eureka-server", "auth-service") instead
+# of localhost. depends_on here only waits for the container to *start*,
+# not for the app inside to be ready - Eureka clients handle that by
+# retrying registration until eureka-server answers, so no extra
+# wait-for-it scripting is needed for a project this size.
+#
+# MongoDB is Atlas (cloud), not a local container - every service's
+# application.yaml already points at the same Atlas cluster, just a
+# different database name each, so there's nothing to run locally for it.
+
+services:
+
+  eureka-server:
+    build: ./eureka-server
+    ports:
+      - "8761:8761"
+
+  api-gateway:
+    build: ./api-gateway
+    ports:
+      - "8080:8080"
+    environment:
+      - EUREKA_URI=http://eureka-server:8761/eureka/
+    depends_on:
+      - eureka-server
+
+  auth-service:
+    build: ./auth-service
+    environment:
+      - EUREKA_URI=http://eureka-server:8761/eureka/
+    depends_on:
+      - eureka-server
+
+  questionnaire-service:
+    build: ./questionnaire-service
+    environment:
+      - EUREKA_URI=http://eureka-server:8761/eureka/
+    depends_on:
+      - eureka-server
+
+  ai-service:
+    build: ./alzheimer-ai
+    ports:
+      - "8000:8000"
+    environment:
+      # Ollama runs on the host (not a container); reach it via the Docker host
+      # gateway. extra_hosts maps host.docker.internal on Linux engines.
+      - OLLAMA_URL=http://host.docker.internal:11434
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+  diagnosis-service:
+    build: ./diagnosis-service
+    environment:
+      - EUREKA_URI=http://eureka-server:8761/eureka/
+      - AI_SERVICE_URL=http://ai-service:8000
+      - MRI_STORAGE_PATH=/app/mri-storage
+    volumes:
+      # Local volume, not object storage - MRI files just need to survive
+      # container restarts for a single-instance deployment like this one.
+      - ./data/mri-storage:/app/mri-storage
+    depends_on:
+      - eureka-server
+      - ai-service
+
+  frontend:
+    build: ./alzheimer-frontend
+    ports:
+      - "4200:80"
+    depends_on:
+      - api-gateway

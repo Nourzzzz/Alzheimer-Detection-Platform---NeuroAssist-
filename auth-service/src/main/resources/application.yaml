@@ -1,0 +1,30 @@
+server:
+  port: 8081
+
+spring:
+  application:
+    name: auth-service
+  data:
+    mongodb:
+      # Same Atlas cluster as the other services, but its own database -
+      # auth-service is the only thing allowed to touch this data directly.
+      # users_db is the single source of truth for user accounts (doctors,
+      # patients, admins) - previously scattered across auth_db/patient_db/
+      # alzheimer_db leftovers from earlier architecture iterations; those
+      # were consolidated here and the orphaned databases dropped.
+      uri: mongodb+srv://nzouaghi15_db_user:Stendhal01%21@cluster0.5p2ews7.mongodb.net/users_db
+
+jwt:
+  secret: alzheimer2025SecretKeyForJWTToken!
+  expiration: 86400000
+
+admin:
+  default-email: ${ADMIN_EMAIL:admin@alzheimer.com}
+  default-password: ${ADMIN_PASSWORD:Admin123!}
+
+eureka:
+  client:
+    service-url:
+      defaultZone: ${EUREKA_URI:http://localhost:8761/eureka/}
+  instance:
+    prefer-ip-address: true

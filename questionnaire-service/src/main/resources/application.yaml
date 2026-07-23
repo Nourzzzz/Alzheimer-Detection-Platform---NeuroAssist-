@@ -1,0 +1,22 @@
+server:
+  port: 8083
+
+spring:
+  application:
+    name: questionnaire-service
+  data:
+    mongodb:
+      uri: mongodb+srv://nzouaghi15_db_user:Stendhal01%21@cluster0.5p2ews7.mongodb.net/questionnaire_db
+
+jwt:
+  secret: alzheimer2025SecretKeyForJWTToken!
+
+ai-service:
+  url: ${AI_SERVICE_URL:http://localhost:8000}
+
+eureka:
+  client:
+    service-url:
+      defaultZone: ${EUREKA_URI:http://localhost:8761/eureka/}
+  instance:
+    prefer-ip-address: true

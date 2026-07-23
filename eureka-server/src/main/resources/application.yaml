@@ -1,0 +1,17 @@
+spring:
+  application:
+    name: eureka-server
+
+server:
+  port: 8761
+
+eureka:
+  client:
+    # This instance IS the registry, so it doesn't need to register itself
+    # with another registry, and it doesn't need to fetch a registry either.
+    register-with-eureka: false
+    fetch-registry: false
+  server:
+    # In a student/single-node setup there are no peer Eureka nodes to
+    # replicate to, so disable the self-preservation heartbeat noise.
+    enable-self-preservation: false

@@ -1,0 +1,192 @@
+<div class="admin-theme">
+<div class="admin-shell">
+
+  <aside class="admin-sidebar">
+    <div class="sidebar-brand">
+      <div class="brand-icon">N</div>
+      <div>
+        <h3>NeuroAssist</h3>
+        <span>Administration</span>
+      </div>
+    </div>
+
+    <div class="nav-section-label">Main</div>
+    <nav class="sidebar-nav">
+      <a routerLink="/admin">
+        <span class="nav-icon"><i class="bi bi-grid-1x2-fill"></i></span> Dashboard
+      </a>
+    </nav>
+
+    <div class="nav-section-label">Account Management</div>
+    <nav class="sidebar-nav">
+      <a routerLink="/admin/doctors">
+        <span class="nav-icon"><i class="bi bi-heart-pulse-fill"></i></span> Doctors
+      </a>
+      <a routerLink="/admin/patients" class="active">
+        <span class="nav-icon"><i class="bi bi-people-fill"></i></span> Patients
+      </a>
+    </nav>
+  </aside>
+
+  <header class="admin-topbar">
+    <div class="topbar-workspace">
+      <span class="workspace-label">Workspace</span>
+      <span class="workspace-name">Platform Administration</span>
+    </div>
+    <div class="topbar-actions">
+      <div class="topbar-user">
+        <div class="topbar-avatar">{{ auth.currentUser()?.prenom?.charAt(0) }}{{ auth.currentUser()?.nom?.charAt(0) }}</div>
+        <div class="topbar-user-info">
+          <span class="user-name">{{ auth.currentUser()?.prenom }} {{ auth.currentUser()?.nom }}</span>
+          <span class="user-role">Administrator</span>
+        </div>
+      </div>
+      <button class="btn-logout" (click)="logout()"><i class="bi bi-box-arrow-right"></i> Logout</button>
+    </div>
+  </header>
+
+  <main class="admin-main">
+
+    <div class="page-header">
+      <span class="page-section-label">Account Management</span>
+      <h2 class="dashboard-title">Patients</h2>
+      <p class="page-subtitle">Search, view, and activate or deactivate patient accounts.</p>
+    </div>
+
+    @if (selectedPatient(); as patient) {
+      <div class="card form-panel">
+        <div class="card-header-row">
+          <div>
+            <span class="card-label">Account Details</span>
+            <h4 class="card-title">{{ patient.prenom }} {{ patient.nom }}</h4>
+          </div>
+          <button class="btn-secondary" (click)="closeDetails()">Close</button>
+        </div>
+        <div class="form-grid">
+          <div class="form-field">
+            <label>Email</label>
+            <p>{{ patient.email }}</p>
+          </div>
+          <div class="form-field">
+            <label>Phone</label>
+            <p>{{ patient.telephone || '—' }}</p>
+          </div>
+          <div class="form-field">
+            <label>Blood Type</label>
+            <p>{{ patient.groupeSanguin || '—' }}</p>
+          </div>
+          <div class="form-field">
+            <label>Status</label>
+            <p>
+              <span class="badge" [class.badge-success]="patient.status === 'ACTIVE'" [class.badge-danger]="patient.status === 'INACTIVE'">
+                {{ patient.status === 'ACTIVE' ? 'Active' : 'Inactive' }}
+              </span>
+            </p>
+          </div>
+          <div class="form-field full">
+            <label>Medical History</label>
+            <p>{{ patient.antecedentsMedicaux || '—' }}</p>
+          </div>
+          <div class="form-field full">
+            <label>Referring Doctor</label>
+            <div style="display:flex; gap:0.75rem; align-items:center;">
+              <select [ngModel]="assigningDoctorEmail()" (ngModelChange)="assigningDoctorEmail.set($event)" style="flex:1;">
+                <option value="">— No doctor assigned —</option>
+                @for (doctor of activeDoctors(); track doctor.id) {
+                  <option [value]="doctor.email">{{ doctor.prenom }} {{ doctor.nom }} @if (doctor.specialite) { ({{ doctor.specialite }}) }</option>
+                }
+              </select>
+              <button class="btn-secondary" [disabled]="!assigningDoctorEmail()" (click)="assignReferringDoctor()">Assign</button>
+            </div>
+          </div>
+        </div>
+        <div class="form-actions">
+          <button class="btn-status" [class.activate]="patient.status === 'INACTIVE'" [class.deactivate]="patient.status === 'ACTIVE'" (click)="toggleStatus(patient)">
+            {{ patient.status === 'ACTIVE' ? 'Deactivate Account' : 'Activate Account' }}
+          </button>
+        </div>
+      </div>
+    }
+
+    <div class="card">
+      <div class="toolbar" style="margin-bottom: 1.5rem;">
+        <input type="text" placeholder="Search by name or email..."
+               [value]="search()" (input)="search.set($any($event.target).value)">
+        <select [value]="statusFilter()" (change)="statusFilter.set($any($event.target).value)">
+          <option value="">All Statuses</option>
+          <option value="ACTIVE">Active</option>
+          <option value="INACTIVE">Inactive</option>
+        </select>
+      </div>
+
+      @if (loading()) {
+        <p class="text-muted-block">Loading...</p>
+      } @else if (patients().length === 0) {
+        <p class="text-muted-block">No patients found.</p>
+      } @else {
+        <div class="table-responsive">
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th (click)="setSort('nom')" style="cursor: pointer;">
+                  Patient
+                  @if (sortColumn() === 'nom') { <i class="bi" [class.bi-arrow-up-short]="sortDirection() === 'asc'" [class.bi-arrow-down-short]="sortDirection() === 'desc'"></i> }
+                </th>
+                <th (click)="setSort('email')" style="cursor: pointer;">
+                  Email
+                  @if (sortColumn() === 'email') { <i class="bi" [class.bi-arrow-up-short]="sortDirection() === 'asc'" [class.bi-arrow-down-short]="sortDirection() === 'desc'"></i> }
+                </th>
+                <th (click)="setSort('referringDoctorEmail')" style="cursor: pointer;">
+                  Referring Doctor
+                  @if (sortColumn() === 'referringDoctorEmail') { <i class="bi" [class.bi-arrow-up-short]="sortDirection() === 'asc'" [class.bi-arrow-down-short]="sortDirection() === 'desc'"></i> }
+                </th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              @if (paginatedPatients().length === 0) {
+                <tr><td colspan="5" class="text-center py-4 text-muted">No results found.</td></tr>
+              }
+              @for (patient of paginatedPatients(); track patient.id) {
+                <tr>
+                  <td class="row-name">{{ patient.prenom }} {{ patient.nom }}</td>
+                  <td>{{ patient.email }}</td>
+                  <td>{{ patient.referringDoctorEmail || '—' }}</td>
+                  <td>
+                    <span class="badge" [class.badge-success]="patient.status === 'ACTIVE'" [class.badge-danger]="patient.status === 'INACTIVE'">
+                      {{ patient.status === 'ACTIVE' ? 'Active' : 'Inactive' }}
+                    </span>
+                  </td>
+                  <td>
+                    <div style="display:flex; gap:0.5rem;">
+                      <button class="btn-link" (click)="viewDetails(patient)">Details</button>
+                      <button class="btn-status" [class.activate]="patient.status === 'INACTIVE'" [class.deactivate]="patient.status === 'ACTIVE'" (click)="toggleStatus(patient)">
+                        {{ patient.status === 'ACTIVE' ? 'Deactivate' : 'Activate' }}
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+
+        <div class="pagination-controls mt-4 d-flex justify-content-between align-items-center flex-wrap gap-3">
+          <span class="text-muted" style="font-size: 0.85rem;">
+            Showing {{ totalFiltered() > 0 ? (currentPage() - 1) * pageSize() + 1 : 0 }} to
+            {{ currentPage() * pageSize() > totalFiltered() ? totalFiltered() : currentPage() * pageSize() }}
+            of {{ totalFiltered() }} patients
+          </span>
+          <div class="d-flex gap-2">
+            <button class="btn-secondary" [disabled]="currentPage() === 1" (click)="setPage(currentPage() - 1)">Previous</button>
+            <span class="btn-secondary" style="pointer-events: none; opacity: 0.8;">Page {{ currentPage() }} of {{ totalPages() }}</span>
+            <button class="btn-secondary" [disabled]="currentPage() === totalPages()" (click)="setPage(currentPage() + 1)">Next</button>
+          </div>
+        </div>
+      }
+    </div>
+
+  </main>
+</div>
+</div>

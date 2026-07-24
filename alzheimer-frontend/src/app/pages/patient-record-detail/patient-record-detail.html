@@ -1,0 +1,153 @@
+<div class="admin-shell">
+
+  <app-medecin-sidebar />
+
+  <header class="admin-topbar">
+    <button class="topbar-toggle"><i class="bi bi-list"></i></button>
+    <div class="topbar-workspace">
+      <span class="workspace-label">Workspace</span>
+      <span class="workspace-name">Alzheimer Platform</span>
+    </div>
+  </header>
+
+  <main class="admin-main">
+
+    @if (loading()) {
+      <p class="text-muted mb-0" style="font-size:0.86rem;">Loading...</p>
+    } @else if (patient(); as p) {
+
+      <div class="d-flex justify-content-between align-items-start flex-wrap gap-3 mb-4">
+        <div class="page-header">
+          <span class="page-section-label">Patient Record</span>
+          <h2 class="dashboard-title">{{ p.prenom }} {{ p.nom }}</h2>
+          <p class="page-subtitle">
+            {{ p.email }}
+            @if (p.status === 'ARCHIVED') {
+              <span class="badge badge-info" style="margin-left:0.5rem;">Archived</span>
+            }
+          </p>
+        </div>
+        <div class="page-actions">
+          <a class="btn-primary" [routerLink]="['/patients', p.email, 'mri-upload']">
+            <i class="bi bi-file-earmark-medical-fill"></i> Upload MRI
+          </a>
+          <button class="btn-secondary" [disabled]="archiving()" (click)="toggleArchive()">
+            @if (p.status === 'ARCHIVED') { <span><i class="bi bi-box-arrow-up"></i> Unarchive</span> }
+            @else { <span><i class="bi bi-archive"></i> Archive</span> }
+          </button>
+        </div>
+      </div>
+
+      <div class="row g-3">
+        <div class="col-xl-5">
+          <div class="card">
+            <div class="card-header-row">
+              <div>
+                <span class="card-label">Profile</span>
+                <h4 class="card-title">Patient Information</h4>
+              </div>
+              @if (!editing()) {
+                <button class="btn-secondary" (click)="startEdit()"><i class="bi bi-pencil"></i> Edit</button>
+              }
+            </div>
+
+            @if (!editing()) {
+              <div class="row g-3">
+                <div class="col-6"><div class="mini-stat"><small>Phone</small><strong>{{ p.telephone || '—' }}</strong></div></div>
+                <div class="col-6"><div class="mini-stat"><small>Gender</small><strong>{{ p.genre || '—' }}</strong></div></div>
+                <div class="col-6"><div class="mini-stat"><small>Blood type</small><strong>{{ p.groupeSanguin || '—' }}</strong></div></div>
+                <div class="col-6"><div class="mini-stat"><small>Registered</small><strong>{{ p.createdAt | date:'MM/dd/yyyy' }}</strong></div></div>
+                <div class="col-12"><div class="mini-stat"><small>Address</small><strong>{{ p.adresse || '—' }}</strong></div></div>
+                <div class="col-12"><div class="mini-stat"><small>Medical history</small><strong>{{ p.antecedentsMedicaux || '—' }}</strong></div></div>
+              </div>
+            } @else {
+              @if (saveError()) {
+                <p style="color:var(--danger-color); font-size:0.85rem; margin-bottom:1rem;">{{ saveError() }}</p>
+              }
+              <div class="row g-3">
+                <div class="col-6">
+                  <input type="text" placeholder="First name" [value]="editForm().prenom"
+                         (input)="updateField('prenom', $any($event.target).value)"
+                         style="width:100%; padding:0.55rem 0.8rem; border:1px solid var(--border-color); border-radius:8px;">
+                </div>
+                <div class="col-6">
+                  <input type="text" placeholder="Last name" [value]="editForm().nom"
+                         (input)="updateField('nom', $any($event.target).value)"
+                         style="width:100%; padding:0.55rem 0.8rem; border:1px solid var(--border-color); border-radius:8px;">
+                </div>
+                <div class="col-6">
+                  <input type="text" placeholder="Phone" [value]="editForm().telephone ?? ''"
+                         (input)="updateField('telephone', $any($event.target).value)"
+                         style="width:100%; padding:0.55rem 0.8rem; border:1px solid var(--border-color); border-radius:8px;">
+                </div>
+                <div class="col-6">
+                  <input type="text" placeholder="Blood type" [value]="editForm().groupeSanguin ?? ''"
+                         (input)="updateField('groupeSanguin', $any($event.target).value)"
+                         style="width:100%; padding:0.55rem 0.8rem; border:1px solid var(--border-color); border-radius:8px;">
+                </div>
+                <div class="col-12">
+                  <input type="text" placeholder="Address" [value]="editForm().adresse ?? ''"
+                         (input)="updateField('adresse', $any($event.target).value)"
+                         style="width:100%; padding:0.55rem 0.8rem; border:1px solid var(--border-color); border-radius:8px;">
+                </div>
+                <div class="col-12">
+                  <textarea placeholder="Medical history" rows="3" [value]="editForm().antecedentsMedicaux ?? ''"
+                            (input)="updateField('antecedentsMedicaux', $any($event.target).value)"
+                            style="width:100%; padding:0.55rem 0.8rem; border:1px solid var(--border-color); border-radius:8px;"></textarea>
+                </div>
+              </div>
+              <div class="mt-3 d-flex gap-2">
+                <button class="btn-primary" [disabled]="saving()" (click)="saveEdit()">
+                  @if (saving()) { <span>Saving...</span> } @else { <span>Save</span> }
+                </button>
+                <button class="btn-secondary" (click)="editing.set(false)">Cancel</button>
+              </div>
+            }
+          </div>
+        </div>
+
+        <div class="col-xl-7">
+          <div class="card">
+            <div class="card-header-row">
+              <div>
+                <span class="card-label">Imaging</span>
+                <h4 class="card-title">MRI / AI Assessment History</h4>
+              </div>
+            </div>
+
+            @if (history().length === 0) {
+              <p class="text-muted mb-0" style="font-size:0.86rem;">No MRI assessment yet for this patient.</p>
+            } @else {
+              <div class="table-responsive">
+                <table class="admin-table">
+                  <thead>
+                    <tr>
+                      <th>Date</th>
+                      <th>Stage</th>
+                      <th>Confidence</th>
+                      <th>Risk score</th>
+                      <th>Status</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    @for (a of history(); track a.id) {
+                      <tr>
+                        <td>{{ a.createdAt | date:'MM/dd/yyyy HH:mm' }}</td>
+                        <td><span class="badge" [class]="stageBadgeClass(a.stage)">{{ a.stage }}</span></td>
+                        <td>{{ (a.cnnResult.confidence * 100) | number:'1.0-1' }}%</td>
+                        <td>{{ a.riskScore }} / 100</td>
+                        <td>{{ a.validationStatus }}</td>
+                      </tr>
+                    }
+                  </tbody>
+                </table>
+              </div>
+            }
+          </div>
+        </div>
+      </div>
+
+    }
+
+  </main>
+</div>

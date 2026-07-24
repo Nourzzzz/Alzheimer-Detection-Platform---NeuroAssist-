@@ -1,0 +1,77 @@
+<section class="medecin-page">
+  <div class="medecin-container">
+    <header class="medecin-header">
+      <h1>Knowledge base</h1>
+      <p>Medical documents indexed for the RAG module — guidelines, research papers, protocols.</p>
+    </header>
+
+    @if (error()) { <p class="medecin-error">{{ error() }}</p> }
+
+    <div class="medecin-card kb-upload">
+      <h2>Add a document</h2>
+      <div class="kb-form">
+        <label class="medecin-label">Title</label>
+        <input class="medecin-input" type="text" [(ngModel)]="title" placeholder="e.g. NICE dementia guideline 2018" />
+
+        <label class="medecin-label">Category</label>
+        <select class="medecin-select" [(ngModel)]="category">
+          @for (c of categories; track c.value) { <option [value]="c.value">{{ c.label }}</option> }
+        </select>
+
+        <label class="medecin-label">Description (optional)</label>
+        <input class="medecin-input" type="text" [(ngModel)]="description" />
+
+        <label class="medecin-label">PDF file</label>
+        <input class="medecin-input" type="file" accept="application/pdf,.pdf" (change)="onFileSelected($event)" />
+
+        <button class="medecin-btn" [disabled]="uploading()" (click)="upload()">
+          {{ uploading() ? 'Uploading…' : 'Upload & index' }}
+        </button>
+      </div>
+    </div>
+
+    <div class="kb-toolbar">
+      <label class="medecin-label">Filter by category</label>
+      <select class="medecin-select" (change)="onFilterChange($any($event.target).value)">
+        <option value="">All</option>
+        @for (c of categories; track c.value) { <option [value]="c.value">{{ c.label }}</option> }
+      </select>
+    </div>
+
+    @if (loading()) {
+      <p class="medecin-muted">Loading…</p>
+    } @else if (documents().length === 0) {
+      <p class="medecin-muted">No documents yet.</p>
+    } @else {
+      <table class="medecin-table">
+        <thead>
+          <tr>
+            <th>Title</th>
+            <th>Category</th>
+            <th>Indexing</th>
+            <th>Chunks</th>
+            <th>Size</th>
+            <th>Uploaded</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (doc of documents(); track doc.id) {
+            <tr>
+              <td>{{ doc.title }}</td>
+              <td>{{ doc.category }}</td>
+              <td><span class="idx-badge idx-{{ doc.indexingStatus }}">{{ doc.indexingStatus }}</span></td>
+              <td>{{ doc.chunkCount }}</td>
+              <td>{{ sizeMb(doc.fileSizeBytes) }} MB</td>
+              <td>{{ doc.uploadedAt | date:'short' }}</td>
+              <td class="kb-actions">
+                <a class="medecin-link" [href]="downloadUrl(doc.id)" target="_blank" rel="noopener">Download</a>
+                <button class="medecin-link danger" (click)="remove(doc)">Delete</button>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    }
+  </div>
+</section>

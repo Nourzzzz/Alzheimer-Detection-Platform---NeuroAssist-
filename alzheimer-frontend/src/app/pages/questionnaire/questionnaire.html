@@ -1,0 +1,108 @@
+<div class="quiz-shell">
+  <div class="quiz-topbar">
+    <a routerLink="/home" class="quiz-back">← Retour</a>
+    <span class="quiz-brand">NeuroAssist</span>
+  </div>
+
+  <div class="quiz-container">
+
+    @if (loading()) {
+      <div class="quiz-state">
+        <p>Chargement du questionnaire...</p>
+      </div>
+    }
+
+    @else if (loadError()) {
+      <div class="quiz-state">
+        <p class="quiz-error">{{ loadError() }}</p>
+        <a routerLink="/home" class="quiz-btn quiz-btn-primary">Retour à l'accueil</a>
+      </div>
+    }
+
+    @else if (result()) {
+      <div class="quiz-result">
+        <div class="result-icon" [class]="'risk-' + result()!.riskBucket.split(' ')[0].toLowerCase()">
+          @if (result()!.riskBucket === 'Low') { ✓ }
+          @else if (result()!.riskBucket === 'Moderate') { ⚠ }
+          @else { ⓘ }
+        </div>
+        <h1>Questionnaire terminé</h1>
+        <p class="result-score">Score : {{ result()!.score }} / {{ result()!.maxScore }}</p>
+        <p class="result-bucket">Catégorie : <strong>{{ result()!.riskBucket }}</strong></p>
+
+        <div class="result-disclaimer">
+          <strong>Important :</strong> ce questionnaire est un outil de dépistage, pas un diagnostic.
+          Votre résultat sera examiné par votre équipe soignante, qui vous contactera pour en discuter
+          et déterminer les prochaines étapes si nécessaire.
+        </div>
+
+        <button class="quiz-btn quiz-btn-primary" (click)="goHome()">Retour à mon espace</button>
+      </div>
+    }
+
+    @else if (currentQuestion(); as question) {
+      <div class="quiz-progress-wrap">
+        <div class="quiz-progress-label">
+          Question {{ currentIndex() + 1 }} sur {{ questions().length }}
+        </div>
+        <div class="quiz-progress-bar">
+          <div class="quiz-progress-fill" [style.width.%]="progressPercent()"></div>
+        </div>
+      </div>
+
+      <div class="quiz-card">
+        <h1 class="quiz-question">{{ question.text }}</h1>
+
+        <div class="quiz-options">
+          @for (option of question.options; track option.value) {
+            <button
+              type="button"
+              class="quiz-option"
+              [class.selected]="selectedValue() === option.value"
+              (click)="selectAnswer(option.value)">
+              <span class="quiz-option-marker"></span>
+              <span class="quiz-option-label">{{ option.label }}</span>
+            </button>
+          }
+        </div>
+
+        @if (submitError()) {
+          <p class="quiz-error">{{ submitError() }}</p>
+        }
+
+        <div class="quiz-nav">
+          <button
+            type="button"
+            class="quiz-btn quiz-btn-outline"
+            [disabled]="currentIndex() === 0"
+            (click)="goPrevious()">
+            Précédent
+          </button>
+
+          @if (!isLastQuestion()) {
+            <button
+              type="button"
+              class="quiz-btn quiz-btn-primary"
+              [disabled]="!canProceed()"
+              (click)="goNext()">
+              Suivant
+            </button>
+          } @else {
+            <button
+              type="button"
+              class="quiz-btn quiz-btn-primary"
+              [disabled]="!canProceed() || submitting()"
+              (click)="submit()">
+              @if (submitting()) {
+                Envoi en cours...
+              } @else {
+                Terminer
+              }
+            </button>
+          }
+        </div>
+      </div>
+    }
+
+  </div>
+</div>

@@ -1,0 +1,94 @@
+.how-it-works {
+  background: var(--surface-alt);
+}
+
+.step-card {
+  position: relative;
+  height: 100%;
+  padding: 2.5rem 2rem 2rem;
+  background: var(--surface-color);
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(17, 35, 68, 0.06);
+  text-align: center;
+}
+
+.step-number {
+  position: absolute;
+  top: -18px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--accent-color);
+  color: var(--contrast-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 0.95rem;
+}
+
+.step-icon {
+  width: 64px;
+  height: 64px;
+  margin: 0 auto 1.25rem;
+  border-radius: 50%;
+  background: var(--accent-tint);
+  color: var(--accent-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.75rem;
+}
+
+.step-card h4 {
+  color: var(--heading-color);
+  margin-bottom: 0.75rem;
+}
+
+.step-card p {
+  color: var(--text-muted);
+  margin: 0;
+}
+
+.benefit-panel {
+  height: 100%;
+  padding: 2.25rem;
+  background: var(--surface-color);
+  border: 1px solid var(--border-color);
+  border-radius: 16px;
+}
+
+.benefit-panel h3 {
+  color: var(--heading-color);
+  font-size: 1.3rem;
+  margin-bottom: 1.5rem;
+  display: flex;
+  align-items: center;
+}
+
+.benefit-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.benefit-list li {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.65rem;
+  padding: 0.6rem 0;
+  color: var(--default-color);
+  border-bottom: 1px solid var(--border-color);
+}
+
+.benefit-list li:last-child {
+  border-bottom: none;
+}
+
+.benefit-list i {
+  color: var(--success-color);
+  margin-top: 0.2rem;
+  flex-shrink: 0;
+}

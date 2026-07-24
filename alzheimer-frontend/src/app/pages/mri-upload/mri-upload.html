@@ -1,0 +1,220 @@
+<div class="admin-shell">
+
+  <app-medecin-sidebar />
+
+  <header class="admin-topbar">
+    <button class="topbar-toggle"><i class="bi bi-list"></i></button>
+    <div class="topbar-workspace">
+      <span class="workspace-label">Workspace</span>
+      <span class="workspace-name">Alzheimer Platform</span>
+    </div>
+    <div class="topbar-actions">
+      <div class="topbar-user">
+        <div class="topbar-avatar">{{ auth.currentUser()?.prenom?.charAt(0) }}{{ auth.currentUser()?.nom?.charAt(0) }}</div>
+        <div class="topbar-user-info">
+          <span class="user-name">{{ auth.currentUser()?.prenom }} {{ auth.currentUser()?.nom }}</span>
+          <span class="user-role">Doctor</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="admin-main">
+
+    <div class="d-flex justify-content-between align-items-start flex-wrap gap-3 mb-4">
+      <div class="page-header">
+        <span class="page-section-label">CNN Diagnosis</span>
+        <h2 class="dashboard-title">MRI Upload &amp; Analysis</h2>
+        <p class="page-subtitle">
+          Upload a patient's MRI slice image ( .jpg / .png ) to run the CN / MCI / AD classification model.
+        </p>
+      </div>
+      <a routerLink="/dashboard" class="btn-secondary">
+        <i class="bi bi-arrow-left-short"></i> Back to Dashboard
+      </a>
+    </div>
+
+    <div class="row g-3">
+      <div class="col-xl-5">
+        <div class="card">
+          <div class="card-header-row">
+            <div>
+              <span class="card-label">Step 1</span>
+              <h4 class="card-title">Patient &amp; File</h4>
+            </div>
+          </div>
+
+          <label style="display:block; font-size:0.82rem; font-weight:600; color:var(--text-secondary); margin-bottom:0.35rem;">
+            Patient email
+          </label>
+          <input
+            type="email"
+            [value]="patientEmail()"
+            (input)="patientEmail.set($any($event.target).value)"
+            placeholder="patient@example.com"
+            style="width:100%; padding:0.6rem 0.85rem; border:1px solid var(--border-color); border-radius:8px; font-size:0.88rem; margin-bottom:1.1rem;"
+          >
+
+          <label style="display:block; font-size:0.82rem; font-weight:600; color:var(--text-secondary); margin-bottom:0.35rem;">
+            MRI image (.jpg / .png)
+          </label>
+          <input type="file" accept=".jpg,.jpeg,.png" (change)="onFileSelected($event)"
+                 style="width:100%; padding:0.55rem; border:1px dashed var(--border-color); border-radius:8px; font-size:0.85rem; margin-bottom:1.25rem;">
+
+          <label style="display:block; font-size:0.82rem; font-weight:600; color:var(--text-secondary); margin-bottom:0.35rem;">
+            Clinical note <span style="font-weight:400; color:var(--text-secondary);">(optional — symptoms & treatments, free text)</span>
+          </label>
+          <textarea
+            rows="4"
+            [value]="clinicalNote()"
+            (input)="clinicalNote.set($any($event.target).value)"
+            placeholder="e.g. Patient reports trouble remembering recent conversations. Started on donepezil. Denies hallucinations."
+            style="width:100%; padding:0.6rem 0.85rem; border:1px solid var(--border-color); border-radius:8px; font-size:0.88rem; margin-bottom:1.25rem; resize:vertical; font-family:inherit;"
+          ></textarea>
+
+          @if (error()) {
+            <p style="color:var(--danger-color); font-size:0.85rem; margin-bottom:1rem;">{{ error() }}</p>
+          }
+
+          <button
+            class="btn-primary"
+            [disabled]="!selectedFile() || !patientEmail() || uploading()"
+            (click)="upload()"
+          >
+            @if (uploading()) {
+              <span>Analyzing...</span>
+            } @else {
+              <span><i class="bi bi-cpu-fill"></i> Run CNN Analysis</span>
+            }
+          </button>
+
+          @if (gating(); as g) {
+            <div style="margin-top:1.25rem; padding:1rem; border:1px solid var(--warning-color, #e0a800); border-radius:10px; background:rgba(224,168,0,0.06);">
+              <h5 style="margin:0 0 0.5rem; font-size:0.95rem;"><i class="bi bi-exclamation-triangle-fill" style="color:var(--warning-color,#e0a800);"></i> Clinical data required</h5>
+              <p style="font-size:0.84rem; color:var(--text-secondary); margin-bottom:0.9rem;">
+                This patient's AI analysis cannot run until the mandatory clinical data is on file.
+              </p>
+
+              @if (g.missingClinicalRecord) {
+                <div class="clinical-grid" style="margin-bottom:1rem;">
+                  <div>
+                    <label class="clinical-lbl">Medical history *
+                      <span class="hint">Past and current conditions, comorbidities, family history.</span>
+                    </label>
+                    <textarea rows="6" class="clinical-ta" [value]="record().medicalHistory"
+                              (input)="updateRecord('medicalHistory', $any($event.target).value)"></textarea>
+                  </div>
+                  <div>
+                    <label class="clinical-lbl">Symptoms *
+                      <span class="hint">Cognitive and behavioural complaints, onset and progression.</span>
+                    </label>
+                    <textarea rows="5" class="clinical-ta" [value]="record().symptoms"
+                              (input)="updateRecord('symptoms', $any($event.target).value)"></textarea>
+                  </div>
+                  <div>
+                    <label class="clinical-lbl">Treatments *</label>
+                    <textarea rows="4" class="clinical-ta" [value]="record().treatments"
+                              (input)="updateRecord('treatments', $any($event.target).value)"></textarea>
+                  </div>
+                  <div>
+                    <label class="clinical-lbl">Observations *</label>
+                    <textarea rows="4" class="clinical-ta" [value]="record().observations"
+                              (input)="updateRecord('observations', $any($event.target).value)"></textarea>
+                  </div>
+                  <div>
+                    <button class="btn-secondary" [disabled]="savingRecord()" (click)="saveClinicalRecord()">
+                      @if (savingRecord()) { <span>Saving…</span> } @else { <span><i class="bi bi-save"></i> Save clinical record</span> }
+                    </button>
+                  </div>
+                </div>
+              } @else if (recordSaved()) {
+                <p style="font-size:0.84rem;"><span class="badge-success">✓</span> Clinical record saved.</p>
+              }
+
+              @if (g.missingCognitiveQuestionnaire) {
+                <div style="margin:0.75rem 0;">
+                  <p style="font-size:0.84rem; margin-bottom:0.4rem;">
+                    <span class="badge-warning">Cognitive questionnaire required</span>
+                    This patient hasn't completed the cognitive questionnaire yet.
+                  </p>
+                  <p style="font-size:0.78rem; color:var(--text-secondary);">
+                    The patient needs to complete it from their own portal before the AI analysis can run.
+                  </p>
+                </div>
+              }
+
+              <button class="btn-primary" style="margin-top:0.75rem;" [disabled]="g.missingClinicalRecord || uploading()" (click)="retryAnalysis()">
+                <i class="bi bi-arrow-clockwise"></i> Retry analysis
+              </button>
+              @if (g.missingCognitiveQuestionnaire) {
+                <p style="font-size:0.78rem; color:var(--text-secondary); margin-top:0.5rem;">
+                  Once the patient completes the questionnaire, retry — the server re-checks before running.
+                </p>
+              }
+            </div>
+          }
+        </div>
+      </div>
+
+      <div class="col-xl-7">
+        <div class="card">
+          <div class="card-header-row">
+            <div>
+              <span class="card-label">Step 2</span>
+              <h4 class="card-title">Result</h4>
+            </div>
+          </div>
+
+          @if (!result() && !uploading()) {
+            <p class="text-muted mb-0" style="font-size:0.86rem;">
+              No analysis yet. Select a patient and an MRI file, then run the analysis.
+            </p>
+          }
+
+          @if (uploading()) {
+            <p class="text-muted mb-0" style="font-size:0.86rem;">Running CNN inference on the uploaded scan...</p>
+          }
+
+          @if (result(); as r) {
+            <div class="mb-3">
+              <span class="badge" [class]="stageBadgeClass(r.stage)" style="font-size:0.95rem; padding:0.5rem 1rem;">
+                {{ r.stage }}
+              </span>
+              <span class="text-muted" style="margin-left:0.75rem; font-size:0.85rem;">
+                confidence {{ (r.cnnResult.confidence * 100) | number:'1.0-1' }}%
+              </span>
+            </div>
+
+            <div class="row g-3">
+              @for (entry of probabilityEntries(); track entry.label) {
+                <div class="col-12">
+                  <div class="mini-stat" style="display:flex; align-items:center; justify-content:space-between;">
+                    <small style="margin:0;">{{ entry.label }}</small>
+                    <strong>{{ (entry.value * 100) | number:'1.0-1' }}%</strong>
+                  </div>
+                </div>
+              }
+            </div>
+
+            <div class="mini-stat mt-3">
+              <small>Risk score</small>
+              <strong>{{ r.riskScore }} / 100</strong>
+            </div>
+
+            @if (gradcamUrl(); as url) {
+              <div class="mt-3">
+                <small style="display:block; color:var(--text-muted); font-weight:600; margin-bottom:0.5rem;">
+                  Grad-CAM (regions driving the prediction)
+                </small>
+                <img [src]="url" alt="Grad-CAM overlay" style="max-width:100%; border-radius:8px; border:1px solid var(--border-color);">
+              </div>
+            } @else if (r.hasGradCam) {
+              <p class="text-muted mt-3" style="font-size:0.8rem;">Loading Grad-CAM...</p>
+            }
+          }
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>

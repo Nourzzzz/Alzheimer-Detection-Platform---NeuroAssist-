@@ -1,0 +1,41 @@
+<section class="medecin-page">
+  <div class="medecin-container">
+    <header class="medecin-header">
+      <h1>Validation queue</h1>
+      <p>AI assessments awaiting your clinical validation.</p>
+    </header>
+
+    @if (loading()) {
+      <p class="medecin-muted">Loading…</p>
+    } @else if (error()) {
+      <p class="medecin-error">{{ error() }}</p>
+    } @else if (items().length === 0) {
+      <p class="medecin-muted">No assessments are waiting for validation.</p>
+    } @else {
+      <table class="medecin-table">
+        <thead>
+          <tr>
+            <th>Patient</th>
+            <th>AI stage</th>
+            <th>Risk</th>
+            <th>Confidence</th>
+            <th>Uploaded</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (item of items(); track item.id) {
+            <tr>
+              <td>{{ item.patientEmail }}</td>
+              <td><span class="stage-badge stage-{{ item.stage }}">{{ item.stage }}</span></td>
+              <td>{{ item.riskScore | number:'1.0-1' }}/100</td>
+              <td>{{ (item.confidence * 100) | number:'1.0-1' }}%</td>
+              <td>{{ item.createdAt | date:'short' }}</td>
+              <td><a class="medecin-btn" [routerLink]="['/assessments', item.id]">Review</a></td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    }
+  </div>
+</section>

@@ -1,0 +1,99 @@
+<div class="quiz-shell">
+  <div class="quiz-topbar">
+    <a routerLink="/home" class="quiz-back">← Retour</a>
+    <span class="quiz-brand">NeuroAssist</span>
+  </div>
+
+  <div class="quiz-container">
+
+    @if (loading()) {
+      <div class="quiz-state">
+        <p>Chargement du questionnaire...</p>
+      </div>
+    }
+
+    @else if (loadError()) {
+      <div class="quiz-state">
+        <p class="quiz-error">{{ loadError() }}</p>
+        <a routerLink="/home" class="quiz-btn quiz-btn-primary">Retour à l'accueil</a>
+      </div>
+    }
+
+    @else if (finished()) {
+      <div class="quiz-result">
+        <div class="result-icon risk-low">✓</div>
+        <h1>Questionnaire terminé</h1>
+        <p class="result-bucket">Merci d'avoir répondu à toutes les questions.</p>
+
+        <div class="result-disclaimer">
+          <strong>Important :</strong> ce questionnaire est un outil de dépistage, pas un diagnostic.
+          Vos réponses ont été transmises à votre médecin, qui les examinera et déterminera les
+          prochaines étapes si nécessaire.
+        </div>
+
+        <button class="quiz-btn quiz-btn-primary" (click)="goHome()">Retour à mon espace</button>
+      </div>
+    }
+
+    @else if (currentQuestion(); as question) {
+      <div class="quiz-progress-wrap">
+        <div class="quiz-progress-label">Question {{ answeredCount() + 1 }}</div>
+      </div>
+
+      <div class="quiz-card">
+        <h1 class="quiz-question">{{ question.text }}</h1>
+
+        @if (question.options.length) {
+          <div class="quiz-options">
+            @for (option of question.options; track option.value) {
+              <button
+                type="button"
+                class="quiz-option"
+                [disabled]="submitting()"
+                (click)="selectOption(option)">
+                <span class="quiz-option-marker"></span>
+                <span class="quiz-option-label">{{ option.label }}</span>
+              </button>
+            }
+          </div>
+        }
+
+        @if (question.forced_choice) {
+          <p class="quiz-error" style="text-align:left;">
+            Merci de choisir une des réponses proposées ci-dessus.
+          </p>
+        }
+
+        <div class="quiz-freetext">
+          <label class="quiz-freetext-label">Ou répondez avec vos propres mots :</label>
+          <textarea
+            rows="2"
+            class="quiz-freetext-input"
+            [value]="freeText()"
+            (input)="freeText.set($any($event.target).value)"
+            [disabled]="submitting()"
+            placeholder="Votre réponse..."></textarea>
+
+          <div class="quiz-nav">
+            <button
+              type="button"
+              class="quiz-btn quiz-btn-primary"
+              [disabled]="submitting() || !canSubmitFreeText()"
+              (click)="submitFreeText()">
+              @if (submitting()) {
+                Envoi en cours...
+              } @else {
+                Envoyer
+              }
+            </button>
+          </div>
+        </div>
+
+        @if (submitError()) {
+          <p class="quiz-error">{{ submitError() }}</p>
+        }
+      </div>
+    }
+
+  </div>
+</div>

@@ -1,0 +1,51 @@
+<section class="patient-page">
+  <div class="patient-container">
+    <header class="patient-header">
+      <h1>My results</h1>
+      <p>Your MRI assessments, once reviewed by your doctor.</p>
+    </header>
+
+    @if (loading()) {
+      <p class="patient-muted">Loading…</p>
+    } @else if (error()) {
+      <p class="patient-error">{{ error() }}</p>
+    } @else if (results().length === 0) {
+      <p class="patient-muted">
+        You have no validated results yet. After you upload an MRI, it stays pending until your
+        doctor reviews it.
+      </p>
+    } @else {
+      <div class="results-list">
+        @for (r of results(); track r.id) {
+          <article class="result-card status-{{ r.validationStatus }}">
+            <div class="result-head">
+              <span class="status-badge status-{{ r.validationStatus }}">{{ r.validationStatus }}</span>
+              <span class="result-date">{{ r.createdAt | date:'mediumDate' }}</span>
+            </div>
+
+            <p class="result-message">{{ r.message }}</p>
+
+            @if (r.finalStage) {
+              <p class="result-stage">Diagnosis stage: <strong>{{ r.finalStage }}</strong></p>
+            }
+            @if (r.doctorComment) {
+              <div class="result-comment">
+                <h3>Doctor's comment</h3>
+                <p>{{ r.doctorComment }}</p>
+              </div>
+            }
+            @if (r.report) {
+              <details class="result-report">
+                <summary>View full report</summary>
+                <pre>{{ r.report }}</pre>
+              </details>
+            }
+            @if (r.validatedAt) {
+              <p class="patient-muted">Reviewed on {{ r.validatedAt | date:'medium' }}.</p>
+            }
+          </article>
+        }
+      </div>
+    }
+  </div>
+</section>

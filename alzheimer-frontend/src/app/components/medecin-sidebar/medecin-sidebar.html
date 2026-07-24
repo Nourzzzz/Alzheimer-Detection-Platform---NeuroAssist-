@@ -1,0 +1,38 @@
+<aside class="admin-sidebar">
+  <div class="sidebar-brand">
+    <div class="brand-icon">N</div>
+    <div>
+      <h3>NeuroAssist</h3>
+      <span>Clinician Portal</span>
+    </div>
+  </div>
+
+  <div class="nav-section-label">Main</div>
+  <nav class="sidebar-nav">
+    @for (item of mainItems; track item.label) {
+      <a
+        [routerLink]="item.path"
+        [queryParams]="item.queryParams ?? null"
+        routerLinkActive="active"
+        [routerLinkActiveOptions]="{
+          paths: item.prefixMatch ? 'subset' : 'exact',
+          queryParams: item.queryParams ? 'exact' : 'ignored',
+          fragment: 'ignored',
+          matrixParams: 'ignored'
+        }"
+      >
+        <span class="nav-icon"><i class="bi" [class]="item.icon"></i></span> {{ item.label }}
+        @if (item.badge === 'pendingValidations' && notifications.pendingValidations() > 0) {
+          <span class="nav-badge">{{ notifications.pendingValidations() }}</span>
+        }
+      </a>
+    }
+  </nav>
+
+  <div class="nav-section-label">System</div>
+  <nav class="sidebar-nav">
+    <a routerLink="/" class="back-link">
+      <span class="nav-icon"><i class="bi bi-arrow-left-short"></i></span> Back to Home
+    </a>
+  </nav>
+</aside>

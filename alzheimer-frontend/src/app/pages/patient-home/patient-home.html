@@ -1,0 +1,55 @@
+<main class="main">
+  <section class="patient-home-section section">
+    <div class="container">
+      <div class="row justify-content-center">
+        <div class="col-lg-8">
+
+          <div class="welcome-card" data-aos="fade-up">
+            <span class="welcome-eyebrow">Mon espace</span>
+            <h1>Bonjour {{ auth.currentUser()?.prenom }} 👋</h1>
+            <p>
+              Bienvenue sur votre espace personnel NeuroAssist. Complétez votre questionnaire cognitif et
+              retrouvez ici les résultats une fois examinés par votre médecin — l'IRM, si nécessaire, est
+              gérée directement par votre équipe soignante.
+            </p>
+          </div>
+
+          <div class="cta-card" data-aos="fade-up" data-aos-delay="100">
+            @if (hasCompletedAssessment()) {
+              <div class="cta-icon">🔄</div>
+              <div class="cta-text">
+                <h3>Reprendre une évaluation</h3>
+                <p>Vous pouvez repasser le questionnaire à tout moment pour suivre l'évolution de vos résultats.</p>
+              </div>
+            } @else {
+              <div class="cta-icon">📋</div>
+              <div class="cta-text">
+                <h3>Commencer votre évaluation</h3>
+                <p>Un questionnaire conversationnel qui s'adapte à vos réponses, à votre rythme.</p>
+              </div>
+            }
+            <a routerLink="/questionnaire" class="cta-btn">
+              @if (hasCompletedAssessment()) { Reprendre } @else { Commencer }
+            </a>
+          </div>
+
+          @if (!loading() && latestResult(); as result) {
+            <div class="result-card" data-aos="fade-up" data-aos-delay="150">
+              <h3>Dernier résultat</h3>
+              <div class="result-body">
+                <div class="result-badge" [class]="riskClass(result.globalRisk.level)">
+                  {{ result.globalRisk.label }}
+                </div>
+              </div>
+              <p class="result-note">
+                Ce résultat est un outil de dépistage et non un diagnostic. Votre équipe soignante
+                l'examine et vous contactera si nécessaire.
+              </p>
+            </div>
+          }
+
+        </div>
+      </div>
+    </div>
+  </section>
+</main>

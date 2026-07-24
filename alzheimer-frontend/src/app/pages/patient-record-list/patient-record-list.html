@@ -1,0 +1,174 @@
+<div class="admin-shell">
+
+  <app-medecin-sidebar />
+
+  <header class="admin-topbar">
+    <button class="topbar-toggle"><i class="bi bi-list"></i></button>
+    <div class="topbar-workspace">
+      <span class="workspace-label">Workspace</span>
+      <span class="workspace-name">Alzheimer Platform</span>
+    </div>
+    <div class="topbar-search">
+      <input type="text" placeholder="Search patients..." [value]="searchTerm()"
+             (input)="onSearchChange($any($event.target).value)">
+    </div>
+  </header>
+
+  <main class="admin-main">
+
+    <div class="d-flex justify-content-between align-items-start flex-wrap gap-3 mb-4">
+      <div class="page-header">
+        <span class="page-section-label">Patient Records</span>
+        <h2 class="dashboard-title">My Patients</h2>
+        <p class="page-subtitle">Create, search and manage the medical records of your patients.</p>
+      </div>
+      <button class="btn-primary" (click)="toggleCreateForm()">
+        <i class="bi bi-plus-lg"></i> New Patient
+      </button>
+    </div>
+
+    @if (showCreateForm()) {
+      <div class="card mb-4">
+        <div class="card-header-row">
+          <div>
+            <span class="card-label">New Record</span>
+            <h4 class="card-title">Create a patient record</h4>
+          </div>
+        </div>
+
+        @if (createError()) {
+          <p style="color:var(--danger-color); font-size:0.85rem; margin-bottom:1rem;">{{ createError() }}</p>
+        }
+
+        <div class="row g-3">
+          <div class="col-md-6">
+            <input type="text" placeholder="First name" [value]="newPatient().prenom"
+                   (input)="updateNewPatientField('prenom', $any($event.target).value)"
+                   style="width:100%; padding:0.6rem 0.85rem; border:1px solid var(--border-color); border-radius:8px;">
+          </div>
+          <div class="col-md-6">
+            <input type="text" placeholder="Last name" [value]="newPatient().nom"
+                   (input)="updateNewPatientField('nom', $any($event.target).value)"
+                   style="width:100%; padding:0.6rem 0.85rem; border:1px solid var(--border-color); border-radius:8px;">
+          </div>
+          <div class="col-md-6">
+            <input type="email" placeholder="Email" [value]="newPatient().email"
+                   (input)="updateNewPatientField('email', $any($event.target).value)"
+                   style="width:100%; padding:0.6rem 0.85rem; border:1px solid var(--border-color); border-radius:8px;">
+          </div>
+          <div class="col-md-6">
+            <input type="text" placeholder="Phone" [value]="newPatient().telephone ?? ''"
+                   (input)="updateNewPatientField('telephone', $any($event.target).value)"
+                   style="width:100%; padding:0.6rem 0.85rem; border:1px solid var(--border-color); border-radius:8px;">
+          </div>
+        </div>
+
+        <div class="clinical-section">
+          <div class="clinical-head">
+            <span class="clinical-eyebrow">Dossier clinique</span>
+            <h4 class="clinical-title">Clinical information <span style="font-weight:400; color:var(--text-secondary); font-size:0.9rem;">(required)</span></h4>
+            <p class="clinical-sub">This free text is the primary input the AI reads to extract symptoms, diagnoses,
+              treatments and comorbidities. Write as you would in the patient file — full sentences help.</p>
+          </div>
+
+          <div class="clinical-grid">
+            <div>
+              <label class="clinical-lbl">Medical history *
+                <span class="hint">Past and current conditions, comorbidities, family history, surgeries.</span>
+              </label>
+              <textarea rows="7" class="clinical-ta" [value]="newRecord().medicalHistory"
+                        (input)="updateNewRecordField('medicalHistory', $any($event.target).value)"></textarea>
+            </div>
+            <div>
+              <label class="clinical-lbl">Symptoms *
+                <span class="hint">Cognitive and behavioural complaints, onset and progression.</span>
+              </label>
+              <textarea rows="5" class="clinical-ta" [value]="newRecord().symptoms"
+                        (input)="updateNewRecordField('symptoms', $any($event.target).value)"></textarea>
+            </div>
+          </div>
+
+          <div class="clinical-grid two" style="margin-top:1.35rem;">
+            <div>
+              <label class="clinical-lbl">Treatments *
+                <span class="hint">Current medication and therapies.</span>
+              </label>
+              <textarea rows="4" class="clinical-ta" [value]="newRecord().treatments"
+                        (input)="updateNewRecordField('treatments', $any($event.target).value)"></textarea>
+            </div>
+            <div>
+              <label class="clinical-lbl">Observations *
+                <span class="hint">Clinical examination notes.</span>
+              </label>
+              <textarea rows="4" class="clinical-ta" [value]="newRecord().observations"
+                        (input)="updateNewRecordField('observations', $any($event.target).value)"></textarea>
+            </div>
+          </div>
+
+          <p style="font-size:0.78rem; color:var(--text-secondary); margin-top:1rem;">
+            The patient must also complete the cognitive questionnaire from their own portal before the AI analysis can run.
+          </p>
+        </div>
+
+        <div class="mt-3 d-flex gap-2">
+          <button class="btn-primary" [disabled]="creating()" (click)="submitCreate()">
+            @if (creating()) { <span>Creating...</span> } @else { <span>Create Record</span> }
+          </button>
+          <button class="btn-secondary" (click)="toggleCreateForm()">Cancel</button>
+        </div>
+      </div>
+    }
+
+    <div class="card">
+      <div class="card-header-row">
+        <div>
+          <span class="card-label">Roster</span>
+          <h4 class="card-title">Patient List</h4>
+        </div>
+        <label style="font-size:0.82rem; color:var(--text-secondary); display:flex; align-items:center; gap:0.4rem;">
+          <input type="checkbox" [checked]="includeArchived()"
+                 (change)="onIncludeArchivedChange($any($event.target).checked)">
+          Show archived
+        </label>
+      </div>
+
+      @if (loading()) {
+        <p class="text-muted mb-0" style="font-size:0.86rem;">Loading...</p>
+      } @else if (patients().length === 0) {
+        <p class="text-muted mb-0" style="font-size:0.86rem;">No patients found.</p>
+      } @else {
+        <div class="table-responsive">
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th>Patient</th>
+                <th>Gender</th>
+                <th>Email</th>
+                <th>Phone</th>
+                <th>Registered On</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (p of patients(); track p.id) {
+                <tr>
+                  <td class="patient-name">{{ p.firstName }} {{ p.lastName }}</td>
+                  <td>{{ p.gender }}</td>
+                  <td>{{ p.email }}</td>
+                  <td>{{ p.phone }}</td>
+                  <td>{{ p.createdAt | date: 'MM/dd/yyyy' }}</td>
+                  <td>
+                    <a class="btn-secondary" [routerLink]="['/patients', p.id]">
+                      <i class="bi bi-eye"></i> View
+                    </a>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      }
+    </div>
+
+  </main>
+</div>

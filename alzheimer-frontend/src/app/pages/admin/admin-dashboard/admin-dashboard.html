@@ -1,0 +1,122 @@
+<div class="admin-theme">
+<div class="admin-shell">
+
+  <aside class="admin-sidebar">
+    <div class="sidebar-brand">
+      <div class="brand-icon">N</div>
+      <div>
+        <h3>NeuroAssist</h3>
+        <span>Administration</span>
+      </div>
+    </div>
+
+    <div class="nav-section-label">Main</div>
+    <nav class="sidebar-nav">
+      <a routerLink="/admin" class="active">
+        <span class="nav-icon"><i class="bi bi-grid-1x2-fill"></i></span> Dashboard
+      </a>
+    </nav>
+
+    <div class="nav-section-label">Account Management</div>
+    <nav class="sidebar-nav">
+      <a routerLink="/admin/doctors">
+        <span class="nav-icon"><i class="bi bi-heart-pulse-fill"></i></span> Doctors
+      </a>
+      <a routerLink="/admin/patients">
+        <span class="nav-icon"><i class="bi bi-people-fill"></i></span> Patients
+      </a>
+    </nav>
+  </aside>
+
+  <header class="admin-topbar">
+    <div class="topbar-workspace">
+      <span class="workspace-label">Workspace</span>
+      <span class="workspace-name">Platform Administration</span>
+    </div>
+    <div class="topbar-actions">
+      <div class="topbar-user">
+        <div class="topbar-avatar">{{ auth.currentUser()?.prenom?.charAt(0) }}{{ auth.currentUser()?.nom?.charAt(0) }}</div>
+        <div class="topbar-user-info">
+          <span class="user-name">{{ auth.currentUser()?.prenom }} {{ auth.currentUser()?.nom }}</span>
+          <span class="user-role">Administrator</span>
+        </div>
+      </div>
+      <button class="btn-logout" (click)="logout()"><i class="bi bi-box-arrow-right"></i> Logout</button>
+    </div>
+  </header>
+
+  <main class="admin-main">
+
+    <div class="page-header">
+      <span class="page-section-label">Administration Center</span>
+      <h2 class="dashboard-title">Dashboard</h2>
+      <p class="page-subtitle">
+        Overview of doctor and patient accounts on the platform.
+      </p>
+    </div>
+
+    <div class="row g-3 stat-cards">
+      <div class="col-md-6 col-xl-3">
+        <div class="stat-card">
+          <div class="stat-icon"><i class="bi bi-heart-pulse-fill"></i></div>
+          <div class="stat-info">
+            <small>Doctors</small>
+            <h3>{{ totalDoctors() }}</h3>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-6 col-xl-3">
+        <div class="stat-card green">
+          <div class="stat-icon green"><i class="bi bi-check-circle-fill"></i></div>
+          <div class="stat-info">
+            <small>Active Doctors</small>
+            <h3>{{ activeDoctors() }}</h3>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-6 col-xl-3">
+        <div class="stat-card red">
+          <div class="stat-icon red"><i class="bi bi-x-circle-fill"></i></div>
+          <div class="stat-info">
+            <small>Inactive Doctors</small>
+            <h3>{{ inactiveDoctors() }}</h3>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-6 col-xl-3">
+        <div class="stat-card orange">
+          <div class="stat-icon orange"><i class="bi bi-people-fill"></i></div>
+          <div class="stat-info">
+            <small>Patients</small>
+            <h3>{{ totalPatients() }}</h3>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row g-3">
+      <div class="col-md-6">
+        <div class="card">
+          <span class="card-label">Patient Accounts</span>
+          <h4 class="card-title">Status Breakdown</h4>
+          <p class="text-muted-block">
+            {{ activePatients() }} active · {{ inactivePatients() }} inactive
+          </p>
+          <a routerLink="/admin/patients" class="btn-primary" style="margin-top: 1rem;">Manage Patients</a>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="card">
+          <span class="card-label">Doctor Accounts</span>
+          <h4 class="card-title">Status Breakdown</h4>
+          <p class="text-muted-block">
+            {{ activeDoctors() }} active · {{ inactiveDoctors() }} inactive
+          </p>
+          <a routerLink="/admin/doctors" class="btn-primary" style="margin-top: 1rem;">Manage Doctors</a>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+</div>

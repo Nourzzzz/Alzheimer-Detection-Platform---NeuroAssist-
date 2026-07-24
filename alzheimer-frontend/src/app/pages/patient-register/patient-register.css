@@ -1,0 +1,75 @@
+.auth-page {
+  min-height: 100vh;
+  background: linear-gradient(135deg, var(--surface-alt) 0%, var(--accent-tint) 100%);
+  display: flex;
+  align-items: center;
+  padding: 2rem 0;
+}
+
+.auth-panel {
+  background: var(--surface-color);
+  border-radius: 24px;
+  box-shadow: 0 20px 60px rgba(17, 35, 68, 0.12);
+  overflow: hidden;
+}
+
+.auth-brand {
+  background: linear-gradient(135deg, var(--heading-color) 0%, var(--accent-color) 100%);
+  color: var(--contrast-color);
+  padding: 3rem;
+  height: 100%;
+}
+
+.auth-form {
+  padding: 3rem;
+}
+
+.form-label {
+  font-size: 0.86rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  margin-bottom: 0.35rem;
+}
+
+.form-control,
+.form-select {
+  min-height: 52px;
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 0.6rem 0.9rem;
+  font-size: 0.92rem;
+  color: var(--heading-color);
+  width: 100%;
+}
+
+.form-control:focus,
+.form-select:focus {
+  outline: none;
+  border-color: var(--accent-color);
+  box-shadow: 0 0 0 3px var(--accent-tint);
+}
+
+.optional-tag {
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-left: 0.5rem;
+}
+
+.field-error {
+  color: var(--danger-color);
+  font-size: 0.78rem;
+  margin-top: 0.3rem;
+  display: block;
+}
+
+.alert-error {
+  background: var(--danger-bg);
+  color: var(--danger-color);
+  border-radius: 8px;
+  padding: 0.65rem 1rem;
+  font-size: 0.85rem;
+  margin-bottom: 1rem;
+}

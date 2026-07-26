@@ -114,36 +114,39 @@ export class DepartmentsPageComponent {}
             <div class="col-lg-4 col-md-6">
               <div class="service-item h-100">
                 <div class="service-image">
-                  <img src="assets/img/health/consultation-4.webp" alt="Cognitive Screening" class="img-fluid">
+                  <img src="assets/img/health/neurology-4.webp" alt="MRI analysis" class="img-fluid">
+                  <div class="service-overlay"><i class="fas fa-brain"></i></div>
+                </div>
+                <div class="service-content">
+                  <h3>AI-Assisted MRI Analysis</h3>
+                  <p>Brain MRI scans are classified by a deep-learning model, with a heatmap showing which regions
+                    drove the prediction.</p>
+                </div>
+              </div>
+            </div>
+            <div class="col-lg-4 col-md-6">
+              <div class="service-item h-100">
+                <div class="service-image">
+                  <img src="assets/img/health/consultation-4.webp" alt="Cognitive screening" class="img-fluid">
                   <div class="service-overlay"><i class="fas fa-clipboard-check"></i></div>
                 </div>
                 <div class="service-content">
-                  <h3>Cognitive Screening</h3>
-                  <p>A guided, accessible questionnaire that takes about five minutes and can be revisited over time.</p>
+                  <h3>Adaptive Cognitive Screening</h3>
+                  <p>A conversational questionnaire that adjusts each question to the patient's previous answers,
+                    and can be revisited over time.</p>
                 </div>
               </div>
             </div>
             <div class="col-lg-4 col-md-6">
               <div class="service-item h-100">
                 <div class="service-image">
-                  <img src="assets/img/health/maternal-2.webp" alt="Care Team Review" class="img-fluid">
+                  <img src="assets/img/health/maternal-2.webp" alt="Doctor review" class="img-fluid">
                   <div class="service-overlay"><i class="fas fa-user-doctor"></i></div>
                 </div>
                 <div class="service-content">
-                  <h3>Care Team Review</h3>
-                  <p>Every submitted result reaches a real clinician before anything is shared back with the patient.</p>
-                </div>
-              </div>
-            </div>
-            <div class="col-lg-4 col-md-6">
-              <div class="service-item h-100">
-                <div class="service-image">
-                  <img src="assets/img/health/emergency-1.webp" alt="Priority Follow-Up" class="img-fluid">
-                  <div class="service-overlay"><i class="fas fa-life-ring"></i></div>
-                </div>
-                <div class="service-content">
-                  <h3>Priority Follow-Up</h3>
-                  <p>Results suggesting further evaluation is warranted are flagged for prompt care-team attention.</p>
+                  <h3>Doctor Review</h3>
+                  <p>Every AI-drafted finding reaches a real clinician, who validates or corrects it before anything
+                    is shared back with the patient.</p>
                 </div>
               </div>
             </div>
@@ -151,7 +154,86 @@ export class DepartmentsPageComponent {}
         </div>
       </section>
     </main>
-  `
+  `,
+  styles: [`
+    /* The bundled theme styles .service-item as a horizontal sidebar list row
+       and .service-overlay as a full-bleed gradient. This page uses a card
+       grid instead, so these rules are scoped under .featured-services to
+       outrank the theme's two-class selectors. */
+    .featured-services .service-item {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      padding: 0;
+      border-bottom: none;
+      background: #fff;
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 10px 30px rgba(17, 35, 68, 0.08);
+      transition: transform 0.25s ease, box-shadow 0.25s ease;
+    }
+
+    .featured-services .service-item:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 18px 40px rgba(17, 35, 68, 0.14);
+    }
+
+    .featured-services .service-image {
+      position: relative;
+      overflow: hidden;
+      flex-shrink: 0;
+    }
+
+    .featured-services .service-image img {
+      display: block;
+      width: 100%;
+      height: 220px;
+      object-fit: cover;
+      transition: transform 0.4s ease;
+    }
+
+    .featured-services .service-item:hover .service-image img {
+      transform: scale(1.06);
+    }
+
+    .featured-services .service-overlay {
+      position: absolute;
+      inset: auto 20px -26px auto;
+      width: 52px;
+      height: 52px;
+      padding: 0;
+      border-radius: 50%;
+      background: var(--accent-color, #3b82f6);
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.15rem;
+      box-shadow: 0 6px 16px rgba(59, 130, 246, 0.35);
+    }
+
+    .featured-services .service-content {
+      padding: 2.25rem 1.5rem 1.75rem;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+    }
+
+    .featured-services .service-content h3 {
+      font-size: 1.15rem;
+      font-weight: 700;
+      margin: 0;
+      color: var(--heading-color, #0f172a);
+    }
+
+    .featured-services .service-content p {
+      margin: 0;
+      font-size: 0.95rem;
+      line-height: 1.65;
+      color: var(--text-muted, #64748b);
+    }
+  `]
 })
 export class ServicesPageComponent {}
 

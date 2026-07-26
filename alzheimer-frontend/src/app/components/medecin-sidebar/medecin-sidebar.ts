@@ -1,6 +1,7 @@
 import { Component, ViewEncapsulation, inject } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { NotificationService } from '../../services/notification';
+import { SidebarService } from '../../services/sidebar';
 
 interface SidebarItem {
   label: string;
@@ -29,4 +30,5 @@ const MAIN_ITEMS: SidebarItem[] = [
 export class MedecinSidebarComponent {
   protected readonly mainItems = MAIN_ITEMS;
   protected readonly notifications = inject(NotificationService);
+  protected readonly sidebar = inject(SidebarService);
 }

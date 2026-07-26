@@ -1,10 +1,20 @@
 <aside class="admin-sidebar">
   <div class="sidebar-brand">
     <div class="brand-icon">N</div>
-    <div>
+    <div class="brand-text">
       <h3>NeuroAssist</h3>
       <span>Clinician Portal</span>
     </div>
+    <button
+      type="button"
+      class="sidebar-collapse"
+      (click)="sidebar.toggle()"
+      [title]="sidebar.collapsed() ? 'Expand sidebar' : 'Collapse sidebar'"
+      [attr.aria-label]="sidebar.collapsed() ? 'Expand sidebar' : 'Collapse sidebar'"
+      [attr.aria-expanded]="!sidebar.collapsed()">
+      <i class="bi" [class.bi-chevron-double-left]="!sidebar.collapsed()"
+                    [class.bi-chevron-double-right]="sidebar.collapsed()"></i>
+    </button>
   </div>
 
   <div class="nav-section-label">Main</div>
@@ -13,6 +23,7 @@
       <a
         [routerLink]="item.path"
         [queryParams]="item.queryParams ?? null"
+        [title]="item.label"
         routerLinkActive="active"
         [routerLinkActiveOptions]="{
           paths: item.prefixMatch ? 'subset' : 'exact',
@@ -21,7 +32,8 @@
           matrixParams: 'ignored'
         }"
       >
-        <span class="nav-icon"><i class="bi" [class]="item.icon"></i></span> {{ item.label }}
+        <span class="nav-icon"><i class="bi" [class]="item.icon"></i></span>
+        <span class="nav-label">{{ item.label }}</span>
         @if (item.badge === 'pendingValidations' && notifications.pendingValidations() > 0) {
           <span class="nav-badge">{{ notifications.pendingValidations() }}</span>
         }
@@ -31,8 +43,9 @@
 
   <div class="nav-section-label">System</div>
   <nav class="sidebar-nav">
-    <a routerLink="/" class="back-link">
-      <span class="nav-icon"><i class="bi bi-arrow-left-short"></i></span> Back to Home
+    <a routerLink="/" class="back-link" title="Back to Home">
+      <span class="nav-icon"><i class="bi bi-arrow-left-short"></i></span>
+      <span class="nav-label">Back to Home</span>
     </a>
   </nav>
 </aside>

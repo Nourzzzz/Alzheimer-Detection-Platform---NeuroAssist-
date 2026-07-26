@@ -162,6 +162,93 @@ body {
   color: var(--accent-color);
 }
 
+/* Keep labels on one line and clip them while the rail animates, otherwise the
+   text reflows and briefly overflows during the 0.2s width transition. */
+.admin-sidebar { overflow-x: hidden; }
+.sidebar-brand .brand-text { min-width: 0; }
+.sidebar-brand h3,
+.sidebar-brand .brand-text span,
+.sidebar-nav a { white-space: nowrap; }
+
+.sidebar-collapse {
+  margin-left: auto;
+  flex-shrink: 0;
+  width: 28px;
+  height: 28px;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  background: var(--surface-color);
+  color: var(--text-muted);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  transition: background 0.2s, color 0.2s, border-color 0.2s;
+}
+
+.sidebar-collapse:hover {
+  background: var(--accent-tint);
+  color: var(--accent-color);
+  border-color: var(--accent-color);
+}
+
+.admin-sidebar,
+.admin-topbar,
+.admin-main {
+  transition: width 0.2s ease, left 0.2s ease, margin-left 0.2s ease, padding 0.2s ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .admin-sidebar, .admin-topbar, .admin-main { transition: none; }
+}
+
+/* Collapsed state: the sidebar shrinks to an icon rail. Only meaningful on
+   wide screens - below 992px the sidebar is hidden entirely (see media query
+   further down), so these offsets must not apply there. */
+@media (min-width: 992px) {
+  body.sidebar-collapsed .admin-sidebar {
+    width: 76px;
+    padding-left: 0.6rem;
+    padding-right: 0.6rem;
+    overflow-x: hidden;
+  }
+
+  body.sidebar-collapsed .admin-topbar { left: 76px; }
+  body.sidebar-collapsed .admin-main   { margin-left: 76px; }
+
+  body.sidebar-collapsed .brand-text,
+  body.sidebar-collapsed .nav-label,
+  body.sidebar-collapsed .nav-section-label { display: none; }
+
+  body.sidebar-collapsed .sidebar-brand {
+    flex-direction: column;
+    gap: 0.6rem;
+    padding: 0.5rem 0 1rem;
+  }
+
+  body.sidebar-collapsed .sidebar-collapse { margin-left: 0; }
+
+  body.sidebar-collapsed .sidebar-nav a {
+    position: relative;
+    justify-content: center;
+    padding-left: 0;
+    padding-right: 0;
+    gap: 0;
+  }
+
+  /* Centred icons leave no room for an inline badge, so it rides the icon. */
+  body.sidebar-collapsed .nav-badge {
+    position: absolute;
+    top: 4px;
+    right: 12px;
+    min-width: 17px;
+    height: 17px;
+    padding: 0 4px;
+    font-size: 0.62rem;
+  }
+}
+
 .admin-topbar {
   position: fixed;
   top: 0;

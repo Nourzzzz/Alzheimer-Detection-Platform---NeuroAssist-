@@ -3,6 +3,7 @@ import { NavigationEnd, Router, RouterOutlet } from '@angular/router';
 import { filter } from 'rxjs';
 import { NavbarComponent } from './components/navbar/navbar';
 import { FooterComponent } from './components/footer/footer';
+import { MedecinToastComponent } from './components/medecin-toast/medecin-toast';
 
 declare const AOS: { init: (options?: Record<string, unknown>) => void } | undefined;
 declare const GLightbox: ((options?: Record<string, unknown>) => unknown) | undefined;
@@ -10,7 +11,7 @@ declare const PureCounter: (new () => unknown) | undefined;
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, NavbarComponent, FooterComponent],
+  imports: [RouterOutlet, NavbarComponent, FooterComponent, MedecinToastComponent],
   templateUrl: './app-shell.html',
   styleUrl: './app.css'
 })
@@ -64,7 +65,12 @@ export class App {
     }
   }
 
-  private static readonly CHROME_FREE_ROUTES = ['/sign-in', '/register', '/dashboard', '/questionnaire', '/admin'];
+  // Routes that render their own full-page shell (doctor/admin consoles, auth,
+  // patient questionnaire) and must not also get the public site navbar/footer.
+  private static readonly CHROME_FREE_ROUTES = [
+    '/sign-in', '/register', '/questionnaire',
+    '/dashboard', '/patients', '/assessments', '/admin',
+  ];
 
   private updateLayout(url: string): void {
     this.showSiteChrome = !App.CHROME_FREE_ROUTES.some((route) => url.startsWith(route));

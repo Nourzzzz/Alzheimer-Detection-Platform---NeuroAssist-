@@ -17,3 +17,16 @@ body {
   padding: 0;
   font-size: 16px;
 }
+
+/* The site header is position:fixed (~112px tall) while .section only carries
+   100px of top padding, so the first section of every inner page slid underneath
+   it. The hero is excluded: it is designed to sit behind the header. */
+.main > .section:first-child:not(.hero) {
+  padding-top: 160px;
+}
+
+@media (max-width: 991px) {
+  .main > .section:first-child:not(.hero) {
+    padding-top: 140px;
+  }
+}

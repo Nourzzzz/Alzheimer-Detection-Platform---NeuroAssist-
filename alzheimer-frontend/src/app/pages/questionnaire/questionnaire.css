@@ -121,12 +121,33 @@
   transition: all 0.15s ease;
 }
 
-.quiz-option:hover {
+.quiz-option:hover:not(:disabled) {
   border-color: var(--accent-color);
   background: var(--accent-tint);
 }
 
-.quiz-option.selected {
+/* While the turn is in flight the tapped option stays highlighted and the
+   others fade, so the choice reads as registered even on a slow answer. */
+.quiz-option:disabled { cursor: default; }
+
+.quiz-card.is-submitting .quiz-option:not(.is-picked) {
+  opacity: 0.45;
+}
+
+.quiz-card.is-submitting .quiz-option.is-picked .quiz-option-marker {
+  animation: quiz-pulse 0.9s ease-in-out infinite;
+}
+
+@keyframes quiz-pulse {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(0.82); opacity: 0.65; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .quiz-card.is-submitting .quiz-option.is-picked .quiz-option-marker { animation: none; }
+}
+
+.quiz-option.is-picked {
   border-color: var(--accent-color);
   background: var(--accent-tint);
   color: var(--accent-color);
@@ -141,12 +162,12 @@
   position: relative;
 }
 
-.quiz-option.selected .quiz-option-marker {
+.quiz-option.is-picked .quiz-option-marker {
   border-color: var(--accent-color);
   background: var(--accent-color);
 }
 
-.quiz-option.selected .quiz-option-marker::after {
+.quiz-option.is-picked .quiz-option-marker::after {
   content: '';
   position: absolute;
   top: 50%;

@@ -8,6 +8,7 @@ import { ClinicalRecordService } from '../../services/clinical-record';
 import { AiAssessment } from '../../models/mri.model';
 import { ClinicalDataRequired, ClinicalRecordRequest } from '../../models/clinical.model';
 import { MedecinSidebarComponent } from '../../components/medecin-sidebar/medecin-sidebar';
+import { I18nService } from '../../services/i18n';
 
 @Component({
   standalone: true,
@@ -22,6 +23,7 @@ export class MriUploadPageComponent {
   private readonly route = inject(ActivatedRoute);
   private readonly mriService = inject(MriService);
   private readonly clinicalRecordService = inject(ClinicalRecordService);
+  protected readonly i18n = inject(I18nService);
 
   protected readonly patientEmail = signal(this.route.snapshot.paramMap.get('email') ?? '');
   protected readonly clinicalNote = signal('');
@@ -72,7 +74,7 @@ export class MriUploadPageComponent {
           this.gating.set(err.error as ClinicalDataRequired);
           return;
         }
-        this.error.set("L'analyse de l'IRM a échoué. Vérifiez que le fichier est une image .jpg ou .png valide et réessayez.");
+        this.error.set(this.i18n.t('medecin.mri.error.analysis'));
       }
     });
   }
@@ -96,7 +98,7 @@ export class MriUploadPageComponent {
       },
       error: () => {
         this.savingRecord.set(false);
-        this.error.set("L'enregistrement du dossier clinique a échoué.");
+        this.error.set(this.i18n.t('medecin.mri.error.saveRecord'));
       }
     });
   }

@@ -3,6 +3,7 @@ import { DatePipe, DecimalPipe } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { AssessmentService } from '../../services/assessment';
 import { AssessmentSummary } from '../../models/mri.model';
+import { I18nService } from '../../services/i18n';
 
 @Component({
   standalone: true,
@@ -14,6 +15,7 @@ import { AssessmentSummary } from '../../models/mri.model';
 })
 export class ValidationQueuePageComponent {
   private readonly assessmentService = inject(AssessmentService);
+  protected readonly i18n = inject(I18nService);
 
   protected readonly loading = signal(true);
   protected readonly error = signal<string | null>(null);
@@ -32,7 +34,7 @@ export class ValidationQueuePageComponent {
         this.loading.set(false);
       },
       error: () => {
-        this.error.set('Could not load the validation queue.');
+        this.error.set(this.i18n.t('medecin.queue.loadError'));
         this.loading.set(false);
       }
     });

@@ -1,25 +1,25 @@
 <section class="medecin-page">
   <div class="medecin-container">
     <header class="medecin-header">
-      <h1>Validation queue</h1>
-      <p>AI assessments awaiting your clinical validation.</p>
+      <h1>{{ i18n.t('medecin.queue.title') }}</h1>
+      <p>{{ i18n.t('medecin.queue.subtitle') }}</p>
     </header>
 
     @if (loading()) {
-      <p class="medecin-muted">Loading…</p>
+      <p class="medecin-muted">{{ i18n.t('common.loading') }}</p>
     } @else if (error()) {
       <p class="medecin-error">{{ error() }}</p>
     } @else if (items().length === 0) {
-      <p class="medecin-muted">No assessments are waiting for validation.</p>
+      <p class="medecin-muted">{{ i18n.t('medecin.queue.empty') }}</p>
     } @else {
       <table class="medecin-table">
         <thead>
           <tr>
-            <th>Patient</th>
-            <th>AI stage</th>
-            <th>Risk</th>
-            <th>Confidence</th>
-            <th>Uploaded</th>
+            <th>{{ i18n.t('medecin.table.patient') }}</th>
+            <th>{{ i18n.t('medecin.queue.col.stage') }}</th>
+            <th>{{ i18n.t('medecin.queue.col.risk') }}</th>
+            <th>{{ i18n.t('medecin.queue.col.confidence') }}</th>
+            <th>{{ i18n.t('medecin.queue.col.uploaded') }}</th>
             <th></th>
           </tr>
         </thead>
@@ -31,7 +31,7 @@
               <td>{{ item.riskScore | number:'1.0-1' }}/100</td>
               <td>{{ (item.confidence * 100) | number:'1.0-1' }}%</td>
               <td>{{ item.createdAt | date:'short' }}</td>
-              <td><a class="medecin-btn" [routerLink]="['/assessments', item.id]">Review</a></td>
+              <td><a class="medecin-btn" [routerLink]="['/assessments', item.id]">{{ i18n.t('medecin.queue.review') }}</a></td>
             </tr>
           }
         </tbody>

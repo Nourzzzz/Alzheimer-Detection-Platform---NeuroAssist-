@@ -4,7 +4,7 @@
   <header class="admin-topbar">
     <button class="topbar-toggle"><i class="bi bi-list"></i></button>
     <div class="topbar-workspace">
-      <span class="workspace-label">Workspace</span>
+      <span class="workspace-label">{{ i18n.t('medecin.topbar.workspace') }}</span>
       <span class="workspace-name">Alzheimer Platform</span>
     </div>
     <div class="topbar-actions">
@@ -12,7 +12,7 @@
         <div class="topbar-avatar">{{ auth.currentUser()?.prenom?.charAt(0) }}{{ auth.currentUser()?.nom?.charAt(0) }}</div>
         <div class="topbar-user-info">
           <span class="user-name">{{ auth.currentUser()?.prenom }} {{ auth.currentUser()?.nom }}</span>
-          <span class="user-role">Doctor</span>
+          <span class="user-role">{{ i18n.t('medecin.topbar.role') }}</span>
         </div>
       </div>
     </div>
@@ -21,102 +21,102 @@
   <main class="admin-main">
   <section class="medecin-page">
   <div class="medecin-container">
-    <a class="medecin-link" [routerLink]="['/dashboard']" [queryParams]="{ tab: 'validation' }">← Back to queue</a>
+    <a class="medecin-link" [routerLink]="['/dashboard']" [queryParams]="{ tab: 'validation' }">← {{ i18n.t('review.backToQueue') }}</a>
 
     @if (loading()) {
-      <p class="medecin-muted">Loading…</p>
+      <p class="medecin-muted">{{ i18n.t('common.loading') }}</p>
     } @else if (!detail()) {
-      <p class="medecin-error">{{ error() ?? 'Assessment not found.' }}</p>
+      <p class="medecin-error">{{ error() ?? i18n.t('review.notFound') }}</p>
     } @else {
       @let d = detail()!;
       <header class="medecin-header">
-        <h1>AI clinical assessment</h1>
-        <p>Patient: {{ d.patientEmail }} · {{ d.createdAt | date:'medium' }}</p>
-        <p>Status: <span class="status-badge status-{{ d.validationStatus }}">{{ d.validationStatus }}</span></p>
+        <h1>{{ i18n.t('review.title') }}</h1>
+        <p>{{ i18n.t('review.patient') }}: {{ d.patientEmail }} · {{ d.createdAt | date:'medium' }}</p>
+        <p>{{ i18n.t('review.status') }}: <span class="status-badge status-{{ d.validationStatus }}">{{ d.validationStatus }}</span></p>
       </header>
 
       @if (error()) { <p class="medecin-error">{{ error() }}</p> }
 
       <div class="review-grid">
         <div class="review-card">
-          <h2>MRI CNN prediction</h2>
-          <p class="stage-line">Predicted stage:
+          <h2>{{ i18n.t('review.cnn.title') }}</h2>
+          <p class="stage-line">{{ i18n.t('review.cnn.stage') }}:
             <span class="stage-badge stage-{{ d.cnnResult.predictedClass }}">{{ d.cnnResult.predictedClass }}</span>
-            ({{ (d.cnnResult.confidence * 100) | number:'1.0-1' }}% confidence)
+            ({{ i18n.t('review.cnn.confidence', { value: ((d.cnnResult.confidence * 100) | number:'1.0-1') ?? '' }) }})
           </p>
           <ul class="prob-list">
             @for (p of probabilityEntries(); track p.label) {
               <li><span>{{ p.label }}</span><span>{{ (p.value * 100) | number:'1.0-1' }}%</span></li>
             }
           </ul>
-          <p class="risk-line">Risk score: <strong>{{ d.riskScore | number:'1.0-1' }}/100</strong></p>
+          <p class="risk-line">{{ i18n.t('review.riskScore') }}: <strong>{{ d.riskScore | number:'1.0-1' }}/100</strong></p>
           @if (gradcamUrl()) {
             <figure class="gradcam">
-              <img [src]="gradcamUrl()" alt="Grad-CAM overlay" />
-              <figcaption>Grad-CAM — regions driving the prediction</figcaption>
+              <img [src]="gradcamUrl()" [alt]="i18n.t('medecin.gradcam.alt')" />
+              <figcaption>{{ i18n.t('review.gradcam') }}</figcaption>
             </figure>
           }
         </div>
 
         <div class="review-card">
-          <h2>ClinicalBERT extraction</h2>
+          <h2>{{ i18n.t('review.extraction.title') }}</h2>
           @if (d.clinicalBertExtraction) {
-            <h3>Symptoms</h3>
+            <h3>{{ i18n.t('review.extraction.symptoms') }}</h3>
             @if (d.clinicalBertExtraction.symptoms?.length) {
               <ul class="tag-list">
                 @for (s of d.clinicalBertExtraction.symptoms; track s) { <li>{{ s }}</li> }
               </ul>
-            } @else { <p class="medecin-muted">None extracted.</p> }
-            <h3>Treatments</h3>
+            } @else { <p class="medecin-muted">{{ i18n.t('review.extraction.none') }}</p> }
+            <h3>{{ i18n.t('review.extraction.treatments') }}</h3>
             @if (d.clinicalBertExtraction.treatments?.length) {
               <ul class="tag-list">
                 @for (t of d.clinicalBertExtraction.treatments; track t) { <li>{{ t }}</li> }
               </ul>
-            } @else { <p class="medecin-muted">None extracted.</p> }
-            <h3>Conditions / diagnoses</h3>
+            } @else { <p class="medecin-muted">{{ i18n.t('review.extraction.none') }}</p> }
+            <h3>{{ i18n.t('review.extraction.conditions') }}</h3>
             @if (d.clinicalBertExtraction.conditions?.length) {
               <ul class="tag-list">
                 @for (c of d.clinicalBertExtraction.conditions; track c) { <li>{{ c }}</li> }
               </ul>
-            } @else { <p class="medecin-muted">None extracted.</p> }
-            <h3>Medical history</h3>
+            } @else { <p class="medecin-muted">{{ i18n.t('review.extraction.none') }}</p> }
+            <h3>{{ i18n.t('review.extraction.history') }}</h3>
             @if (d.clinicalBertExtraction.history?.length) {
               <ul class="tag-list">
                 @for (h of d.clinicalBertExtraction.history; track h) { <li>{{ h }}</li> }
               </ul>
-            } @else { <p class="medecin-muted">None extracted.</p> }
+            } @else { <p class="medecin-muted">{{ i18n.t('review.extraction.none') }}</p> }
           } @else {
-            <p class="medecin-muted">No clinical extraction available.</p>
+            <p class="medecin-muted">{{ i18n.t('review.extraction.unavailable') }}</p>
           }
         </div>
 
         <div class="review-card">
-          <h2>Retrieved medical context (RAG)</h2>
+          <h2>{{ i18n.t('review.rag.title') }}</h2>
           @if (d.ragContextRefs?.length) {
             <ul class="rag-list">
               @for (r of d.ragContextRefs; track r.docId + r.snippet) {
                 <li>
                   <span class="rag-source">{{ r.source }}</span>
-                  <span class="rag-score">score {{ r.score | number:'1.0-3' }}</span>
+                  <span class="rag-score">{{ i18n.t('medecin.review.score') }} {{ r.score | number:'1.0-3' }}</span>
                   <p>{{ r.snippet }}</p>
                 </li>
               }
             </ul>
           } @else {
-            <p class="medecin-muted">No indexed medical knowledge matched this case.</p>
+            <p class="medecin-muted">{{ i18n.t('review.rag.none') }}</p>
           }
         </div>
 
         <div class="review-card review-card-wide">
-          <h2>Cognitive questionnaire (patient-reported)</h2>
+          <h2>{{ i18n.t('cognitive.title') }}</h2>
           @if (cognitiveLoading()) {
-            <p class="medecin-muted">Loading…</p>
+            <p class="medecin-muted">{{ i18n.t('common.loading') }}</p>
           } @else if (!cognitiveSummary()) {
-            <p class="medecin-muted">This patient hasn't completed the cognitive questionnaire yet.</p>
+            <p class="medecin-muted">{{ i18n.t('cognitive.none') }}</p>
           } @else {
             @let cs = cognitiveSummary()!;
             <p class="risk-line">
-              Global risk:
+              {{ i18n.t('cognitive.globalRisk') }}:
               <span class="stage-badge"
                     [class.stage-CN]="cs.globalRisk.level === 'low'"
                     [class.stage-MCI]="cs.globalRisk.level === 'moderate'"
@@ -138,17 +138,18 @@
             </ul>
 
             @if (cs.redFlags.length) {
-              <h3>Red flags</h3>
+              <h3>{{ i18n.t('cognitive.redFlags') }}</h3>
               <ul class="tag-list">
                 @for (f of cs.redFlags; track f) { <li>{{ f }}</li> }
               </ul>
             }
 
-            <h3>Narrative</h3>
+            <h3>{{ i18n.t('medecin.review.narrative') }}</h3>
             <p>{{ cs.narrative }}</p>
 
             <button class="medecin-btn" style="margin-top:0.5rem;" (click)="toggleTranscript()">
-              {{ showFullTranscript() ? 'Hide' : 'Show' }} full transcript ({{ cs.questionsAsked }} questions)
+              {{ showFullTranscript() ? i18n.t('cognitive.transcript.hide') : i18n.t('cognitive.transcript.show') }}
+              ({{ i18n.t('cognitive.questionsAsked', { n: cs.questionsAsked }) }})
             </button>
 
             @if (showFullTranscript()) {
@@ -156,8 +157,8 @@
                 @for (t of cs.transcript; track t.nodeId + t.value) {
                   <li>
                     <span class="rag-source">{{ t.nodeId }}</span>
-                    <span class="rag-score">{{ t.isFollowUp ? 'follow-up' : '' }}</span>
-                    <p>Answer: {{ t.value }} (score {{ t.score }})</p>
+                    <span class="rag-score">{{ t.isFollowUp ? i18n.t('medecin.review.followUp') : '' }}</span>
+                    <p>{{ i18n.t('medecin.review.answer') }}: {{ t.value }} ({{ i18n.t('medecin.review.score') }} {{ t.score }})</p>
                   </li>
                 }
               </ul>
@@ -166,37 +167,126 @@
         </div>
 
         <div class="review-card review-card-wide">
-          <h2>AI-generated report (LLaMA)</h2>
-          <pre class="report-text">{{ d.generatedReport ?? 'No report generated.' }}</pre>
+          <div class="report-head">
+            <h2>{{ i18n.t('review.report.title') }}</h2>
+            <span class="report-model"><i class="bi bi-cpu"></i> LLaMA 3.1</span>
+          </div>
+
+          @if (d.generatedReport) {
+            @if (reportBanner(d.generatedReport); as banner) {
+              <p class="report-banner"><i class="bi bi-exclamation-triangle-fill"></i> {{ banner }}</p>
+            }
+            <article class="report-body">
+              @for (block of reportBlocks(d.generatedReport); track $index) {
+                @switch (block.kind) {
+                  @case ('heading') {
+                    <h3 class="report-section">{{ block.text }}</h3>
+                  }
+                  @case ('bullets') {
+                    <ul class="report-list">
+                      @for (item of block.items; track item) {
+                        <li><i class="bi bi-dot"></i><span>{{ item }}</span></li>
+                      }
+                    </ul>
+                  }
+                  @default {
+                    <p class="report-para">{{ block.text }}</p>
+                  }
+                }
+              }
+            </article>
+          } @else {
+            <p class="medecin-muted">{{ i18n.t('review.report.none') }}</p>
+          }
+
+          @if (d.revisions?.length) {
+            <button type="button" class="medecin-link" (click)="toggleRevisions()">
+              {{ showRevisions()
+                   ? i18n.t('review.revisions.hide', { n: d.revisions!.length })
+                   : i18n.t('review.revisions.show', { n: d.revisions!.length }) }}
+            </button>
+            @if (showRevisions()) {
+              <div class="revision-history">
+                @for (r of d.revisions; track r.round) {
+                  <div class="revision-item">
+                    <div class="revision-head">
+                      <span class="revision-round">{{ i18n.t('review.revisions.round', { n: r.round }) }}</span>
+                      <span class="medecin-muted">{{ r.requestedAt | date:'medium' }} · {{ r.requestedByEmail }}</span>
+                    </div>
+                    <p class="revision-feedback"><strong>{{ i18n.t('review.revisions.feedback') }}</strong> {{ r.doctorFeedback }}</p>
+                    @if (r.rejectedReport) {
+                      <details>
+                        <summary>{{ i18n.t('review.revisions.rejected') }}</summary>
+                        <pre class="report-text">{{ r.rejectedReport }}</pre>
+                      </details>
+                    }
+                  </div>
+                }
+              </div>
+            }
+          }
         </div>
       </div>
 
       <div class="review-card review-card-wide decision-card">
-        <h2>Your decision</h2>
-        <label class="medecin-label">Medical comment (optional)</label>
+        <h2>{{ i18n.t('review.decision.title') }}</h2>
+        <label class="medecin-label">{{ i18n.t('review.decision.comment') }}</label>
         <textarea class="medecin-textarea" rows="3" [(ngModel)]="comment"
-                  placeholder="Add a clinical note for the patient record…"></textarea>
+                  [placeholder]="i18n.t('review.decision.commentPlaceholder')"></textarea>
 
-        <label class="medecin-label">Edit the report before releasing (optional)</label>
+        <label class="medecin-label">{{ i18n.t('review.decision.editReport') }}</label>
         <textarea class="medecin-textarea" rows="6" [(ngModel)]="editedReport"></textarea>
+
+        <label class="medecin-label">
+          {{ i18n.t('review.decision.guidance') }}
+          <span class="medecin-muted" style="font-weight:400;">
+            {{ i18n.t('review.decision.guidanceHint') }}
+          </span>
+        </label>
+        <textarea class="medecin-textarea" rows="8" [(ngModel)]="patientGuidance"></textarea>
+
+        <div class="revision-box">
+          <div>
+            <strong>{{ i18n.t('review.revision.prompt') }}</strong>
+            <span class="medecin-muted">
+              {{ i18n.t('review.revision.hint') }}
+            </span>
+          </div>
+          <button class="medecin-btn btn-revise"
+                  [disabled]="submitting() || !canRequestRevision()"
+                  (click)="submit('REQUEST_REVISION')">
+            @if (submitting()) { {{ i18n.t('review.revision.pending') }} } @else { {{ i18n.t('review.revision.action') }} }
+          </button>
+          <span class="medecin-muted revision-left">
+            @if (canRequestRevision()) {
+              {{ i18n.t('review.revision.left', { n: d.revisionsRemaining }) }}
+            } @else {
+              {{ i18n.t('review.revision.none') }}
+            }
+          </span>
+        </div>
 
         <div class="decision-row">
           <div class="correct-inline">
-            <label class="medecin-label">Corrected stage</label>
+            <label class="medecin-label">{{ i18n.t('review.decision.correctedStage') }}</label>
             <select class="medecin-select" [(ngModel)]="correctedStage">
               @for (s of stages; track s) { <option [value]="s">{{ s }}</option> }
             </select>
           </div>
           <div class="decision-actions">
-            <button class="medecin-btn btn-validate" [disabled]="submitting()" (click)="submit('VALIDATE')">Validate</button>
-            <button class="medecin-btn btn-correct" [disabled]="submitting()" (click)="submit('CORRECT')">Correct</button>
-            <button class="medecin-btn btn-reject" [disabled]="submitting()" (click)="submit('REJECT')">Reject</button>
+            <button class="medecin-btn btn-validate" [disabled]="submitting()" (click)="submit('VALIDATE')">{{ i18n.t('review.decision.validate') }}</button>
+            <button class="medecin-btn btn-correct" [disabled]="submitting()" (click)="submit('CORRECT')">{{ i18n.t('review.decision.correct') }}</button>
+            <button class="medecin-btn btn-reject" [disabled]="submitting()" (click)="submit('REJECT')">{{ i18n.t('review.decision.reject') }}</button>
           </div>
         </div>
 
         @if (d.validatedAt) {
           <p class="medecin-muted">
-            Last decision: {{ d.validationStatus }} by {{ d.validatedByEmail }} on {{ d.validatedAt | date:'medium' }}.
+            {{ i18n.t('review.decision.lastDecision', {
+                 status: d.validationStatus,
+                 email: d.validatedByEmail ?? '',
+                 date: (d.validatedAt | date:'medium') ?? ''
+               }) }}
           </p>
         }
       </div>

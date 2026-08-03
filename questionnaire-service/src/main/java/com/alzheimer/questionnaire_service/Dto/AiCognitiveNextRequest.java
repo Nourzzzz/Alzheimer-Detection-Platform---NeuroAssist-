@@ -12,4 +12,5 @@ import java.util.Map;
 public class AiCognitiveNextRequest {
     private Map<String, Object> state;
     private String answer;
+    private String lang;
 }

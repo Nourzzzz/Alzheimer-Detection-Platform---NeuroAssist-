@@ -41,15 +41,19 @@ public class AssessmentController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<AssessmentDetailDto> detail(@PathVariable String id) {
-        return ResponseEntity.ok(assessmentReviewService.detail(id));
+    public ResponseEntity<AssessmentDetailDto> detail(
+            @PathVariable String id,
+            @RequestHeader(value = "Accept-Language", required = false) String lang) {
+        return ResponseEntity.ok(assessmentReviewService.detail(id, normalizeLang(lang)));
     }
 
     @PostMapping("/{id}/validate")
-    public ResponseEntity<AssessmentDetailDto> validate(@PathVariable String id,
-                                                        @RequestBody ValidationRequestDto request) {
+    public ResponseEntity<AssessmentDetailDto> validate(
+            @PathVariable String id,
+            @RequestBody ValidationRequestDto request,
+            @RequestHeader(value = "Accept-Language", required = false) String lang) {
         String doctorEmail = SecurityContextHolder.getContext().getAuthentication().getName();
-        return ResponseEntity.ok(assessmentReviewService.validate(id, doctorEmail, request));
+        return ResponseEntity.ok(assessmentReviewService.validate(id, doctorEmail, request, normalizeLang(lang)));
     }
 
     @GetMapping(value = "/{id}/gradcam", produces = MediaType.IMAGE_PNG_VALUE)
@@ -69,5 +73,14 @@ public class AssessmentController {
         return ResponseEntity.ok()
                 .contentType(MediaType.IMAGE_PNG)
                 .body(new FileSystemResource(file));
+    }
+
+    /** Keeps only a supported language tag; anything else falls back to French. */
+    private String normalizeLang(String header) {
+        if (header == null || header.isBlank()) {
+            return "fr";
+        }
+        String tag = header.split(",")[0].trim().toLowerCase().split("-")[0];
+        return "en".equals(tag) ? "en" : "fr";
     }
 }

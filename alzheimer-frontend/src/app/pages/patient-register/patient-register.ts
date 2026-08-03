@@ -2,6 +2,7 @@ import { Component, OnInit, ViewEncapsulation, inject, signal } from '@angular/c
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService, DoctorOption, RegisterRequest } from '../../services/auth';
+import { I18nService } from '../../services/i18n';
 
 @Component({
   standalone: true,
@@ -15,6 +16,7 @@ export class PatientRegisterPageComponent implements OnInit {
   private readonly fb = inject(FormBuilder);
   private readonly authService = inject(AuthService);
   private readonly router = inject(Router);
+  protected readonly i18n = inject(I18nService);
 
   protected readonly submitting = signal(false);
   protected readonly errorMessage = signal<string | null>(null);
@@ -67,7 +69,7 @@ export class PatientRegisterPageComponent implements OnInit {
       },
       error: (err) => {
         this.submitting.set(false);
-        this.errorMessage.set(err.error?.message || 'An error occurred while creating your account.');
+        this.errorMessage.set(err.error?.message || this.i18n.t('patient.register.error'));
       }
     });
   }

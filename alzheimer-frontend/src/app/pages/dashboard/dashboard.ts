@@ -9,6 +9,7 @@ import { RecentActivity, RiskBucket } from '../../models/questionnaire.model';
 import { ValidationQueuePageComponent } from '../validation-queue/validation-queue';
 import { KnowledgeBasePageComponent } from '../knowledge-base/knowledge-base';
 import { MedecinSidebarComponent } from '../../components/medecin-sidebar/medecin-sidebar';
+import { I18nService } from '../../services/i18n';
 
 interface PatientRow extends PatientResponse {
   age: number;
@@ -30,6 +31,7 @@ export class DashboardPageComponent implements OnInit {
   private readonly patientService = inject(PatientService);
   private readonly dashboardService = inject(DashboardService);
   private readonly route = inject(ActivatedRoute);
+  protected readonly i18n = inject(I18nService);
 
   protected readonly activeTab = signal<DashboardTab>('overview');
 
@@ -184,15 +186,28 @@ export class DashboardPageComponent implements OnInit {
     }
   }
 
+  protected riskLabel(bucket: RiskBucket | undefined | null): string {
+    switch (bucket) {
+      case 'Low':
+        return this.i18n.t('medecin.risk.low');
+      case 'Moderate':
+        return this.i18n.t('medecin.risk.moderate');
+      case 'Further Evaluation Recommended':
+        return this.i18n.t('medecin.risk.further');
+      default:
+        return '';
+    }
+  }
+
   protected timeAgo(isoDate: string): string {
     const diffMs = Date.now() - new Date(isoDate).getTime();
     const minutes = Math.floor(diffMs / 60000);
-    if (minutes < 1) return "Just now";
-    if (minutes < 60) return `${minutes} min ago`;
+    if (minutes < 1) return this.i18n.t('medecin.time.justNow');
+    if (minutes < 60) return this.i18n.t('medecin.time.minutes', { n: minutes });
     const hours = Math.floor(minutes / 60);
-    if (hours < 24) return `${hours}h ago`;
+    if (hours < 24) return this.i18n.t('medecin.time.hours', { n: hours });
     const days = Math.floor(hours / 24);
-    return `${days}d ago`;
+    return this.i18n.t('medecin.time.days', { n: days });
   }
 
   private computeAge(dateOfBirth: string): number {

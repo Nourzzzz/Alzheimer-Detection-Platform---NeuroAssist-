@@ -14,6 +14,12 @@ from app.config import (
 
 logger = logging.getLogger(__name__)
 
+# The report is read by the doctor, so it follows the console's language.
+_LANGUAGE_INSTRUCTION = {
+    "fr": "Write the entire report in FRENCH, in professional clinical French.",
+    "en": "Write the entire report in ENGLISH.",
+}
+
 
 def _build_prompt(context: dict) -> str:
     cnn = context.get("cnn_prediction", "?")
@@ -32,10 +38,13 @@ def _build_prompt(context: dict) -> str:
     ans_str = "\n".join(f"- {a}" for a in answers) or "- (no questionnaire on file)"
     cognitive_str = _format_cognitive(context) or "not administered"
 
-    return (
+    lang = (context.get("lang") or "fr").lower()
+    language_line = _LANGUAGE_INSTRUCTION.get(lang, _LANGUAGE_INSTRUCTION["fr"])
+
+    base = (
         "You are a clinical decision-support assistant. Draft a concise, cautious "
         "Alzheimer assessment for a physician to review. Do NOT give a definitive "
-        "diagnosis; frame findings as AI-generated and requiring validation.\n\n"
+        f"diagnosis; frame findings as AI-generated and requiring validation. {language_line}\n\n"
         f"MRI CNN prediction: {cnn} (class probabilities: {prob_str})\n"
         f"Computed risk score (0-100): {risk}\n"
         f"Cognitive questionnaire assessment: {cognitive_str}\n"
@@ -45,8 +54,36 @@ def _build_prompt(context: dict) -> str:
         f"Relevant medical history / comorbidities: {history}\n"
         f"Questionnaire answers:\n{ans_str}\n"
         f"Relevant medical knowledge (retrieved):\n{ctx_str}\n\n"
+    )
+
+    revision = _revision_block(context)
+    if revision:
+        return base + revision
+
+    return base + (
         "Write: (1) a one-paragraph summary, (2) key contributing factors "
         "(weigh the comorbidities), (3) suggested next steps for the physician."
+    )
+
+
+def _revision_block(context: dict) -> str:
+    """Extra instructions when a physician rejected the previous draft. The
+    feedback is an explicit instruction to follow, not just extra context."""
+    feedback = (context.get("doctor_feedback") or "").strip()
+    if not feedback:
+        return ""
+    previous = (context.get("previous_report") or "").strip()
+    previous_block = f"PREVIOUS DRAFT (rejected):\n{previous}\n\n" if previous else ""
+    return (
+        f"{previous_block}"
+        "The reviewing physician REJECTED the draft above with this feedback:\n"
+        f"\"{feedback}\"\n\n"
+        "Write a REVISED assessment that explicitly addresses every point the "
+        "physician raised. Where their feedback contradicts the model output, "
+        "follow the physician. Keep the same structure: (1) a one-paragraph "
+        "summary, (2) key contributing factors, (3) suggested next steps. Do not "
+        "mention this revision process or apologise - produce the corrected "
+        "assessment itself."
     )
 
 
@@ -72,6 +109,13 @@ def _templated_report(context: dict, prompt: str) -> str:
                    "AD": "Alzheimer's disease pattern"}.get(cnn, cnn)
     n_ctx = len(retrieved)
     cognitive_sentence = f"Cognitive questionnaire: {cognitive_str}. " if cognitive_str else ""
+    feedback = (context.get("doctor_feedback") or "").strip()
+    revision_sentence = (
+        f"\n\nPhysician feedback on the previous draft: \"{feedback}\" "
+        "(this fallback report cannot rewrite itself around that feedback - "
+        "enable the LLM to obtain a genuinely revised assessment.)"
+        if feedback else ""
+    )
     return (
         "[AI-GENERATED DRAFT — REQUIRES PHYSICIAN VALIDATION]\n\n"
         "Summary: The MRI-based CNN classifies this scan as "
@@ -84,7 +128,8 @@ def _templated_report(context: dict, prompt: str) -> str:
         "symptoms provide supporting context.\n\n"
         "Suggested next steps: correlate with clinical history, consider "
         "confirmatory testing where indicated, and validate or correct this "
-        "AI assessment before it is released to the patient.\n\n"
+        "AI assessment before it is released to the patient."
+        f"{revision_sentence}\n\n"
         "(Placeholder report generated without an LLM. Enable RAG_USE_OLLAMA to "
         "produce a model-written narrative from the same inputs.)"
     )

@@ -1,57 +1,57 @@
 <section class="medecin-page">
   <div class="medecin-container">
     <header class="medecin-header">
-      <h1>Knowledge base</h1>
-      <p>Medical documents indexed for the RAG module — guidelines, research papers, protocols.</p>
+      <h1>{{ i18n.t('medecin.kb.title') }}</h1>
+      <p>{{ i18n.t('medecin.kb.subtitle') }}</p>
     </header>
 
     @if (error()) { <p class="medecin-error">{{ error() }}</p> }
 
     <div class="medecin-card kb-upload">
-      <h2>Add a document</h2>
+      <h2>{{ i18n.t('medecin.kb.add') }}</h2>
       <div class="kb-form">
-        <label class="medecin-label">Title</label>
-        <input class="medecin-input" type="text" [(ngModel)]="title" placeholder="e.g. NICE dementia guideline 2018" />
+        <label class="medecin-label">{{ i18n.t('medecin.kb.titleLabel') }}</label>
+        <input class="medecin-input" type="text" [(ngModel)]="title" [placeholder]="i18n.t('medecin.kb.titlePlaceholder')" />
 
-        <label class="medecin-label">Category</label>
+        <label class="medecin-label">{{ i18n.t('medecin.kb.category') }}</label>
         <select class="medecin-select" [(ngModel)]="category">
-          @for (c of categories; track c.value) { <option [value]="c.value">{{ c.label }}</option> }
+          @for (c of categories; track c.value) { <option [value]="c.value">{{ i18n.t(c.labelKey) }}</option> }
         </select>
 
-        <label class="medecin-label">Description (optional)</label>
+        <label class="medecin-label">{{ i18n.t('medecin.kb.description') }}</label>
         <input class="medecin-input" type="text" [(ngModel)]="description" />
 
-        <label class="medecin-label">PDF file</label>
+        <label class="medecin-label">{{ i18n.t('medecin.kb.pdfFile') }}</label>
         <input class="medecin-input" type="file" accept="application/pdf,.pdf" (change)="onFileSelected($event)" />
 
         <button class="medecin-btn" [disabled]="uploading()" (click)="upload()">
-          {{ uploading() ? 'Uploading…' : 'Upload & index' }}
+          {{ uploading() ? i18n.t('medecin.kb.uploading') : i18n.t('medecin.kb.upload') }}
         </button>
       </div>
     </div>
 
     <div class="kb-toolbar">
-      <label class="medecin-label">Filter by category</label>
+      <label class="medecin-label">{{ i18n.t('medecin.kb.filter') }}</label>
       <select class="medecin-select" (change)="onFilterChange($any($event.target).value)">
-        <option value="">All</option>
-        @for (c of categories; track c.value) { <option [value]="c.value">{{ c.label }}</option> }
+        <option value="">{{ i18n.t('medecin.kb.all') }}</option>
+        @for (c of categories; track c.value) { <option [value]="c.value">{{ i18n.t(c.labelKey) }}</option> }
       </select>
     </div>
 
     @if (loading()) {
-      <p class="medecin-muted">Loading…</p>
+      <p class="medecin-muted">{{ i18n.t('common.loading') }}</p>
     } @else if (documents().length === 0) {
-      <p class="medecin-muted">No documents yet.</p>
+      <p class="medecin-muted">{{ i18n.t('medecin.kb.empty') }}</p>
     } @else {
       <table class="medecin-table">
         <thead>
           <tr>
-            <th>Title</th>
-            <th>Category</th>
-            <th>Indexing</th>
-            <th>Chunks</th>
-            <th>Size</th>
-            <th>Uploaded</th>
+            <th>{{ i18n.t('medecin.kb.titleLabel') }}</th>
+            <th>{{ i18n.t('medecin.kb.category') }}</th>
+            <th>{{ i18n.t('medecin.kb.col.indexing') }}</th>
+            <th>{{ i18n.t('medecin.kb.col.chunks') }}</th>
+            <th>{{ i18n.t('medecin.kb.col.size') }}</th>
+            <th>{{ i18n.t('medecin.queue.col.uploaded') }}</th>
             <th></th>
           </tr>
         </thead>
@@ -65,8 +65,8 @@
               <td>{{ sizeMb(doc.fileSizeBytes) }} MB</td>
               <td>{{ doc.uploadedAt | date:'short' }}</td>
               <td class="kb-actions">
-                <a class="medecin-link" [href]="downloadUrl(doc.id)" target="_blank" rel="noopener">Download</a>
-                <button class="medecin-link danger" (click)="remove(doc)">Delete</button>
+                <a class="medecin-link" [href]="downloadUrl(doc.id)" target="_blank" rel="noopener">{{ i18n.t('medecin.kb.download') }}</a>
+                <button class="medecin-link danger" (click)="remove(doc)">{{ i18n.t('medecin.kb.delete') }}</button>
               </td>
             </tr>
           }

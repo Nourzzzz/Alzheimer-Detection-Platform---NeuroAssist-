@@ -6,7 +6,13 @@ export interface CnnResult {
   probabilities: Record<AlzheimerStage, number>;
 }
 
-export type ValidationStatus = 'NOT_READY' | 'PENDING_VALIDATION' | 'VALIDATED' | 'CORRECTED' | 'REJECTED';
+export type ValidationStatus =
+  | 'NOT_READY'
+  | 'PENDING_VALIDATION'
+  | 'REVISION_REQUESTED'
+  | 'VALIDATED'
+  | 'CORRECTED'
+  | 'REJECTED';
 
 export interface AiAssessment {
   id: string;
@@ -58,6 +64,10 @@ export interface AssessmentDetail {
   ragContextRefs: RagContextRef[] | null;
   generatedReport: string | null;
   editedReport: string | null;
+  patientGuidance: string | null;
+  editedGuidance: string | null;
+  revisions: AssessmentRevision[] | null;
+  revisionsRemaining: number;
   validationStatus: ValidationStatus;
   correctedStage: AlzheimerStage | null;
   doctorComment: string | null;
@@ -66,22 +76,32 @@ export interface AssessmentDetail {
   createdAt: string;
 }
 
-export type ValidationAction = 'VALIDATE' | 'CORRECT' | 'REJECT';
+export interface AssessmentRevision {
+  round: number;
+  rejectedReport: string | null;
+  doctorFeedback: string;
+  requestedByEmail: string;
+  requestedAt: string;
+}
+
+export type ValidationAction = 'VALIDATE' | 'CORRECT' | 'REJECT' | 'REQUEST_REVISION';
 
 export interface ValidationRequest {
   action: ValidationAction;
   comment?: string;
   correctedStage?: AlzheimerStage;
   editedReport?: string;
+  patientGuidance?: string;
 }
 
 export interface PatientAssessmentView {
   id: string;
   validationStatus: ValidationStatus;
-  message: string;
   finalStage: AlzheimerStage | null;
   doctorComment: string | null;
-  report: string | null;
+  guidance: string | null;
+  /** Language the guidance text is written in, which may differ from the UI. */
+  guidanceLang: string | null;
   hasGradCam: boolean;
   createdAt: string;
   validatedAt: string | null;

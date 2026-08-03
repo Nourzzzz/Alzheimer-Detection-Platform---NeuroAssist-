@@ -6,103 +6,103 @@
       <div class="brand-icon">N</div>
       <div>
         <h3>NeuroAssist</h3>
-        <span>Administration</span>
+        <span>{{ i18n.t('admin.brand.subtitle') }}</span>
       </div>
     </div>
 
-    <div class="nav-section-label">Main</div>
+    <div class="nav-section-label">{{ i18n.t('admin.nav.main') }}</div>
     <nav class="sidebar-nav">
       <a routerLink="/admin">
-        <span class="nav-icon"><i class="bi bi-grid-1x2-fill"></i></span> Dashboard
+        <span class="nav-icon"><i class="bi bi-grid-1x2-fill"></i></span> {{ i18n.t('admin.nav.dashboard') }}
       </a>
     </nav>
 
-    <div class="nav-section-label">Account Management</div>
+    <div class="nav-section-label">{{ i18n.t('admin.nav.accountManagement') }}</div>
     <nav class="sidebar-nav">
       <a routerLink="/admin/doctors">
-        <span class="nav-icon"><i class="bi bi-heart-pulse-fill"></i></span> Doctors
+        <span class="nav-icon"><i class="bi bi-heart-pulse-fill"></i></span> {{ i18n.t('admin.nav.doctors') }}
       </a>
       <a routerLink="/admin/patients" class="active">
-        <span class="nav-icon"><i class="bi bi-people-fill"></i></span> Patients
+        <span class="nav-icon"><i class="bi bi-people-fill"></i></span> {{ i18n.t('admin.nav.patients') }}
       </a>
     </nav>
   </aside>
 
   <header class="admin-topbar">
     <div class="topbar-workspace">
-      <span class="workspace-label">Workspace</span>
-      <span class="workspace-name">Platform Administration</span>
+      <span class="workspace-label">{{ i18n.t('admin.topbar.workspace') }}</span>
+      <span class="workspace-name">{{ i18n.t('admin.topbar.workspaceName') }}</span>
     </div>
     <div class="topbar-actions">
       <div class="topbar-user">
         <div class="topbar-avatar">{{ auth.currentUser()?.prenom?.charAt(0) }}{{ auth.currentUser()?.nom?.charAt(0) }}</div>
         <div class="topbar-user-info">
           <span class="user-name">{{ auth.currentUser()?.prenom }} {{ auth.currentUser()?.nom }}</span>
-          <span class="user-role">Administrator</span>
+          <span class="user-role">{{ i18n.t('admin.topbar.role') }}</span>
         </div>
       </div>
-      <button class="btn-logout" (click)="logout()"><i class="bi bi-box-arrow-right"></i> Logout</button>
+      <button class="btn-logout" (click)="logout()"><i class="bi bi-box-arrow-right"></i> {{ i18n.t('admin.topbar.logout') }}</button>
     </div>
   </header>
 
   <main class="admin-main">
 
     <div class="page-header">
-      <span class="page-section-label">Account Management</span>
-      <h2 class="dashboard-title">Patients</h2>
-      <p class="page-subtitle">Search, view, and activate or deactivate patient accounts.</p>
+      <span class="page-section-label">{{ i18n.t('admin.patients.sectionLabel') }}</span>
+      <h2 class="dashboard-title">{{ i18n.t('admin.patients.title') }}</h2>
+      <p class="page-subtitle">{{ i18n.t('admin.patients.subtitle') }}</p>
     </div>
 
     @if (selectedPatient(); as patient) {
       <div class="card form-panel">
         <div class="card-header-row">
           <div>
-            <span class="card-label">Account Details</span>
+            <span class="card-label">{{ i18n.t('admin.patients.detailsLabel') }}</span>
             <h4 class="card-title">{{ patient.prenom }} {{ patient.nom }}</h4>
           </div>
-          <button class="btn-secondary" (click)="closeDetails()">Close</button>
+          <button class="btn-secondary" (click)="closeDetails()">{{ i18n.t('admin.action.close') }}</button>
         </div>
         <div class="form-grid">
           <div class="form-field">
-            <label>Email</label>
+            <label>{{ i18n.t('admin.field.email') }}</label>
             <p>{{ patient.email }}</p>
           </div>
           <div class="form-field">
-            <label>Phone</label>
+            <label>{{ i18n.t('admin.field.phone') }}</label>
             <p>{{ patient.telephone || '—' }}</p>
           </div>
           <div class="form-field">
-            <label>Blood Type</label>
+            <label>{{ i18n.t('admin.field.bloodType') }}</label>
             <p>{{ patient.groupeSanguin || '—' }}</p>
           </div>
           <div class="form-field">
-            <label>Status</label>
+            <label>{{ i18n.t('admin.field.status') }}</label>
             <p>
               <span class="badge" [class.badge-success]="patient.status === 'ACTIVE'" [class.badge-danger]="patient.status === 'INACTIVE'">
-                {{ patient.status === 'ACTIVE' ? 'Active' : 'Inactive' }}
+                {{ patient.status === 'ACTIVE' ? i18n.t('admin.status.active') : i18n.t('admin.status.inactive') }}
               </span>
             </p>
           </div>
           <div class="form-field full">
-            <label>Medical History</label>
+            <label>{{ i18n.t('admin.field.medicalHistory') }}</label>
             <p>{{ patient.antecedentsMedicaux || '—' }}</p>
           </div>
           <div class="form-field full">
-            <label>Referring Doctor</label>
+            <label>{{ i18n.t('admin.field.referringDoctor') }}</label>
             <div style="display:flex; gap:0.75rem; align-items:center;">
               <select [ngModel]="assigningDoctorEmail()" (ngModelChange)="assigningDoctorEmail.set($event)" style="flex:1;">
-                <option value="">— No doctor assigned —</option>
+                <option value="">{{ i18n.t('admin.patients.noDoctorAssigned') }}</option>
                 @for (doctor of activeDoctors(); track doctor.id) {
                   <option [value]="doctor.email">{{ doctor.prenom }} {{ doctor.nom }} @if (doctor.specialite) { ({{ doctor.specialite }}) }</option>
                 }
               </select>
-              <button class="btn-secondary" [disabled]="!assigningDoctorEmail()" (click)="assignReferringDoctor()">Assign</button>
+              <button class="btn-secondary" [disabled]="!assigningDoctorEmail()" (click)="assignReferringDoctor()">{{ i18n.t('admin.action.assign') }}</button>
             </div>
           </div>
         </div>
         <div class="form-actions">
           <button class="btn-status" [class.activate]="patient.status === 'INACTIVE'" [class.deactivate]="patient.status === 'ACTIVE'" (click)="toggleStatus(patient)">
-            {{ patient.status === 'ACTIVE' ? 'Deactivate Account' : 'Activate Account' }}
+            {{ patient.status === 'ACTIVE' ? i18n.t('admin.patients.deactivateAccount') : i18n.t('admin.patients.activateAccount') }}
           </button>
         </div>
       </div>
@@ -110,43 +110,43 @@
 
     <div class="card">
       <div class="toolbar" style="margin-bottom: 1.5rem;">
-        <input type="text" placeholder="Search by name or email..."
+        <input type="text" [placeholder]="i18n.t('admin.search.placeholder')"
                [value]="search()" (input)="search.set($any($event.target).value)">
         <select [value]="statusFilter()" (change)="statusFilter.set($any($event.target).value)">
-          <option value="">All Statuses</option>
-          <option value="ACTIVE">Active</option>
-          <option value="INACTIVE">Inactive</option>
+          <option value="">{{ i18n.t('admin.filter.allStatuses') }}</option>
+          <option value="ACTIVE">{{ i18n.t('admin.status.active') }}</option>
+          <option value="INACTIVE">{{ i18n.t('admin.status.inactive') }}</option>
         </select>
       </div>
 
       @if (loading()) {
-        <p class="text-muted-block">Loading...</p>
+        <p class="text-muted-block">{{ i18n.t('common.loading') }}</p>
       } @else if (patients().length === 0) {
-        <p class="text-muted-block">No patients found.</p>
+        <p class="text-muted-block">{{ i18n.t('admin.patients.empty') }}</p>
       } @else {
         <div class="table-responsive">
           <table class="admin-table">
             <thead>
               <tr>
                 <th (click)="setSort('nom')" style="cursor: pointer;">
-                  Patient
+                  {{ i18n.t('admin.patients.column') }}
                   @if (sortColumn() === 'nom') { <i class="bi" [class.bi-arrow-up-short]="sortDirection() === 'asc'" [class.bi-arrow-down-short]="sortDirection() === 'desc'"></i> }
                 </th>
                 <th (click)="setSort('email')" style="cursor: pointer;">
-                  Email
+                  {{ i18n.t('admin.table.email') }}
                   @if (sortColumn() === 'email') { <i class="bi" [class.bi-arrow-up-short]="sortDirection() === 'asc'" [class.bi-arrow-down-short]="sortDirection() === 'desc'"></i> }
                 </th>
                 <th (click)="setSort('referringDoctorEmail')" style="cursor: pointer;">
-                  Referring Doctor
+                  {{ i18n.t('admin.field.referringDoctor') }}
                   @if (sortColumn() === 'referringDoctorEmail') { <i class="bi" [class.bi-arrow-up-short]="sortDirection() === 'asc'" [class.bi-arrow-down-short]="sortDirection() === 'desc'"></i> }
                 </th>
-                <th>Status</th>
-                <th>Actions</th>
+                <th>{{ i18n.t('admin.table.status') }}</th>
+                <th>{{ i18n.t('admin.table.actions') }}</th>
               </tr>
             </thead>
             <tbody>
               @if (paginatedPatients().length === 0) {
-                <tr><td colspan="5" class="text-center py-4 text-muted">No results found.</td></tr>
+                <tr><td colspan="5" class="text-center py-4 text-muted">{{ i18n.t('admin.table.noResults') }}</td></tr>
               }
               @for (patient of paginatedPatients(); track patient.id) {
                 <tr>
@@ -155,14 +155,14 @@
                   <td>{{ patient.referringDoctorEmail || '—' }}</td>
                   <td>
                     <span class="badge" [class.badge-success]="patient.status === 'ACTIVE'" [class.badge-danger]="patient.status === 'INACTIVE'">
-                      {{ patient.status === 'ACTIVE' ? 'Active' : 'Inactive' }}
+                      {{ patient.status === 'ACTIVE' ? i18n.t('admin.status.active') : i18n.t('admin.status.inactive') }}
                     </span>
                   </td>
                   <td>
                     <div style="display:flex; gap:0.5rem;">
-                      <button class="btn-link" (click)="viewDetails(patient)">Details</button>
+                      <button class="btn-link" (click)="viewDetails(patient)">{{ i18n.t('admin.action.details') }}</button>
                       <button class="btn-status" [class.activate]="patient.status === 'INACTIVE'" [class.deactivate]="patient.status === 'ACTIVE'" (click)="toggleStatus(patient)">
-                        {{ patient.status === 'ACTIVE' ? 'Deactivate' : 'Activate' }}
+                        {{ patient.status === 'ACTIVE' ? i18n.t('admin.action.deactivate') : i18n.t('admin.action.activate') }}
                       </button>
                     </div>
                   </td>
@@ -174,14 +174,16 @@
 
         <div class="pagination-controls mt-4 d-flex justify-content-between align-items-center flex-wrap gap-3">
           <span class="text-muted" style="font-size: 0.85rem;">
-            Showing {{ totalFiltered() > 0 ? (currentPage() - 1) * pageSize() + 1 : 0 }} to
-            {{ currentPage() * pageSize() > totalFiltered() ? totalFiltered() : currentPage() * pageSize() }}
-            of {{ totalFiltered() }} patients
+            {{ i18n.t('admin.patients.showing', {
+                 from: totalFiltered() > 0 ? (currentPage() - 1) * pageSize() + 1 : 0,
+                 to: currentPage() * pageSize() > totalFiltered() ? totalFiltered() : currentPage() * pageSize(),
+                 total: totalFiltered()
+               }) }}
           </span>
           <div class="d-flex gap-2">
-            <button class="btn-secondary" [disabled]="currentPage() === 1" (click)="setPage(currentPage() - 1)">Previous</button>
-            <span class="btn-secondary" style="pointer-events: none; opacity: 0.8;">Page {{ currentPage() }} of {{ totalPages() }}</span>
-            <button class="btn-secondary" [disabled]="currentPage() === totalPages()" (click)="setPage(currentPage() + 1)">Next</button>
+            <button class="btn-secondary" [disabled]="currentPage() === 1" (click)="setPage(currentPage() - 1)">{{ i18n.t('admin.pagination.previous') }}</button>
+            <span class="btn-secondary" style="pointer-events: none; opacity: 0.8;">{{ i18n.t('admin.pagination.page', { current: currentPage(), total: totalPages() }) }}</span>
+            <button class="btn-secondary" [disabled]="currentPage() === totalPages()" (click)="setPage(currentPage() + 1)">{{ i18n.t('admin.pagination.next') }}</button>
           </div>
         </div>
       }

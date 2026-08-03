@@ -144,7 +144,7 @@ public class DoctorService {
                 .telephone(user.getTelephone())
                 .adresse(user.getAdresse())
                 .genre(user.getGenre())
-                .dateNaissance(user.getDateNaissance())
+                .dateNaissance(user.getDateNaissance() == null ? null : user.getDateNaissance().toLocalDate())
                 .groupeSanguin(user.getGroupeSanguin())
                 .antecedentsMedicaux(user.getAntecedentsMedicaux())
                 .referringDoctorEmail(user.getReferringDoctorEmail())

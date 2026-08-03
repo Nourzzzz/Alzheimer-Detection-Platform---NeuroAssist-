@@ -14,4 +14,5 @@ public class ValidationRequestDto {
     private String comment;
     private String correctedStage;
     private String editedReport;
+    private String patientGuidance;
 }

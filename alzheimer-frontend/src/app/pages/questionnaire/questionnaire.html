@@ -1,6 +1,6 @@
 <div class="quiz-shell">
   <div class="quiz-topbar">
-    <a routerLink="/home" class="quiz-back">← Retour</a>
+    <a routerLink="/home" class="quiz-back">← {{ i18n.t('common.back') }}</a>
     <span class="quiz-brand">NeuroAssist</span>
   </div>
 
@@ -8,14 +8,14 @@
 
     @if (loading()) {
       <div class="quiz-state">
-        <p>Chargement du questionnaire...</p>
+        <p>{{ i18n.t('quiz.loading') }}</p>
       </div>
     }
 
     @else if (loadError()) {
       <div class="quiz-state">
         <p class="quiz-error">{{ loadError() }}</p>
-        <a routerLink="/home" class="quiz-btn quiz-btn-primary">Retour à l'accueil</a>
+        <a routerLink="/home" class="quiz-btn quiz-btn-primary">{{ i18n.t('quiz.backHome') }}</a>
       </div>
     }
 
@@ -26,24 +26,27 @@
           @else if (result()!.riskBucket === 'Moderate') { ⚠ }
           @else { ⓘ }
         </div>
-        <h1>Questionnaire terminé</h1>
-        <p class="result-score">Score : {{ result()!.score }} / {{ result()!.maxScore }}</p>
-        <p class="result-bucket">Catégorie : <strong>{{ result()!.riskBucket }}</strong></p>
+        <h1>{{ i18n.t('quiz.done.title') }}</h1>
+        <p class="result-score">
+          {{ i18n.t('patient.quiz.score', { score: result()!.score, max: result()!.maxScore }) }}
+        </p>
+        <p class="result-bucket">
+          {{ i18n.t('patient.quiz.category') }}<strong>{{ riskLabel(result()!.riskBucket) }}</strong>
+        </p>
 
         <div class="result-disclaimer">
-          <strong>Important :</strong> ce questionnaire est un outil de dépistage, pas un diagnostic.
-          Votre résultat sera examiné par votre équipe soignante, qui vous contactera pour en discuter
-          et déterminer les prochaines étapes si nécessaire.
+          <strong>{{ i18n.t('patient.quiz.important') }}</strong>
+          {{ i18n.t('patient.quiz.legacy.noteBody') }}
         </div>
 
-        <button class="quiz-btn quiz-btn-primary" (click)="goHome()">Retour à mon espace</button>
+        <button class="quiz-btn quiz-btn-primary" (click)="goHome()">{{ i18n.t('quiz.done.back') }}</button>
       </div>
     }
 
     @else if (currentQuestion(); as question) {
       <div class="quiz-progress-wrap">
         <div class="quiz-progress-label">
-          Question {{ currentIndex() + 1 }} sur {{ questions().length }}
+          {{ i18n.t('patient.quiz.questionOf', { n: currentIndex() + 1, total: questions().length }) }}
         </div>
         <div class="quiz-progress-bar">
           <div class="quiz-progress-fill" [style.width.%]="progressPercent()"></div>
@@ -76,7 +79,7 @@
             class="quiz-btn quiz-btn-outline"
             [disabled]="currentIndex() === 0"
             (click)="goPrevious()">
-            Précédent
+            {{ i18n.t('patient.quiz.previous') }}
           </button>
 
           @if (!isLastQuestion()) {
@@ -85,7 +88,7 @@
               class="quiz-btn quiz-btn-primary"
               [disabled]="!canProceed()"
               (click)="goNext()">
-              Suivant
+              {{ i18n.t('patient.quiz.next') }}
             </button>
           } @else {
             <button
@@ -94,9 +97,9 @@
               [disabled]="!canProceed() || submitting()"
               (click)="submit()">
               @if (submitting()) {
-                Envoi en cours...
+                {{ i18n.t('common.sending') }}
               } @else {
-                Terminer
+                {{ i18n.t('patient.quiz.finish') }}
               }
             </button>
           }

@@ -9,7 +9,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.HashMap;
 import java.util.Map;
 
 @Service
@@ -19,9 +18,9 @@ public class CognitiveQuestionnaireService {
     private final CognitiveSessionRepository repository;
     private final AiQuestionnaireClient aiQuestionnaireClient;
 
-    public CognitiveTurnResponse start() {
+    public CognitiveTurnResponse start(String lang) {
         String email = getCurrentPatientEmail();
-        AiCognitiveNextResponse resp = aiQuestionnaireClient.next(null, null);
+        AiCognitiveNextResponse resp = aiQuestionnaireClient.next(null, null, lang);
 
         CognitiveSession session = CognitiveSession.builder()
                 .patientEmail(email)
@@ -36,14 +35,14 @@ public class CognitiveQuestionnaireService {
         return toTurnResponse(session.getId(), resp);
     }
 
-    public CognitiveTurnResponse answer(String sessionId, String answer) {
+    public CognitiveTurnResponse answer(String sessionId, String answer, String lang) {
         String email = getCurrentPatientEmail();
         CognitiveSession session = getOwnedSession(sessionId, email);
         if (session.isFinished()) {
             throw new RuntimeException("Ce questionnaire est déjà terminé.");
         }
 
-        AiCognitiveNextResponse resp = aiQuestionnaireClient.next(session.getState(), answer);
+        AiCognitiveNextResponse resp = aiQuestionnaireClient.next(session.getState(), answer, lang);
 
         session.setState(resp.getState());
         session.setLastQuestion(resp.getQuestion());
@@ -64,23 +63,7 @@ public class CognitiveQuestionnaireService {
                 .sessionId(session.getId())
                 .finished(session.isFinished())
                 .question(session.isFinished() ? null : session.getLastQuestion())
-                .summary(session.getSummary())
                 .build();
-    }
-
-    public Map<String, Object> getSummary(String sessionId) {
-        String email = getCurrentPatientEmail();
-        CognitiveSession session = getOwnedSession(sessionId, email);
-        if (!session.isFinished()) {
-            throw new RuntimeException("Cette session n'est pas encore terminée.");
-        }
-        if (session.getSummary() != null) {
-            return session.getSummary();
-        }
-        Map<String, Object> summary = aiQuestionnaireClient.summary(session.getState());
-        session.setSummary(summary);
-        repository.save(session);
-        return summary;
     }
 
     public Map<String, Object> getLatestFinishedSummary(String patientEmail) {
@@ -89,14 +72,14 @@ public class CognitiveQuestionnaireService {
                 .orElse(null);
     }
 
-    public Map<String, Object> getMyLatestFinishedSummary() {
-        Map<String, Object> summary = getLatestFinishedSummary(getCurrentPatientEmail());
-        if (summary == null) {
-            return Map.of("exists", false);
-        }
-        Map<String, Object> result = new HashMap<>(summary);
-        result.put("exists", true);
-        return result;
+    /**
+     * Patient-facing: only says whether a run was completed. Scores, red flags and
+     * narrative stay server-side until a doctor has reviewed the case.
+     */
+    public Map<String, Object> getMyQuestionnaireStatus() {
+        return repository.findFirstByPatientEmailAndFinishedTrueOrderByCreatedAtDesc(getCurrentPatientEmail())
+                .<Map<String, Object>>map(s -> Map.of("exists", true, "completedAt", s.getUpdatedAt().toString()))
+                .orElse(Map.of("exists", false));
     }
 
     private CognitiveSession getOwnedSession(String sessionId, String email) {
@@ -113,7 +96,6 @@ public class CognitiveQuestionnaireService {
                 .sessionId(sessionId)
                 .finished(resp.isFinished())
                 .question(resp.getQuestion())
-                .summary(resp.getSummary())
                 .build();
     }
 

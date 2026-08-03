@@ -1,7 +1,7 @@
 import logging
 
 from app.config import RAG_RERANK_MIN_SCORE, RAG_RETRIEVE_K, RAG_TOP_K, RAG_USE_RERANKER
-from app.rag import clinical_bert, llm, reranker
+from app.rag import clinical_bert, guidance, llm, reranker
 from app.rag.embeddings import get_embedding_model
 from app.rag.vector_store import get_vector_store
 
@@ -71,6 +71,27 @@ def generate_assessment(payload: dict) -> dict:
         "cognitive_red_flags": payload.get("cognitive_red_flags", []),
         "questionnaire_answers": payload.get("questionnaire_answers", []),
         "retrieved_context": hits,
+        "doctor_feedback": payload.get("doctor_feedback"),
+        "previous_report": payload.get("previous_report"),
+        "lang": payload.get("lang"),
     })
 
-    return {"clinical_bert": clinical, "rag_context": hits, "report": report}
+    # Built in every supported language up front. The patient may switch language
+    # long after the assessment was reviewed, and translating validated clinical
+    # guidance on the fly is not something a model should be trusted with.
+    patient_guidance = {
+        lang: guidance.build_guidance(
+            payload.get("predicted_class", ""),
+            red_flags=payload.get("cognitive_red_flags", []),
+            symptoms=clinical.get("symptoms", []),
+            lang=lang,
+        )
+        for lang in guidance.SUPPORTED_LANGS
+    }
+
+    return {
+        "clinical_bert": clinical,
+        "rag_context": hits,
+        "report": report,
+        "patient_guidance": patient_guidance,
+    }

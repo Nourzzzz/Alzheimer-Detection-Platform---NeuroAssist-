@@ -6,6 +6,7 @@ import { ClinicalRecordService } from '../../services/clinical-record';
 import { CreatePatientRequest, PatientResponse } from '../../models/patient.model';
 import { ClinicalRecordRequest } from '../../models/clinical.model';
 import { MedecinSidebarComponent } from '../../components/medecin-sidebar/medecin-sidebar';
+import { I18nService } from '../../services/i18n';
 
 @Component({
   standalone: true,
@@ -18,6 +19,7 @@ import { MedecinSidebarComponent } from '../../components/medecin-sidebar/medeci
 export class PatientRecordListPageComponent implements OnInit {
   private readonly patientService = inject(PatientService);
   private readonly clinicalRecordService = inject(ClinicalRecordService);
+  protected readonly i18n = inject(I18nService);
 
   protected readonly patients = signal<PatientResponse[]>([]);
   protected readonly loading = signal(true);
@@ -78,7 +80,7 @@ export class PatientRecordListPageComponent implements OnInit {
     const request = this.newPatient();
     const rec = this.newRecord();
     if (!request.prenom || !request.nom || !request.email || !this.clinicalComplete(rec)) {
-      this.createError.set('Renseignez l’identité et toutes les informations cliniques obligatoires (*).');
+      this.createError.set(this.i18n.t('medecin.patients.error.required'));
       return;
     }
 
@@ -97,14 +99,14 @@ export class PatientRecordListPageComponent implements OnInit {
           },
           error: () => {
             this.creating.set(false);
-            this.createError.set('Patient créé, mais l’enregistrement du dossier clinique a échoué. Complétez-le depuis la fiche patient.');
+            this.createError.set(this.i18n.t('medecin.patients.error.clinicalSaveFailed'));
             this.reload();
           }
         });
       },
       error: (err) => {
         this.creating.set(false);
-        this.createError.set(err?.error?.message ?? 'Impossible de créer ce dossier patient.');
+        this.createError.set(err?.error?.message ?? this.i18n.t('medecin.patients.error.createFailed'));
       }
     });
   }

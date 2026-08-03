@@ -2,6 +2,7 @@ import { Component, computed, inject, signal } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { CognitiveQuestionnaireService } from '../../services/cognitive';
 import { CognitiveOption, CognitiveQuestion, CognitiveTurn } from '../../models/cognitive.model';
+import { I18nService } from '../../services/i18n';
 
 @Component({
   standalone: true,
@@ -13,6 +14,7 @@ import { CognitiveOption, CognitiveQuestion, CognitiveTurn } from '../../models/
 export class CognitiveQuestionnairePageComponent {
   private readonly cognitiveService = inject(CognitiveQuestionnaireService);
   private readonly router = inject(Router);
+  protected readonly i18n = inject(I18nService);
 
   protected readonly loading = signal(true);
   protected readonly loadError = signal<string | null>(null);
@@ -25,6 +27,10 @@ export class CognitiveQuestionnairePageComponent {
   protected readonly freeText = signal('');
 
   protected readonly answeredCount = signal(0);
+
+  /** Marks the tapped option straight away, so the choice registers visually
+   *  without waiting for the round-trip. */
+  protected readonly pendingValue = signal<string | null>(null);
 
   protected readonly canSubmitFreeText = computed(() => this.freeText().trim().length > 0);
 
@@ -42,13 +48,14 @@ export class CognitiveQuestionnairePageComponent {
       },
       error: () => {
         this.loading.set(false);
-        this.loadError.set("Impossible de charger le questionnaire pour le moment.");
+        this.loadError.set(this.i18n.t('quiz.loadError'));
       }
     });
   }
 
   private applyTurn(turn: CognitiveTurn): void {
     this.submitting.set(false);
+    this.pendingValue.set(null);
     this.submitError.set(null);
     this.sessionId.set(turn.sessionId);
     this.finished.set(turn.finished);
@@ -57,7 +64,10 @@ export class CognitiveQuestionnairePageComponent {
   }
 
   protected selectOption(option: CognitiveOption): void {
-    this.submitAnswer(option.label);
+    this.pendingValue.set(option.value);
+    // Sending the value, not the label, lets the backend resolve the answer by
+    // exact match and skip the language-model normalisation entirely.
+    this.submitAnswer(option.value);
   }
 
   protected submitFreeText(): void {
@@ -80,7 +90,7 @@ export class CognitiveQuestionnairePageComponent {
       },
       error: () => {
         this.submitting.set(false);
-        this.submitError.set("Une erreur est survenue lors de l'envoi de votre réponse. Veuillez réessayer.");
+        this.submitError.set(this.i18n.t('quiz.submitError'));
       }
     });
   }

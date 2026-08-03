@@ -7,7 +7,9 @@ import { AuthService } from '../../services/auth';
 import { CognitiveQuestionnaireService } from '../../services/cognitive';
 import { AssessmentDetail, AlzheimerStage, ValidationAction } from '../../models/mri.model';
 import { CognitiveLatestSummary } from '../../models/cognitive.model';
+import { TextBlock, parseStructuredText, splitDraftBanner } from '../../utils/rich-text';
 import { MedecinSidebarComponent } from '../../components/medecin-sidebar/medecin-sidebar';
+import { I18nService } from '../../services/i18n';
 
 @Component({
   standalone: true,
@@ -23,6 +25,7 @@ export class AssessmentReviewPageComponent {
   private readonly router = inject(Router);
   private readonly assessmentService = inject(AssessmentService);
   private readonly cognitiveService = inject(CognitiveQuestionnaireService);
+  protected readonly i18n = inject(I18nService);
 
   protected readonly stages: AlzheimerStage[] = ['CN', 'MCI', 'AD'];
 
@@ -39,6 +42,9 @@ export class AssessmentReviewPageComponent {
   protected comment = '';
   protected correctedStage: AlzheimerStage = 'CN';
   protected editedReport = '';
+  protected patientGuidance = '';
+
+  protected readonly showRevisions = signal(false);
 
   constructor() {
     const id = this.route.snapshot.paramMap.get('id');
@@ -53,6 +59,7 @@ export class AssessmentReviewPageComponent {
       next: (detail) => {
         this.detail.set(detail);
         this.editedReport = detail.editedReport ?? detail.generatedReport ?? '';
+        this.patientGuidance = detail.editedGuidance ?? detail.patientGuidance ?? '';
         this.correctedStage = detail.stage;
         this.loading.set(false);
         if (detail.hasGradCam) {
@@ -64,7 +71,7 @@ export class AssessmentReviewPageComponent {
         this.loadCognitiveSummary(detail.patientEmail);
       },
       error: () => {
-        this.error.set('Could not load the assessment.');
+        this.error.set(this.i18n.t('review.loadError'));
         this.loading.set(false);
       }
     });
@@ -103,23 +110,53 @@ export class AssessmentReviewPageComponent {
     return Object.entries(probs).map(([label, value]) => ({ label, value: value as number }));
   }
 
+  protected reportBanner(raw: string | null): string | null {
+    return splitDraftBanner(raw).banner;
+  }
+
+  protected reportBlocks(raw: string | null): TextBlock[] {
+    return parseStructuredText(splitDraftBanner(raw).body);
+  }
+
+  protected canRequestRevision(): boolean {
+    return (this.detail()?.revisionsRemaining ?? 0) > 0;
+  }
+
+  protected toggleRevisions(): void {
+    this.showRevisions.update((v) => !v);
+  }
+
   protected submit(action: ValidationAction): void {
     const current = this.detail();
     if (!current) return;
+
+    // The AI can only answer an objection it has been told about.
+    if (action === 'REQUEST_REVISION' && !this.comment.trim()) {
+      this.error.set(this.i18n.t('review.revision.needComment'));
+      return;
+    }
+
     this.submitting.set(true);
     this.error.set(null);
     this.assessmentService.validate(current.id, {
       action,
       comment: this.comment || undefined,
       correctedStage: action === 'CORRECT' ? this.correctedStage : undefined,
-      editedReport: this.editedReport || undefined,
+      editedReport: action === 'REQUEST_REVISION' ? undefined : (this.editedReport || undefined),
+      patientGuidance: this.patientGuidance || undefined,
     }).subscribe({
       next: (updated) => {
         this.detail.set(updated);
+        if (action === 'REQUEST_REVISION') {
+          // The regenerated draft replaces what was in the editor.
+          this.editedReport = updated.editedReport ?? updated.generatedReport ?? '';
+          this.patientGuidance = updated.editedGuidance ?? updated.patientGuidance ?? '';
+          this.comment = '';
+        }
         this.submitting.set(false);
       },
       error: () => {
-        this.error.set('Validation failed. Please retry.');
+        this.error.set(this.i18n.t('review.decision.failed'));
         this.submitting.set(false);
       }
     });

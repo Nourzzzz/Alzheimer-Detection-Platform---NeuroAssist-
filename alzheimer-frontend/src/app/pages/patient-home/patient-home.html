@@ -5,12 +5,10 @@
         <div class="col-lg-8">
 
           <div class="welcome-card" data-aos="fade-up">
-            <span class="welcome-eyebrow">Mon espace</span>
-            <h1>Bonjour {{ auth.currentUser()?.prenom }} 👋</h1>
+            <span class="welcome-eyebrow">{{ i18n.t('nav.mySpace') }}</span>
+            <h1>{{ i18n.t('patient.greeting', { name: auth.currentUser()?.prenom ?? '' }) }} 👋</h1>
             <p>
-              Bienvenue sur votre espace personnel NeuroAssist. Complétez votre questionnaire cognitif et
-              retrouvez ici les résultats une fois examinés par votre médecin — l'IRM, si nécessaire, est
-              gérée directement par votre équipe soignante.
+              {{ i18n.t('patient.welcome') }}
             </p>
           </div>
 
@@ -18,33 +16,36 @@
             @if (hasCompletedAssessment()) {
               <div class="cta-icon">🔄</div>
               <div class="cta-text">
-                <h3>Reprendre une évaluation</h3>
-                <p>Vous pouvez repasser le questionnaire à tout moment pour suivre l'évolution de vos résultats.</p>
+                <h3>{{ i18n.t('patient.resume.title') }}</h3>
+                <p>{{ i18n.t('patient.resume.text') }}</p>
               </div>
             } @else {
               <div class="cta-icon">📋</div>
               <div class="cta-text">
-                <h3>Commencer votre évaluation</h3>
-                <p>Un questionnaire conversationnel qui s'adapte à vos réponses, à votre rythme.</p>
+                <h3>{{ i18n.t('patient.start.title') }}</h3>
+                <p>{{ i18n.t('patient.start.text') }}</p>
               </div>
             }
             <a routerLink="/questionnaire" class="cta-btn">
-              @if (hasCompletedAssessment()) { Reprendre } @else { Commencer }
+              @if (hasCompletedAssessment()) {
+                {{ i18n.t('patient.resume.action') }}
+              } @else {
+                {{ i18n.t('patient.start.action') }}
+              }
             </a>
           </div>
 
-          @if (!loading() && latestResult(); as result) {
-            <div class="result-card" data-aos="fade-up" data-aos-delay="150">
-              <h3>Dernier résultat</h3>
-              <div class="result-body">
-                <div class="result-badge" [class]="riskClass(result.globalRisk.level)">
-                  {{ result.globalRisk.label }}
-                </div>
+          @if (!loading() && hasCompletedAssessment()) {
+            <div class="status-card" data-aos="fade-up" data-aos-delay="150">
+              <div class="status-icon"><i class="bi bi-shield-check"></i></div>
+              <div class="status-text">
+                <h3>{{ i18n.t('patient.status.title') }}</h3>
+                <p>{{ i18n.t('patient.status.text') }}</p>
               </div>
-              <p class="result-note">
-                Ce résultat est un outil de dépistage et non un diagnostic. Votre équipe soignante
-                l'examine et vous contactera si nécessaire.
-              </p>
+              <a routerLink="/my-results" class="status-link">
+                {{ i18n.t('patient.status.action') }}
+                <i class="bi bi-arrow-right"></i>
+              </a>
             </div>
           }
 

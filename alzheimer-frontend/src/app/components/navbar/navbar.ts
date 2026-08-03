@@ -1,35 +1,38 @@
 import { Component, computed, inject, signal } from '@angular/core';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { AuthService, Role } from '../../services/auth';
+import { I18nService } from '../../services/i18n';
+import { LanguageSwitcherComponent } from '../language-switcher/language-switcher';
 
 interface NavItem {
-  label: string;
+  labelKey: string;
   path: string;
   visibility: 'public' | Role;
   exact?: boolean;
 }
 
 const MENU: NavItem[] = [
-  { label: 'Home', path: '/', visibility: 'public', exact: true },
-  { label: 'About', path: '/about', visibility: 'public' },
-  { label: 'Departments', path: '/departments', visibility: 'public' },
-  { label: 'Services', path: '/services', visibility: 'public' },
-  { label: 'Doctors', path: '/doctors', visibility: 'public' },
-  { label: 'Contact', path: '/contact', visibility: 'public' },
-  { label: 'Dashboard', path: '/dashboard', visibility: 'MEDECIN' },
-  { label: 'My Space', path: '/home', visibility: 'PATIENT' },
-  { label: 'Questionnaire', path: '/questionnaire', visibility: 'PATIENT' },
-  { label: 'My Results', path: '/my-results', visibility: 'PATIENT' }
+  { labelKey: 'nav.home', path: '/', visibility: 'public', exact: true },
+  { labelKey: 'nav.about', path: '/about', visibility: 'public' },
+  { labelKey: 'nav.departments', path: '/departments', visibility: 'public' },
+  { labelKey: 'nav.services', path: '/services', visibility: 'public' },
+  { labelKey: 'nav.doctors', path: '/doctors', visibility: 'public' },
+  { labelKey: 'nav.contact', path: '/contact', visibility: 'public' },
+  { labelKey: 'nav.dashboard', path: '/dashboard', visibility: 'MEDECIN' },
+  { labelKey: 'nav.mySpace', path: '/home', visibility: 'PATIENT' },
+  { labelKey: 'nav.questionnaire', path: '/questionnaire', visibility: 'PATIENT' },
+  { labelKey: 'nav.myResults', path: '/my-results', visibility: 'PATIENT' }
 ];
 
 @Component({
   selector: 'app-navbar',
-  imports: [RouterLink, RouterLinkActive],
+  imports: [RouterLink, RouterLinkActive, LanguageSwitcherComponent],
   templateUrl: './navbar.html',
   styleUrl: './navbar.css'
 })
 export class NavbarComponent {
   protected readonly auth = inject(AuthService);
+  protected readonly i18n = inject(I18nService);
   private readonly router = inject(Router);
 
   protected readonly menuItems = computed(() => {

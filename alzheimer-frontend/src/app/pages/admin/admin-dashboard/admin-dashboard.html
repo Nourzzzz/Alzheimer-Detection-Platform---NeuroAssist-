@@ -6,52 +6,52 @@
       <div class="brand-icon">N</div>
       <div>
         <h3>NeuroAssist</h3>
-        <span>Administration</span>
+        <span>{{ i18n.t('admin.brand.subtitle') }}</span>
       </div>
     </div>
 
-    <div class="nav-section-label">Main</div>
+    <div class="nav-section-label">{{ i18n.t('admin.nav.main') }}</div>
     <nav class="sidebar-nav">
       <a routerLink="/admin" class="active">
-        <span class="nav-icon"><i class="bi bi-grid-1x2-fill"></i></span> Dashboard
+        <span class="nav-icon"><i class="bi bi-grid-1x2-fill"></i></span> {{ i18n.t('admin.nav.dashboard') }}
       </a>
     </nav>
 
-    <div class="nav-section-label">Account Management</div>
+    <div class="nav-section-label">{{ i18n.t('admin.nav.accountManagement') }}</div>
     <nav class="sidebar-nav">
       <a routerLink="/admin/doctors">
-        <span class="nav-icon"><i class="bi bi-heart-pulse-fill"></i></span> Doctors
+        <span class="nav-icon"><i class="bi bi-heart-pulse-fill"></i></span> {{ i18n.t('admin.nav.doctors') }}
       </a>
       <a routerLink="/admin/patients">
-        <span class="nav-icon"><i class="bi bi-people-fill"></i></span> Patients
+        <span class="nav-icon"><i class="bi bi-people-fill"></i></span> {{ i18n.t('admin.nav.patients') }}
       </a>
     </nav>
   </aside>
 
   <header class="admin-topbar">
     <div class="topbar-workspace">
-      <span class="workspace-label">Workspace</span>
-      <span class="workspace-name">Platform Administration</span>
+      <span class="workspace-label">{{ i18n.t('admin.topbar.workspace') }}</span>
+      <span class="workspace-name">{{ i18n.t('admin.topbar.workspaceName') }}</span>
     </div>
     <div class="topbar-actions">
       <div class="topbar-user">
         <div class="topbar-avatar">{{ auth.currentUser()?.prenom?.charAt(0) }}{{ auth.currentUser()?.nom?.charAt(0) }}</div>
         <div class="topbar-user-info">
           <span class="user-name">{{ auth.currentUser()?.prenom }} {{ auth.currentUser()?.nom }}</span>
-          <span class="user-role">Administrator</span>
+          <span class="user-role">{{ i18n.t('admin.topbar.role') }}</span>
         </div>
       </div>
-      <button class="btn-logout" (click)="logout()"><i class="bi bi-box-arrow-right"></i> Logout</button>
+      <button class="btn-logout" (click)="logout()"><i class="bi bi-box-arrow-right"></i> {{ i18n.t('admin.topbar.logout') }}</button>
     </div>
   </header>
 
   <main class="admin-main">
 
     <div class="page-header">
-      <span class="page-section-label">Administration Center</span>
-      <h2 class="dashboard-title">Dashboard</h2>
+      <span class="page-section-label">{{ i18n.t('admin.dashboard.sectionLabel') }}</span>
+      <h2 class="dashboard-title">{{ i18n.t('admin.dashboard.title') }}</h2>
       <p class="page-subtitle">
-        Overview of doctor and patient accounts on the platform.
+        {{ i18n.t('admin.dashboard.subtitle') }}
       </p>
     </div>
 
@@ -60,7 +60,7 @@
         <div class="stat-card">
           <div class="stat-icon"><i class="bi bi-heart-pulse-fill"></i></div>
           <div class="stat-info">
-            <small>Doctors</small>
+            <small>{{ i18n.t('admin.dashboard.stat.doctors') }}</small>
             <h3>{{ totalDoctors() }}</h3>
           </div>
         </div>
@@ -69,7 +69,7 @@
         <div class="stat-card green">
           <div class="stat-icon green"><i class="bi bi-check-circle-fill"></i></div>
           <div class="stat-info">
-            <small>Active Doctors</small>
+            <small>{{ i18n.t('admin.dashboard.stat.activeDoctors') }}</small>
             <h3>{{ activeDoctors() }}</h3>
           </div>
         </div>
@@ -78,7 +78,7 @@
         <div class="stat-card red">
           <div class="stat-icon red"><i class="bi bi-x-circle-fill"></i></div>
           <div class="stat-info">
-            <small>Inactive Doctors</small>
+            <small>{{ i18n.t('admin.dashboard.stat.inactiveDoctors') }}</small>
             <h3>{{ inactiveDoctors() }}</h3>
           </div>
         </div>
@@ -87,7 +87,7 @@
         <div class="stat-card orange">
           <div class="stat-icon orange"><i class="bi bi-people-fill"></i></div>
           <div class="stat-info">
-            <small>Patients</small>
+            <small>{{ i18n.t('admin.dashboard.stat.patients') }}</small>
             <h3>{{ totalPatients() }}</h3>
           </div>
         </div>
@@ -97,22 +97,22 @@
     <div class="row g-3">
       <div class="col-md-6">
         <div class="card">
-          <span class="card-label">Patient Accounts</span>
-          <h4 class="card-title">Status Breakdown</h4>
+          <span class="card-label">{{ i18n.t('admin.dashboard.patientAccounts') }}</span>
+          <h4 class="card-title">{{ i18n.t('admin.dashboard.statusBreakdown') }}</h4>
           <p class="text-muted-block">
-            {{ activePatients() }} active · {{ inactivePatients() }} inactive
+            {{ i18n.t('admin.dashboard.breakdown', { active: activePatients(), inactive: inactivePatients() }) }}
           </p>
-          <a routerLink="/admin/patients" class="btn-primary" style="margin-top: 1rem;">Manage Patients</a>
+          <a routerLink="/admin/patients" class="btn-primary" style="margin-top: 1rem;">{{ i18n.t('admin.dashboard.managePatients') }}</a>
         </div>
       </div>
       <div class="col-md-6">
         <div class="card">
-          <span class="card-label">Doctor Accounts</span>
-          <h4 class="card-title">Status Breakdown</h4>
+          <span class="card-label">{{ i18n.t('admin.dashboard.doctorAccounts') }}</span>
+          <h4 class="card-title">{{ i18n.t('admin.dashboard.statusBreakdown') }}</h4>
           <p class="text-muted-block">
-            {{ activeDoctors() }} active · {{ inactiveDoctors() }} inactive
+            {{ i18n.t('admin.dashboard.breakdown', { active: activeDoctors(), inactive: inactiveDoctors() }) }}
           </p>
-          <a routerLink="/admin/doctors" class="btn-primary" style="margin-top: 1rem;">Manage Doctors</a>
+          <a routerLink="/admin/doctors" class="btn-primary" style="margin-top: 1rem;">{{ i18n.t('admin.dashboard.manageDoctors') }}</a>
         </div>
       </div>
     </div>

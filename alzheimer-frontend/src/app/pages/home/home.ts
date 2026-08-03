@@ -1,5 +1,6 @@
-import { Component, ViewEncapsulation } from '@angular/core';
+import { Component, ViewEncapsulation, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { I18nService } from '../../services/i18n';
 
 @Component({
   standalone: true,
@@ -9,4 +10,6 @@ import { RouterLink } from '@angular/router';
   templateUrl: './home.html',
   styleUrl: './home.css'
 })
-export class HomePageComponent {}
+export class HomePageComponent {
+  protected readonly i18n = inject(I18nService);
+}

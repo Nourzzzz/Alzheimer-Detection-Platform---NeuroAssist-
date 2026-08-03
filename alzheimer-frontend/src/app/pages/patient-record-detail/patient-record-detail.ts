@@ -6,6 +6,7 @@ import { MriService } from '../../services/mri';
 import { PatientDetail, UpdatePatientRequest } from '../../models/patient.model';
 import { AiAssessment } from '../../models/mri.model';
 import { MedecinSidebarComponent } from '../../components/medecin-sidebar/medecin-sidebar';
+import { I18nService } from '../../services/i18n';
 
 @Component({
   standalone: true,
@@ -19,6 +20,7 @@ export class PatientRecordDetailPageComponent implements OnInit {
   private readonly route = inject(ActivatedRoute);
   private readonly patientService = inject(PatientService);
   private readonly mriService = inject(MriService);
+  protected readonly i18n = inject(I18nService);
 
   protected readonly patientId = this.route.snapshot.paramMap.get('id') ?? '';
   protected readonly patient = signal<PatientDetail | null>(null);
@@ -51,6 +53,17 @@ export class PatientRecordDetailPageComponent implements OnInit {
     });
   }
 
+  /**
+   * A date of birth carries no time. Older records come back as a full
+   * timestamp ("1950-04-25T00:00:00"), which is neither what `<input type=date>`
+   * accepts nor what the update endpoint can parse, so keep only the date part.
+   */
+  private toDateOnly(value: string | undefined): string | undefined {
+    if (!value) return undefined;
+    const match = /^(\d{4}-\d{2}-\d{2})/.exec(value.trim());
+    return match ? match[1] : undefined;
+  }
+
   protected startEdit(): void {
     const p = this.patient();
     if (!p) return;
@@ -60,7 +73,7 @@ export class PatientRecordDetailPageComponent implements OnInit {
       telephone: p.telephone,
       adresse: p.adresse,
       genre: p.genre,
-      dateNaissance: p.dateNaissance,
+      dateNaissance: this.toDateOnly(p.dateNaissance),
       groupeSanguin: p.groupeSanguin,
       antecedentsMedicaux: p.antecedentsMedicaux
     });
@@ -72,11 +85,28 @@ export class PatientRecordDetailPageComponent implements OnInit {
     this.editForm.update((f) => ({ ...f, [field]: value }));
   }
 
+  /** Blanked optional fields must travel as null: an empty string is not a
+   *  parseable date and the server would reject the whole update. */
+  private cleaned(): UpdatePatientRequest {
+    const f = this.editForm();
+    const blankToNull = (v: string | undefined) => (v && v.trim() ? v.trim() : undefined);
+    return {
+      prenom: f.prenom.trim(),
+      nom: f.nom.trim(),
+      telephone: blankToNull(f.telephone),
+      adresse: blankToNull(f.adresse),
+      genre: blankToNull(f.genre),
+      dateNaissance: this.toDateOnly(f.dateNaissance),
+      groupeSanguin: blankToNull(f.groupeSanguin),
+      antecedentsMedicaux: blankToNull(f.antecedentsMedicaux)
+    };
+  }
+
   protected saveEdit(): void {
     this.saving.set(true);
     this.saveError.set(null);
 
-    this.patientService.update(this.patientId, this.editForm()).subscribe({
+    this.patientService.update(this.patientId, this.cleaned()).subscribe({
       next: (updated) => {
         this.saving.set(false);
         this.editing.set(false);
@@ -84,7 +114,7 @@ export class PatientRecordDetailPageComponent implements OnInit {
       },
       error: (err) => {
         this.saving.set(false);
-        this.saveError.set(err?.error?.message ?? 'Impossible de mettre à jour ce dossier.');
+        this.saveError.set(err?.error?.message ?? this.i18n.t('medecin.record.error.updateFailed'));
       }
     });
   }

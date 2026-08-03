@@ -10,6 +10,7 @@
         <a href="#" class="facebook"><i class="bi bi-facebook"></i></a>
         <a href="#" class="instagram"><i class="bi bi-instagram"></i></a>
         <a href="#" class="linkedin"><i class="bi bi-linkedin"></i></a>
+        <app-language-switcher class="ms-3" />
       </div>
     </div>
   </div>
@@ -24,12 +25,12 @@
         <ul>
           @for (item of menuItems(); track item.path) {
             <li>
-              <a [routerLink]="item.path" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: !!item.exact }" (click)="closeMobileNav()">{{ item.label }}</a>
+              <a [routerLink]="item.path" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: !!item.exact }" (click)="closeMobileNav()">{{ i18n.t(item.labelKey) }}</a>
             </li>
           }
 
           @if (!auth.isLoggedIn()) {
-            <li><a routerLink="/sign-in" routerLinkActive="active" (click)="closeMobileNav()">Sign In</a></li>
+            <li><a routerLink="/sign-in" routerLinkActive="active" (click)="closeMobileNav()">{{ i18n.t('nav.signIn') }}</a></li>
           } @else {
             <li class="dropdown">
               <a href="#" [class.active]="userMenuOpen()" (click)="toggleUserMenu($event)">
@@ -38,7 +39,7 @@
                 <i class="bi bi-chevron-down toggle-dropdown"></i>
               </a>
               <ul [class.dropdown-active]="userMenuOpen()">
-                <li><a href="#" (click)="logout(); $event.preventDefault()"><i class="bi bi-box-arrow-right"></i><span>Logout</span></a></li>
+                <li><a href="#" (click)="logout(); $event.preventDefault()"><i class="bi bi-box-arrow-right"></i><span>{{ i18n.t('nav.logout') }}</span></a></li>
               </ul>
             </li>
           }

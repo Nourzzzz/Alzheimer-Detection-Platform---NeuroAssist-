@@ -6,251 +6,657 @@
     "maxFollowUpsPerNode": 2,
     "entryNode": "mem.complaint"
   },
-
   "scales": {
     "AD8": {
-      "label": "AD8-inspired dementia screening (adapted, not the certified instrument)",
+      "label": "Dépistage de démence inspiré de l'AD8 (adapté, pas l'instrument certifié)",
       "max": 9,
       "cutoff": 3,
-      "aboveCutoffMeans": "cognitive impairment likely"
+      "aboveCutoffMeans": "cognitive impairment likely",
+      "label_en": "AD8-inspired dementia screening (adapted, not the certified instrument)"
     },
     "FAQ": {
-      "label": "FAQ-inspired functional screening (3 core items, adapted)",
+      "label": "Dépistage fonctionnel inspiré du FAQ (3 items principaux, adapté)",
       "max": 9,
       "cutoff": 3,
-      "aboveCutoffMeans": "functional impairment"
+      "aboveCutoffMeans": "functional impairment",
+      "label_en": "FAQ-inspired functional screening (3 core items, adapted)"
     },
     "ORIENT": {
-      "label": "Orientation items (MMSE-derived)",
+      "label": "Items d'orientation (dérivés du MMSE)",
       "max": 2,
       "cutoff": 1,
-      "aboveCutoffMeans": "disorientation"
+      "aboveCutoffMeans": "disorientation",
+      "label_en": "Orientation items (MMSE-derived)"
     }
   },
-
   "sections": [
-    { "id": "memory",      "label": "Mémoire",               "entryNode": "mem.complaint" },
-    { "id": "language",    "label": "Langage",               "entryNode": "lang.wordfinding" },
-    { "id": "orientation", "label": "Orientation",           "entryNode": "orient.time" },
-    { "id": "function",    "label": "Autonomie quotidienne", "entryNode": "func.finances" },
-    { "id": "mood",        "label": "Thymie et comportement","entryNode": "mood.apathy" }
+    {
+      "id": "memory",
+      "label": "Mémoire",
+      "entryNode": "mem.complaint",
+      "label_en": "Memory"
+    },
+    {
+      "id": "language",
+      "label": "Langage",
+      "entryNode": "lang.wordfinding",
+      "label_en": "Language"
+    },
+    {
+      "id": "orientation",
+      "label": "Orientation",
+      "entryNode": "orient.time",
+      "label_en": "Orientation"
+    },
+    {
+      "id": "function",
+      "label": "Autonomie quotidienne",
+      "entryNode": "func.finances",
+      "label_en": "Daily independence"
+    },
+    {
+      "id": "mood",
+      "label": "Thymie et comportement",
+      "entryNode": "mood.apathy",
+      "label_en": "Mood and behaviour"
+    }
   ],
-
   "nodes": {
     "mem.complaint": {
-      "section": "memory", "scale": "AD8", "scaleItem": "AD8_1",
+      "section": "memory",
+      "scale": "AD8",
+      "scaleItem": "AD8_1",
       "intent": "Détecter une plainte mnésique subjective : le patient perçoit-il des problèmes de mémoire ?",
       "answerType": "yes_no",
       "options": [
-        { "value": "yes", "label": "Oui", "score": 1, "finding": "memory loss" },
-        { "value": "no",  "label": "Non", "score": 0 }
+        {
+          "value": "yes",
+          "label": "Oui",
+          "score": 1,
+          "finding": "memory loss",
+          "label_en": "Yes"
+        },
+        {
+          "value": "no",
+          "label": "Non",
+          "score": 0,
+          "label_en": "No"
+        }
       ],
       "followUps": [
-        { "id": "clarify.entourage", "intent": "La réponse est ambiguë : demander si l'entourage a remarqué ces oublis." }
+        {
+          "id": "clarify.entourage",
+          "intent": "La réponse est ambiguë : demander si l'entourage a remarqué ces oublis.",
+          "intent_en": "The answer is ambiguous: ask whether relatives have noticed these lapses."
+        }
       ],
       "branches": [
-        { "when": { "answer": "yes" }, "next": "mem.duration" },
-        { "when": { "answer": "no"  }, "next": "lang.wordfinding" }
+        {
+          "when": {
+            "answer": "yes"
+          },
+          "next": "mem.duration"
+        },
+        {
+          "when": {
+            "answer": "no"
+          },
+          "next": "lang.wordfinding"
+        }
       ],
-      "defaultNext": "lang.wordfinding"
+      "defaultNext": "lang.wordfinding",
+      "intent_en": "Detect a subjective memory complaint: does the patient notice memory problems?"
     },
-
     "mem.duration": {
-      "section": "memory", "scale": "AD8", "scaleItem": "AD8_1b",
+      "section": "memory",
+      "scale": "AD8",
+      "scaleItem": "AD8_1b",
       "intent": "Préciser depuis combien de temps les troubles de mémoire sont présents.",
       "answerType": "single_choice",
       "options": [
-        { "value": "lt6m",  "label": "Moins de 6 mois", "score": 0, "finding": "recent onset (< 6 months)" },
-        { "value": "6_24m", "label": "Entre 6 mois et 2 ans", "score": 1, "finding": "symptoms present 6-24 months" },
-        { "value": "gt2y",  "label": "Plus de 2 ans", "score": 1, "finding": "progressive symptoms for over 2 years",
-          "redFlag": "troubles cognitifs évoluant depuis plus de 2 ans" }
+        {
+          "value": "lt6m",
+          "label": "Moins de 6 mois",
+          "score": 0,
+          "finding": "recent onset (< 6 months)",
+          "label_en": "Less than 6 months"
+        },
+        {
+          "value": "6_24m",
+          "label": "Entre 6 mois et 2 ans",
+          "score": 1,
+          "finding": "symptoms present 6-24 months",
+          "label_en": "Between 6 months and 2 years"
+        },
+        {
+          "value": "gt2y",
+          "label": "Plus de 2 ans",
+          "score": 1,
+          "finding": "progressive symptoms for over 2 years",
+          "redFlag": "troubles cognitifs évoluant depuis plus de 2 ans",
+          "label_en": "More than 2 years",
+          "redFlag_en": "cognitive difficulties present for over 2 years"
+        }
       ],
-      "branches": [ { "when": { "answer": "any" }, "next": "mem.worsening" } ],
-      "defaultNext": "mem.worsening"
+      "branches": [
+        {
+          "when": {
+            "answer": "any"
+          },
+          "next": "mem.worsening"
+        }
+      ],
+      "defaultNext": "mem.worsening",
+      "intent_en": "Establish how long the memory difficulties have been present."
     },
-
     "mem.worsening": {
-      "section": "memory", "scale": "AD8", "scaleItem": "AD8_2",
+      "section": "memory",
+      "scale": "AD8",
+      "scaleItem": "AD8_2",
       "intent": "Savoir si les troubles de mémoire s'aggravent avec le temps.",
       "answerType": "yes_no",
       "options": [
-        { "value": "yes", "label": "Oui, cela s'aggrave", "score": 1, "finding": "worsening memory decline",
-          "redFlag": "aggravation progressive rapportée" },
-        { "value": "no",  "label": "Non, c'est stable", "score": 0 }
+        {
+          "value": "yes",
+          "label": "Oui, cela s'aggrave",
+          "score": 1,
+          "finding": "worsening memory decline",
+          "redFlag": "aggravation progressive rapportée",
+          "label_en": "Yes, it is getting worse",
+          "redFlag_en": "progressive worsening reported"
+        },
+        {
+          "value": "no",
+          "label": "Non, c'est stable",
+          "score": 0,
+          "label_en": "No, it is stable"
+        }
       ],
-      "branches": [ { "when": { "answer": "any" }, "next": "mem.appointments" } ],
-      "defaultNext": "mem.appointments"
+      "branches": [
+        {
+          "when": {
+            "answer": "any"
+          },
+          "next": "mem.appointments"
+        }
+      ],
+      "defaultNext": "mem.appointments",
+      "intent_en": "Find out whether the memory difficulties are worsening over time."
     },
-
     "mem.appointments": {
-      "section": "memory", "scale": "AD8", "scaleItem": "AD8_3",
+      "section": "memory",
+      "scale": "AD8",
+      "scaleItem": "AD8_3",
       "intent": "Savoir si le patient oublie des rendez-vous ou des dates importantes.",
       "answerType": "yes_no",
       "options": [
-        { "value": "yes", "label": "Oui", "score": 1, "finding": "forgetting appointments" },
-        { "value": "no",  "label": "Non", "score": 0 }
+        {
+          "value": "yes",
+          "label": "Oui",
+          "score": 1,
+          "finding": "forgetting appointments",
+          "label_en": "Yes"
+        },
+        {
+          "value": "no",
+          "label": "Non",
+          "score": 0,
+          "label_en": "No"
+        }
       ],
-      "branches": [ { "when": { "answer": "any" }, "next": "mem.repeat" } ],
-      "defaultNext": "mem.repeat"
+      "branches": [
+        {
+          "when": {
+            "answer": "any"
+          },
+          "next": "mem.repeat"
+        }
+      ],
+      "defaultNext": "mem.repeat",
+      "intent_en": "Find out whether the patient forgets appointments or important dates."
     },
-
     "mem.repeat": {
-      "section": "memory", "scale": "AD8", "scaleItem": "AD8_4",
+      "section": "memory",
+      "scale": "AD8",
+      "scaleItem": "AD8_4",
       "intent": "Savoir si le patient répète les mêmes questions ou les mêmes histoires.",
       "answerType": "yes_no",
       "options": [
-        { "value": "yes", "label": "Oui", "score": 1, "finding": "repeating questions" },
-        { "value": "no",  "label": "Non", "score": 0 }
+        {
+          "value": "yes",
+          "label": "Oui",
+          "score": 1,
+          "finding": "repeating questions",
+          "label_en": "Yes"
+        },
+        {
+          "value": "no",
+          "label": "Non",
+          "score": 0,
+          "label_en": "No"
+        }
       ],
-      "branches": [ { "when": { "answer": "any" }, "next": "mem.misplace" } ],
-      "defaultNext": "mem.misplace"
+      "branches": [
+        {
+          "when": {
+            "answer": "any"
+          },
+          "next": "mem.misplace"
+        }
+      ],
+      "defaultNext": "mem.misplace",
+      "intent_en": "Find out whether the patient repeats the same questions or stories."
     },
-
     "mem.misplace": {
-      "section": "memory", "scale": "AD8", "scaleItem": "AD8_5",
+      "section": "memory",
+      "scale": "AD8",
+      "scaleItem": "AD8_5",
       "intent": "Savoir si le patient égare des objets du quotidien (clés, lunettes, papiers).",
       "answerType": "yes_no",
       "options": [
-        { "value": "yes", "label": "Oui", "score": 1, "finding": "misplacing objects" },
-        { "value": "no",  "label": "Non", "score": 0 }
+        {
+          "value": "yes",
+          "label": "Oui",
+          "score": 1,
+          "finding": "misplacing objects",
+          "label_en": "Yes"
+        },
+        {
+          "value": "no",
+          "label": "Non",
+          "score": 0,
+          "label_en": "No"
+        }
       ],
-      "branches": [ { "when": { "answer": "any" }, "next": "lang.wordfinding" } ],
-      "defaultNext": "lang.wordfinding"
+      "branches": [
+        {
+          "when": {
+            "answer": "any"
+          },
+          "next": "lang.wordfinding"
+        }
+      ],
+      "defaultNext": "lang.wordfinding",
+      "intent_en": "Find out whether the patient misplaces everyday objects (keys, glasses, papers)."
     },
-
     "lang.wordfinding": {
-      "section": "language", "scale": "AD8", "scaleItem": "AD8_6",
+      "section": "language",
+      "scale": "AD8",
+      "scaleItem": "AD8_6",
       "intent": "Savoir si le patient a des difficultés à trouver ses mots.",
       "answerType": "yes_no",
       "options": [
-        { "value": "yes", "label": "Oui", "score": 1, "finding": "word-finding difficulty" },
-        { "value": "no",  "label": "Non", "score": 0 }
+        {
+          "value": "yes",
+          "label": "Oui",
+          "score": 1,
+          "finding": "word-finding difficulty",
+          "label_en": "Yes"
+        },
+        {
+          "value": "no",
+          "label": "Non",
+          "score": 0,
+          "label_en": "No"
+        }
       ],
       "branches": [
-        { "when": { "answer": "yes" }, "next": "lang.conversation" },
-        { "when": { "answer": "no"  }, "next": "orient.time" }
+        {
+          "when": {
+            "answer": "yes"
+          },
+          "next": "lang.conversation"
+        },
+        {
+          "when": {
+            "answer": "no"
+          },
+          "next": "orient.time"
+        }
       ],
-      "defaultNext": "orient.time"
+      "defaultNext": "orient.time",
+      "intent_en": "Find out whether the patient has difficulty finding words."
     },
-
     "lang.conversation": {
-      "section": "language", "scale": "AD8", "scaleItem": "AD8_6b",
+      "section": "language",
+      "scale": "AD8",
+      "scaleItem": "AD8_6b",
       "intent": "Savoir si le patient a du mal à suivre une conversation ou l'intrigue d'un film.",
       "answerType": "yes_no",
       "options": [
-        { "value": "yes", "label": "Oui", "score": 1, "finding": "difficulty following conversation",
-          "alsoFinding": "difficulty concentrating" },
-        { "value": "no",  "label": "Non", "score": 0 }
+        {
+          "value": "yes",
+          "label": "Oui",
+          "score": 1,
+          "finding": "difficulty following conversation",
+          "alsoFinding": "difficulty concentrating",
+          "label_en": "Yes"
+        },
+        {
+          "value": "no",
+          "label": "Non",
+          "score": 0,
+          "label_en": "No"
+        }
       ],
-      "branches": [ { "when": { "answer": "any" }, "next": "orient.time" } ],
-      "defaultNext": "orient.time"
+      "branches": [
+        {
+          "when": {
+            "answer": "any"
+          },
+          "next": "orient.time"
+        }
+      ],
+      "defaultNext": "orient.time",
+      "intent_en": "Find out whether the patient struggles to follow a conversation or a film's plot."
     },
-
     "orient.time": {
-      "section": "orientation", "scale": "ORIENT", "scaleItem": "ORIENT_TIME",
+      "section": "orientation",
+      "scale": "ORIENT",
+      "scaleItem": "ORIENT_TIME",
       "intent": "Savoir si le patient se trompe ou hésite sur le jour, la date ou le mois.",
       "answerType": "yes_no",
       "options": [
-        { "value": "yes", "label": "Oui, cela m'arrive", "score": 1, "finding": "disorientation to time",
-          "redFlag": "désorientation temporelle" },
-        { "value": "no",  "label": "Non", "score": 0 }
+        {
+          "value": "yes",
+          "label": "Oui, cela m'arrive",
+          "score": 1,
+          "finding": "disorientation to time",
+          "redFlag": "désorientation temporelle",
+          "label_en": "Yes, that happens to me",
+          "redFlag_en": "temporal disorientation"
+        },
+        {
+          "value": "no",
+          "label": "Non",
+          "score": 0,
+          "label_en": "No"
+        }
       ],
-      "branches": [ { "when": { "answer": "any" }, "next": "orient.place" } ],
-      "defaultNext": "orient.place"
+      "branches": [
+        {
+          "when": {
+            "answer": "any"
+          },
+          "next": "orient.place"
+        }
+      ],
+      "defaultNext": "orient.place",
+      "intent_en": "Find out whether the patient is unsure about the day, the date or the month."
     },
-
     "orient.place": {
-      "section": "orientation", "scale": "ORIENT", "scaleItem": "ORIENT_PLACE",
+      "section": "orientation",
+      "scale": "ORIENT",
+      "scaleItem": "ORIENT_PLACE",
       "intent": "Savoir si le patient se perd ou se sent désorienté dans des lieux familiers.",
       "answerType": "yes_no",
       "options": [
-        { "value": "yes", "label": "Oui", "score": 1, "finding": "getting lost in familiar places",
-          "redFlag": "désorientation spatiale" },
-        { "value": "no",  "label": "Non", "score": 0 }
+        {
+          "value": "yes",
+          "label": "Oui",
+          "score": 1,
+          "finding": "getting lost in familiar places",
+          "redFlag": "désorientation spatiale",
+          "label_en": "Yes",
+          "redFlag_en": "spatial disorientation"
+        },
+        {
+          "value": "no",
+          "label": "Non",
+          "score": 0,
+          "label_en": "No"
+        }
       ],
-      "branches": [ { "when": { "answer": "any" }, "next": "func.finances" } ],
-      "defaultNext": "func.finances"
+      "branches": [
+        {
+          "when": {
+            "answer": "any"
+          },
+          "next": "func.finances"
+        }
+      ],
+      "defaultNext": "func.finances",
+      "intent_en": "Find out whether the patient gets lost or feels disoriented in familiar places."
     },
-
     "func.finances": {
-      "section": "function", "scale": "FAQ", "scaleItem": "FAQ_FINANCES",
+      "section": "function",
+      "scale": "FAQ",
+      "scaleItem": "FAQ_FINANCES",
       "intent": "Évaluer l'autonomie pour gérer l'argent : factures, comptes, budget.",
       "answerType": "likert_0_3",
       "options": [
-        { "value": "normal",     "label": "Sans difficulté", "score": 0 },
-        { "value": "difficulty", "label": "Avec difficulté mais seul(e)", "score": 1, "finding": "difficulty managing finances" },
-        { "value": "help",       "label": "J'ai besoin d'aide", "score": 2, "finding": "needs help managing finances" },
-        { "value": "dependent",  "label": "Quelqu'un le fait à ma place", "score": 3,
-          "finding": "dependent for managing finances", "redFlag": "perte d'autonomie financière" }
+        {
+          "value": "normal",
+          "label": "Sans difficulté",
+          "score": 0,
+          "label_en": "Without difficulty"
+        },
+        {
+          "value": "difficulty",
+          "label": "Avec difficulté mais seul(e)",
+          "score": 1,
+          "finding": "difficulty managing finances",
+          "label_en": "With difficulty, but on my own"
+        },
+        {
+          "value": "help",
+          "label": "J'ai besoin d'aide",
+          "score": 2,
+          "finding": "needs help managing finances",
+          "label_en": "I need help"
+        },
+        {
+          "value": "dependent",
+          "label": "Quelqu'un le fait à ma place",
+          "score": 3,
+          "finding": "dependent for managing finances",
+          "redFlag": "perte d'autonomie financière",
+          "label_en": "Someone does it for me",
+          "redFlag_en": "loss of financial independence"
+        }
       ],
-      "branches": [ { "when": { "answer": "any" }, "next": "func.medication" } ],
-      "defaultNext": "func.medication"
+      "branches": [
+        {
+          "when": {
+            "answer": "any"
+          },
+          "next": "func.medication"
+        }
+      ],
+      "defaultNext": "func.medication",
+      "intent_en": "Assess independence in managing money: bills, accounts, budget."
     },
-
     "func.medication": {
-      "section": "function", "scale": "FAQ", "scaleItem": "FAQ_MEDICATION",
+      "section": "function",
+      "scale": "FAQ",
+      "scaleItem": "FAQ_MEDICATION",
       "intent": "Évaluer l'autonomie pour gérer ses médicaments (doses, horaires).",
       "answerType": "likert_0_3",
       "options": [
-        { "value": "normal",     "label": "Sans difficulté", "score": 0 },
-        { "value": "difficulty", "label": "Avec difficulté mais seul(e)", "score": 1, "finding": "difficulty managing medication" },
-        { "value": "help",       "label": "J'ai besoin d'aide", "score": 2, "finding": "needs help managing medication" },
-        { "value": "dependent",  "label": "Quelqu'un le fait à ma place", "score": 3,
-          "finding": "dependent for managing medication", "redFlag": "perte d'autonomie médicamenteuse" }
+        {
+          "value": "normal",
+          "label": "Sans difficulté",
+          "score": 0,
+          "label_en": "Without difficulty"
+        },
+        {
+          "value": "difficulty",
+          "label": "Avec difficulté mais seul(e)",
+          "score": 1,
+          "finding": "difficulty managing medication",
+          "label_en": "With difficulty, but on my own"
+        },
+        {
+          "value": "help",
+          "label": "J'ai besoin d'aide",
+          "score": 2,
+          "finding": "needs help managing medication",
+          "label_en": "I need help"
+        },
+        {
+          "value": "dependent",
+          "label": "Quelqu'un le fait à ma place",
+          "score": 3,
+          "finding": "dependent for managing medication",
+          "redFlag": "perte d'autonomie médicamenteuse",
+          "label_en": "Someone does it for me",
+          "redFlag_en": "loss of independence managing medication"
+        }
       ],
-      "branches": [ { "when": { "answer": "any" }, "next": "func.appliances" } ],
-      "defaultNext": "func.appliances"
+      "branches": [
+        {
+          "when": {
+            "answer": "any"
+          },
+          "next": "func.appliances"
+        }
+      ],
+      "defaultNext": "func.appliances",
+      "intent_en": "Assess independence in managing medication (doses, timing)."
     },
-
     "func.appliances": {
-      "section": "function", "scale": "FAQ", "scaleItem": "FAQ_APPLIANCES",
+      "section": "function",
+      "scale": "FAQ",
+      "scaleItem": "FAQ_APPLIANCES",
       "intent": "Évaluer l'autonomie pour les tâches du quotidien : cuisiner, utiliser les appareils ménagers.",
       "answerType": "likert_0_3",
       "options": [
-        { "value": "normal",     "label": "Sans difficulté", "score": 0 },
-        { "value": "difficulty", "label": "Avec difficulté mais seul(e)", "score": 1, "finding": "difficulty with household tasks" },
-        { "value": "help",       "label": "J'ai besoin d'aide", "score": 2, "finding": "needs help with household tasks" },
-        { "value": "dependent",  "label": "Quelqu'un le fait à ma place", "score": 3,
-          "finding": "dependent for household tasks", "redFlag": "perte d'autonomie domestique" }
+        {
+          "value": "normal",
+          "label": "Sans difficulté",
+          "score": 0,
+          "label_en": "Without difficulty"
+        },
+        {
+          "value": "difficulty",
+          "label": "Avec difficulté mais seul(e)",
+          "score": 1,
+          "finding": "difficulty with household tasks",
+          "label_en": "With difficulty, but on my own"
+        },
+        {
+          "value": "help",
+          "label": "J'ai besoin d'aide",
+          "score": 2,
+          "finding": "needs help with household tasks",
+          "label_en": "I need help"
+        },
+        {
+          "value": "dependent",
+          "label": "Quelqu'un le fait à ma place",
+          "score": 3,
+          "finding": "dependent for household tasks",
+          "redFlag": "perte d'autonomie domestique",
+          "label_en": "Someone does it for me",
+          "redFlag_en": "loss of independence in household tasks"
+        }
       ],
-      "branches": [ { "when": { "answer": "any" }, "next": "mood.apathy" } ],
-      "defaultNext": "mood.apathy"
+      "branches": [
+        {
+          "when": {
+            "answer": "any"
+          },
+          "next": "mood.apathy"
+        }
+      ],
+      "defaultNext": "mood.apathy",
+      "intent_en": "Assess independence in everyday tasks: cooking, using household appliances."
     },
-
     "mood.apathy": {
-      "section": "mood", "scale": "AD8", "scaleItem": "AD8_7",
+      "section": "mood",
+      "scale": "AD8",
+      "scaleItem": "AD8_7",
       "intent": "Savoir si le patient a perdu l'intérêt pour ses activités ou loisirs habituels.",
       "answerType": "yes_no",
       "options": [
-        { "value": "yes", "label": "Oui", "score": 1, "finding": "apathy" },
-        { "value": "no",  "label": "Non", "score": 0 }
+        {
+          "value": "yes",
+          "label": "Oui",
+          "score": 1,
+          "finding": "apathy",
+          "label_en": "Yes"
+        },
+        {
+          "value": "no",
+          "label": "Non",
+          "score": 0,
+          "label_en": "No"
+        }
       ],
-      "branches": [ { "when": { "answer": "any" }, "next": "mood.depression" } ],
-      "defaultNext": "mood.depression"
+      "branches": [
+        {
+          "when": {
+            "answer": "any"
+          },
+          "next": "mood.depression"
+        }
+      ],
+      "defaultNext": "mood.depression",
+      "intent_en": "Find out whether the patient has lost interest in usual activities or hobbies."
     },
-
     "mood.depression": {
-      "section": "mood", "scale": null, "scaleItem": null,
+      "section": "mood",
+      "scale": null,
+      "scaleItem": null,
       "intent": "Dépister une humeur dépressive (tristesse persistante, découragement).",
       "answerType": "yes_no",
       "options": [
-        { "value": "yes", "label": "Oui", "score": 0, "finding": "depression" },
-        { "value": "no",  "label": "Non", "score": 0 }
+        {
+          "value": "yes",
+          "label": "Oui",
+          "score": 0,
+          "finding": "depression",
+          "label_en": "Yes"
+        },
+        {
+          "value": "no",
+          "label": "Non",
+          "score": 0,
+          "label_en": "No"
+        }
       ],
-      "branches": [ { "when": { "answer": "any" }, "next": "mood.sleep" } ],
-      "defaultNext": "mood.sleep"
+      "branches": [
+        {
+          "when": {
+            "answer": "any"
+          },
+          "next": "mood.sleep"
+        }
+      ],
+      "defaultNext": "mood.sleep",
+      "intent_en": "Screen for depressed mood (persistent sadness, discouragement)."
     },
-
     "mood.sleep": {
-      "section": "mood", "scale": null, "scaleItem": null,
+      "section": "mood",
+      "scale": null,
+      "scaleItem": null,
       "intent": "Dépister des troubles du sommeil (insomnie, réveils nocturnes).",
       "answerType": "yes_no",
       "options": [
-        { "value": "yes", "label": "Oui", "score": 0, "finding": "insomnia" },
-        { "value": "no",  "label": "Non", "score": 0 }
+        {
+          "value": "yes",
+          "label": "Oui",
+          "score": 0,
+          "finding": "insomnia",
+          "label_en": "Yes"
+        },
+        {
+          "value": "no",
+          "label": "Non",
+          "score": 0,
+          "label_en": "No"
+        }
       ],
-      "branches": [ { "when": { "answer": "any" }, "next": "END" } ],
-      "defaultNext": "END"
+      "branches": [
+        {
+          "when": {
+            "answer": "any"
+          },
+          "next": "END"
+        }
+      ],
+      "defaultNext": "END",
+      "intent_en": "Screen for sleep disturbance (insomnia, night-time waking)."
     }
   }
 }

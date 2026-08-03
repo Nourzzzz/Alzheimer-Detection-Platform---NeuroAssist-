@@ -55,9 +55,14 @@ export interface CognitiveLatestSummary extends CognitiveSummary {
   exists: boolean;
 }
 
+/** All the patient's own space is allowed to know: whether a run was completed. */
+export interface CognitiveCompletionStatus {
+  exists: boolean;
+  completedAt?: string;
+}
+
 export interface CognitiveTurn {
   sessionId: string;
   finished: boolean;
   question: CognitiveQuestion | null;
-  summary: CognitiveSummary | null;
 }

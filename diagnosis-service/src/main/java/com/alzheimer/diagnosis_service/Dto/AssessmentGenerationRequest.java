@@ -32,6 +32,14 @@ public class AssessmentGenerationRequest {
     @JsonProperty("clinical_note")
     private String clinicalNote;
 
+    private String lang;
+
+    @JsonProperty("doctor_feedback")
+    private String doctorFeedback;
+
+    @JsonProperty("previous_report")
+    private String previousReport;
+
     @JsonProperty("cognitive_summary")
     private String cognitiveSummary;
 

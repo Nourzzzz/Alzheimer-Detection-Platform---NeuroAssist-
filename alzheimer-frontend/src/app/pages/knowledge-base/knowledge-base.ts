@@ -7,6 +7,7 @@ import {
   KnowledgeCategory,
   KnowledgeDocument,
 } from '../../models/knowledge.model';
+import { I18nService } from '../../services/i18n';
 
 @Component({
   standalone: true,
@@ -18,6 +19,7 @@ import {
 })
 export class KnowledgeBasePageComponent {
   private readonly knowledgeService = inject(KnowledgeService);
+  protected readonly i18n = inject(I18nService);
 
   protected readonly categories = KNOWLEDGE_CATEGORIES;
 
@@ -41,7 +43,7 @@ export class KnowledgeBasePageComponent {
     const cat = this.filter();
     this.knowledgeService.list(cat || undefined).subscribe({
       next: (docs) => { this.documents.set(docs); this.loading.set(false); },
-      error: () => { this.error.set('Could not load documents.'); this.loading.set(false); }
+      error: () => { this.error.set(this.i18n.t('medecin.kb.error.load')); this.loading.set(false); }
     });
   }
 
@@ -58,7 +60,7 @@ export class KnowledgeBasePageComponent {
   protected upload(): void {
     const file = this.selectedFile();
     if (!file || !this.title) {
-      this.error.set('A title and a PDF file are required.');
+      this.error.set(this.i18n.t('medecin.kb.error.required'));
       return;
     }
     this.uploading.set(true);
@@ -71,15 +73,15 @@ export class KnowledgeBasePageComponent {
         this.selectedFile.set(null);
         this.load();
       },
-      error: () => { this.error.set('Upload failed.'); this.uploading.set(false); }
+      error: () => { this.error.set(this.i18n.t('medecin.kb.error.upload')); this.uploading.set(false); }
     });
   }
 
   protected remove(doc: KnowledgeDocument): void {
-    if (!confirm(`Delete "${doc.title}"? This also removes it from the RAG index.`)) return;
+    if (!confirm(this.i18n.t('medecin.kb.confirmDelete', { title: doc.title }))) return;
     this.knowledgeService.delete(doc.id).subscribe({
       next: () => this.load(),
-      error: () => this.error.set('Delete failed.')
+      error: () => this.error.set(this.i18n.t('medecin.kb.error.delete'))
     });
   }
 

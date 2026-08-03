@@ -5,12 +5,12 @@
   <header class="admin-topbar">
     <button class="topbar-toggle"><i class="bi bi-list"></i></button>
     <div class="topbar-workspace">
-      <span class="workspace-label">Workspace</span>
+      <span class="workspace-label">{{ i18n.t('medecin.topbar.workspace') }}</span>
       <span class="workspace-name">Alzheimer Platform</span>
     </div>
     @if (activeTab() === 'overview') {
       <div class="topbar-search">
-        <input type="text" placeholder="Search for a patient..." [value]="searchTerm()" (input)="searchTerm.set($any($event.target).value)">
+        <input type="text" [placeholder]="i18n.t('medecin.dashboard.searchPlaceholder')" [value]="searchTerm()" (input)="searchTerm.set($any($event.target).value)">
       </div>
     }
     <div class="topbar-actions">
@@ -18,7 +18,7 @@
         <div class="topbar-avatar">{{ auth.currentUser()?.prenom?.charAt(0) }}{{ auth.currentUser()?.nom?.charAt(0) }}</div>
         <div class="topbar-user-info">
           <span class="user-name">{{ auth.currentUser()?.prenom }} {{ auth.currentUser()?.nom }}</span>
-          <span class="user-role">Doctor</span>
+          <span class="user-role">{{ i18n.t('medecin.topbar.role') }}</span>
         </div>
       </div>
     </div>
@@ -34,10 +34,10 @@
 
     <div class="d-flex justify-content-between align-items-start flex-wrap gap-3 mb-4">
       <div class="page-header">
-        <span class="page-section-label">Command Center</span>
-        <h2 class="dashboard-title">Dashboard</h2>
+        <span class="page-section-label">{{ i18n.t('medecin.dashboard.eyebrow') }}</span>
+        <h2 class="dashboard-title">{{ i18n.t('medecin.dashboard.title') }}</h2>
         <p class="page-subtitle">
-          Track your patients and their assessment results from a centralized space.
+          {{ i18n.t('medecin.dashboard.subtitle') }}
         </p>
       </div>
     </div>
@@ -47,9 +47,9 @@
         <div class="stat-card">
           <div class="stat-icon blue"><i class="bi bi-people-fill"></i></div>
           <div class="stat-info">
-            <small>Total Patients</small>
+            <small>{{ i18n.t('medecin.dashboard.stat.totalPatients') }}</small>
             <h3>{{ totalPatients() }}</h3>
-            <span class="trend-up">{{ newThisMonthCount() }} this month</span>
+            <span class="trend-up">{{ i18n.t('medecin.dashboard.stat.newThisMonth', { n: newThisMonthCount() }) }}</span>
           </div>
         </div>
       </div>
@@ -57,9 +57,9 @@
         <div class="stat-card">
           <div class="stat-icon green"><i class="bi bi-journal-check"></i></div>
           <div class="stat-info">
-            <small>Completed Assessments</small>
+            <small>{{ i18n.t('medecin.dashboard.stat.completedAssessments') }}</small>
             <h3>{{ assessedCount() }}</h3>
-            <span class="trend-up">out of {{ totalPatients() }} patients</span>
+            <span class="trend-up">{{ i18n.t('medecin.dashboard.stat.outOfPatients', { n: totalPatients() }) }}</span>
           </div>
         </div>
       </div>
@@ -67,9 +67,9 @@
         <div class="stat-card">
           <div class="stat-icon purple"><i class="bi bi-exclamation-triangle-fill"></i></div>
           <div class="stat-info">
-            <small>Further Evaluation Recommended</small>
+            <small>{{ i18n.t('medecin.dashboard.stat.furtherEvaluation') }}</small>
             <h3>{{ furtherEvaluationCount() }}</h3>
-            <span class="trend-up">needs close monitoring</span>
+            <span class="trend-up">{{ i18n.t('medecin.dashboard.stat.closeMonitoring') }}</span>
           </div>
         </div>
       </div>
@@ -77,9 +77,9 @@
         <div class="stat-card">
           <div class="stat-icon orange"><i class="bi bi-clipboard-pulse"></i></div>
           <div class="stat-info">
-            <small>Pending Assessment</small>
+            <small>{{ i18n.t('medecin.dashboard.stat.pendingAssessment') }}</small>
             <h3>{{ totalPatients() - assessedCount() }}</h3>
-            <span class="trend-up">no assessment yet</span>
+            <span class="trend-up">{{ i18n.t('medecin.dashboard.stat.noAssessmentYet') }}</span>
           </div>
         </div>
       </div>
@@ -90,26 +90,26 @@
         <div class="card">
           <div class="card-header-row">
             <div>
-              <span class="card-label">Clinical Overview</span>
-              <h4 class="card-title">Risk Level Distribution</h4>
+              <span class="card-label">{{ i18n.t('medecin.dashboard.risk.eyebrow') }}</span>
+              <h4 class="card-title">{{ i18n.t('medecin.dashboard.risk.title') }}</h4>
             </div>
           </div>
           <div class="row g-3">
             <div class="col-md-4">
               <div class="mini-stat">
-                <small>Low</small>
+                <small>{{ i18n.t('medecin.risk.low') }}</small>
                 <strong>{{ riskDistribution().Low }}</strong>
               </div>
             </div>
             <div class="col-md-4">
               <div class="mini-stat">
-                <small>Moderate</small>
+                <small>{{ i18n.t('medecin.risk.moderate') }}</small>
                 <strong>{{ riskDistribution().Moderate }}</strong>
               </div>
             </div>
             <div class="col-md-4">
               <div class="mini-stat">
-                <small>Further Evaluation</small>
+                <small>{{ i18n.t('medecin.dashboard.risk.furtherShort') }}</small>
                 <strong>{{ riskDistribution()['Further Evaluation Recommended'] }}</strong>
               </div>
             </div>
@@ -120,13 +120,13 @@
         <div class="card">
           <div class="card-header-row">
             <div>
-              <span class="card-label">Live Queue</span>
-              <h4 class="card-title">Recent Activity</h4>
+              <span class="card-label">{{ i18n.t('medecin.dashboard.activity.eyebrow') }}</span>
+              <h4 class="card-title">{{ i18n.t('medecin.dashboard.activity.title') }}</h4>
             </div>
           </div>
 
           @if (!loading() && activity().length === 0) {
-            <p class="text-muted mb-0" style="font-size:0.86rem;">No activity yet.</p>
+            <p class="text-muted mb-0" style="font-size:0.86rem;">{{ i18n.t('medecin.dashboard.activity.none') }}</p>
           }
 
           @for (item of activity(); track item.createdAt) {
@@ -139,8 +139,9 @@
                 @else { <i class="bi bi-x"></i> }
               </div>
               <div class="activity-text">
-                <strong>{{ item.patientName }}</strong> completed the assessment —
-                score {{ item.score }}/{{ item.maxScore }}, <span [class]="riskBadgeClass(item.riskBucket)" class="badge">{{ item.riskBucket }}</span>
+                <strong>{{ item.patientName }}</strong>
+                {{ i18n.t('medecin.dashboard.activity.completed', { score: item.score, max: item.maxScore }) }}
+                <span [class]="riskBadgeClass(item.riskBucket)" class="badge">{{ riskLabel(item.riskBucket) }}</span>
                 <span class="activity-time">{{ timeAgo(item.createdAt) }}</span>
               </div>
             </div>
@@ -154,20 +155,20 @@
         <div class="card">
           <div class="card-header-row">
             <div>
-              <span class="card-label">Patient Roster</span>
-              <h4 class="card-title">My Patients</h4>
+              <span class="card-label">{{ i18n.t('medecin.dashboard.roster.eyebrow') }}</span>
+              <h4 class="card-title">{{ i18n.t('medecin.myPatients') }}</h4>
             </div>
           </div>
 
           <div class="toolbar" style="margin-bottom: 1.25rem;">
-            <input type="text" placeholder="Filter list..." [value]="searchTerm()" (input)="searchTerm.set($any($event.target).value)" style="width: 100%; max-width: 300px;">
+            <input type="text" [placeholder]="i18n.t('medecin.dashboard.filterPlaceholder')" [value]="searchTerm()" (input)="searchTerm.set($any($event.target).value)" style="width: 100%; max-width: 300px;">
           </div>
 
           @if (loading()) {
-            <p class="text-muted mb-0" style="font-size:0.86rem;">Loading...</p>
+            <p class="text-muted mb-0" style="font-size:0.86rem;">{{ i18n.t('common.loading') }}</p>
           } @else if (baseRows().length === 0) {
             <p class="text-muted mb-0" style="font-size:0.86rem;">
-              No patients yet. They'll appear here once they register and choose you as their doctor.
+              {{ i18n.t('medecin.dashboard.noPatients') }}
             </p>
           } @else {
             <div class="table-responsive">
@@ -175,58 +176,58 @@
                 <thead>
                   <tr>
                     <th (click)="setSort('firstName')" style="cursor: pointer;">
-                      Patient 
+                      {{ i18n.t('medecin.table.patient') }}
                       @if (sortColumn() === 'firstName') {
                         <i class="bi" [class.bi-arrow-up-short]="sortDirection() === 'asc'" [class.bi-arrow-down-short]="sortDirection() === 'desc'"></i>
                       }
                     </th>
                     <th (click)="setSort('age')" style="cursor: pointer;">
-                      Age
+                      {{ i18n.t('medecin.table.age') }}
                       @if (sortColumn() === 'age') {
                         <i class="bi" [class.bi-arrow-up-short]="sortDirection() === 'asc'" [class.bi-arrow-down-short]="sortDirection() === 'desc'"></i>
                       }
                     </th>
                     <th (click)="setSort('gender')" style="cursor: pointer;">
-                      Gender
+                      {{ i18n.t('medecin.table.gender') }}
                       @if (sortColumn() === 'gender') {
                         <i class="bi" [class.bi-arrow-up-short]="sortDirection() === 'asc'" [class.bi-arrow-down-short]="sortDirection() === 'desc'"></i>
                       }
                     </th>
                     <th (click)="setSort('createdAt')" style="cursor: pointer;">
-                      Registered On
+                      {{ i18n.t('medecin.table.registeredOn') }}
                       @if (sortColumn() === 'createdAt') {
                         <i class="bi" [class.bi-arrow-up-short]="sortDirection() === 'asc'" [class.bi-arrow-down-short]="sortDirection() === 'desc'"></i>
                       }
                     </th>
-                    <th>Latest Result</th>
-                    <th>MRI</th>
+                    <th>{{ i18n.t('medecin.table.latestResult') }}</th>
+                    <th>{{ i18n.t('medecin.table.mri') }}</th>
                   </tr>
                 </thead>
                 <tbody>
                   @if (paginatedRows().length === 0) {
-                    <tr><td colspan="6" class="text-center py-4 text-muted">No results for "{{ searchTerm() }}"</td></tr>
+                    <tr><td colspan="6" class="text-center py-4 text-muted">{{ i18n.t('medecin.dashboard.noResults', { term: searchTerm() }) }}</td></tr>
                   }
                   @for (row of paginatedRows(); track row.id) {
                     <tr>
                       <td class="patient-name">{{ row.firstName }} {{ row.lastName }}</td>
-                      <td>{{ row.age }} years</td>
+                      <td>{{ i18n.t('medecin.dashboard.years', { n: row.age }) }}</td>
                       <td>{{ row.gender }}</td>
                       <td>{{ row.createdAt | date: 'MM/dd/yyyy' }}</td>
                       <td>
                         @if (row.latestActivity) {
                           <span class="badge" [class]="riskBadgeClass(row.latestActivity.riskBucket)">
-                            {{ row.latestActivity.riskBucket }}
+                            {{ riskLabel(row.latestActivity.riskBucket) }}
                           </span>
                         } @else {
-                          <span class="badge badge-info">Not assessed yet</span>
+                          <span class="badge badge-info">{{ i18n.t('medecin.dashboard.notAssessed') }}</span>
                         }
                       </td>
                       <td>
                         <a class="btn-secondary" [routerLink]="['/patients', row.id]">
-                          <i class="bi bi-eye"></i> Record
+                          <i class="bi bi-eye"></i> {{ i18n.t('medecin.action.record') }}
                         </a>
                         <a class="btn-secondary" [routerLink]="['/patients', row.email, 'mri-upload']">
-                          <i class="bi bi-file-earmark-medical-fill"></i> Upload MRI
+                          <i class="bi bi-file-earmark-medical-fill"></i> {{ i18n.t('medecin.action.uploadMri') }}
                         </a>
                       </td>
                     </tr>
@@ -237,14 +238,16 @@
 
             <div class="pagination-controls mt-4 d-flex justify-content-between align-items-center flex-wrap gap-3">
               <span class="text-muted" style="font-size: 0.85rem;">
-                Showing {{ totalFilteredRows() > 0 ? (currentPage() - 1) * pageSize() + 1 : 0 }} to 
-                {{ currentPage() * pageSize() > totalFilteredRows() ? totalFilteredRows() : currentPage() * pageSize() }} 
-                of {{ totalFilteredRows() }} patients
+                {{ i18n.t('medecin.pagination.showing', {
+                     from: totalFilteredRows() > 0 ? (currentPage() - 1) * pageSize() + 1 : 0,
+                     to: currentPage() * pageSize() > totalFilteredRows() ? totalFilteredRows() : currentPage() * pageSize(),
+                     total: totalFilteredRows()
+                   }) }}
               </span>
               <div class="d-flex gap-2">
-                <button class="btn-secondary" [disabled]="currentPage() === 1" (click)="setPage(currentPage() - 1)">Previous</button>
-                <span class="btn-secondary" style="pointer-events: none; opacity: 0.8;">Page {{ currentPage() }} of {{ totalPages() }}</span>
-                <button class="btn-secondary" [disabled]="currentPage() === totalPages()" (click)="setPage(currentPage() + 1)">Next</button>
+                <button class="btn-secondary" [disabled]="currentPage() === 1" (click)="setPage(currentPage() - 1)">{{ i18n.t('medecin.pagination.previous') }}</button>
+                <span class="btn-secondary" style="pointer-events: none; opacity: 0.8;">{{ i18n.t('medecin.pagination.page', { current: currentPage(), total: totalPages() }) }}</span>
+                <button class="btn-secondary" [disabled]="currentPage() === totalPages()" (click)="setPage(currentPage() + 1)">{{ i18n.t('medecin.pagination.next') }}</button>
               </div>
             </div>
           }

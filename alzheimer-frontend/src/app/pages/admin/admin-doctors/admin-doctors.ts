@@ -3,6 +3,7 @@ import { Router, RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../../services/auth';
 import { AdminService } from '../../../services/admin';
+import { I18nService } from '../../../services/i18n';
 import { AccountStatus, CreateDoctorRequest, DoctorAdmin, UpdateDoctorRequest } from '../../../models/admin.model';
 
 type FormMode = 'none' | 'create' | 'edit';
@@ -17,6 +18,7 @@ type FormMode = 'none' | 'create' | 'edit';
 })
 export class AdminDoctorsPageComponent implements OnInit {
   protected readonly auth = inject(AuthService);
+  protected readonly i18n = inject(I18nService);
   private readonly adminService = inject(AdminService);
   private readonly router = inject(Router);
 
@@ -139,7 +141,7 @@ export class AdminDoctorsPageComponent implements OnInit {
       },
       error: (err) => {
         this.saving.set(false);
-        this.errorMessage.set(err.error?.message || "Error creating doctor account");
+        this.errorMessage.set(err.error?.message || this.i18n.t('admin.doctors.error.create'));
       }
     });
   }
@@ -158,7 +160,7 @@ export class AdminDoctorsPageComponent implements OnInit {
       },
       error: (err) => {
         this.saving.set(false);
-        this.errorMessage.set(err.error?.message || "Error updating doctor");
+        this.errorMessage.set(err.error?.message || this.i18n.t('admin.doctors.error.update'));
       }
     });
   }

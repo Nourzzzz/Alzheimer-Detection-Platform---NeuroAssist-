@@ -12,6 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 @Service
@@ -24,7 +25,22 @@ public class AssessmentPipelineService {
     private final AIAssessmentRepository aiAssessmentRepository;
     private final ClinicalRecordService clinicalRecordService;
 
-    public AIAssessment runPostCnnPipeline(AIAssessment assessment, String clinicalNote) {
+    public AIAssessment runPostCnnPipeline(AIAssessment assessment, String clinicalNote, String lang) {
+        return runPipeline(assessment, clinicalNote, null, null, lang);
+    }
+
+    /**
+     * Re-runs the RAG/LLM step after a physician rejected the previous draft.
+     * Their feedback is forwarded as an explicit instruction so the new report
+     * addresses the objections instead of repeating the same reasoning.
+     */
+    public AIAssessment regenerateWithFeedback(AIAssessment assessment, String doctorFeedback,
+                                               String previousReport, String lang) {
+        return runPipeline(assessment, null, doctorFeedback, previousReport, lang);
+    }
+
+    private AIAssessment runPipeline(AIAssessment assessment, String clinicalNote,
+                                     String doctorFeedback, String previousReport, String lang) {
         String patientEmail = assessment.getPatientEmail();
         List<String> questionnaireAnswers = fetchQuestionnaireAnswers(patientEmail);
 
@@ -41,7 +57,10 @@ public class AssessmentPipelineService {
                     .riskScore(assessment.getRiskScore())
                     .mriFeatures(List.of())
                     .questionnaireAnswers(questionnaireAnswers)
-                    .clinicalNote(effectiveNote);
+                    .clinicalNote(effectiveNote)
+                    .doctorFeedback(doctorFeedback)
+                    .previousReport(previousReport)
+                    .lang(lang);
 
             applyCognitiveSummary(builder, patientEmail);
             AssessmentGenerationRequest request = builder.build();
@@ -82,6 +101,9 @@ public class AssessmentPipelineService {
             assessment.setRagContextRefs(refs);
         }
         assessment.setGeneratedReport(response.getReport());
+        if (response.getPatientGuidance() != null && !response.getPatientGuidance().isEmpty()) {
+            assessment.setPatientGuidanceByLang(new HashMap<>(response.getPatientGuidance()));
+        }
     }
 
     private void applyCognitiveSummary(AssessmentGenerationRequest.AssessmentGenerationRequestBuilder builder, String patientEmail) {

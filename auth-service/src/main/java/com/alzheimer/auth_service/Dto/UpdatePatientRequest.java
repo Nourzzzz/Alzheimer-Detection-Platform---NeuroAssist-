@@ -1,6 +1,7 @@
 package com.alzheimer.auth_service.Dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
@@ -20,6 +21,7 @@ public class UpdatePatientRequest {
     private String genre;
 
     @JsonFormat(pattern = "yyyy-MM-dd")
+    @JsonDeserialize(using = LenientLocalDateDeserializer.class)
     private LocalDate dateNaissance;
 
     private String groupeSanguin;

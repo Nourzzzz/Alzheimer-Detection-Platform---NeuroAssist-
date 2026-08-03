@@ -34,6 +34,9 @@ class RagAssessRequest(BaseModel):
     mri_features: list[str] = Field(default_factory=list)
     questionnaire_answers: list[str] = Field(default_factory=list)
     clinical_note: str = ""
+    lang: str | None = None
+    doctor_feedback: str | None = None
+    previous_report: str | None = None
     cognitive_summary: str | None = None
     cognitive_risk_level: str | None = None
     cognitive_red_flags: list[str] = Field(default_factory=list)
@@ -58,6 +61,8 @@ class RagAssessResponse(BaseModel):
     clinical_bert: ClinicalBertModel
     rag_context: list[RagContextItem]
     report: str
+    """Guidance text keyed by language, so the patient can switch later on."""
+    patient_guidance: dict[str, str] = {}
 
 
 class QuestionOptionModel(BaseModel):
@@ -77,6 +82,7 @@ class QuestionnaireQuestion(BaseModel):
 class QuestionnaireNextRequest(BaseModel):
     state: dict | None = None
     answer: str | None = None
+    lang: str | None = None
 
 
 class QuestionnaireNextResponse(BaseModel):
@@ -88,3 +94,4 @@ class QuestionnaireNextResponse(BaseModel):
 
 class QuestionnaireSummaryRequest(BaseModel):
     state: dict
+    lang: str | None = None

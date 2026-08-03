@@ -1,47 +1,125 @@
 <section class="patient-page">
   <div class="patient-container">
     <header class="patient-header">
-      <h1>My results</h1>
-      <p>Your MRI assessments, once reviewed by your doctor.</p>
+      <h1>{{ i18n.t('results.title') }}</h1>
+      <p>{{ i18n.t('results.subtitle') }}</p>
     </header>
 
     @if (loading()) {
-      <p class="patient-muted">Loading…</p>
+      <p class="patient-muted">{{ i18n.t('common.loading') }}</p>
     } @else if (error()) {
       <p class="patient-error">{{ error() }}</p>
     } @else if (results().length === 0) {
       <p class="patient-muted">
-        You have no validated results yet. After you upload an MRI, it stays pending until your
-        doctor reviews it.
+        {{ i18n.t('results.empty') }}
       </p>
     } @else {
       <div class="results-list">
         @for (r of results(); track r.id) {
           <article class="result-card status-{{ r.validationStatus }}">
             <div class="result-head">
-              <span class="status-badge status-{{ r.validationStatus }}">{{ r.validationStatus }}</span>
+              <span class="status-badge status-{{ r.validationStatus }}">{{ statusLabel(r.validationStatus) }}</span>
               <span class="result-date">{{ r.createdAt | date:'mediumDate' }}</span>
             </div>
 
-            <p class="result-message">{{ r.message }}</p>
+            <p class="result-message">{{ statusMessage(r.validationStatus) }}</p>
 
             @if (r.finalStage) {
-              <p class="result-stage">Diagnosis stage: <strong>{{ r.finalStage }}</strong></p>
+              <div class="stage-panel {{ toneFor(r.finalStage) }}">
+                <span class="stage-eyebrow">{{ i18n.t('patient.results.stageLabel') }}</span>
+                <strong class="stage-name">{{ stageLabel(r.finalStage) }}</strong>
+                <span class="stage-code">{{ r.finalStage }}</span>
+              </div>
             }
             @if (r.doctorComment) {
               <div class="result-comment">
-                <h3>Doctor's comment</h3>
+                <h3>{{ i18n.t('results.doctorComment') }}</h3>
                 <p>{{ r.doctorComment }}</p>
               </div>
             }
-            @if (r.report) {
-              <details class="result-report">
-                <summary>View full report</summary>
-                <pre>{{ r.report }}</pre>
-              </details>
+            @if (r.guidance) {
+              <section class="guidance-card {{ toneFor(r.finalStage) }}">
+                <header class="guidance-head">
+                  <span class="guidance-icon"><i class="bi bi-signpost-split-fill"></i></span>
+                  <div>
+                    <span class="guidance-eyebrow">{{ i18n.t('results.guidance.eyebrow') }}</span>
+                    <h3 class="guidance-title">{{ headlineFor(r.finalStage) }}</h3>
+                  </div>
+                </header>
+
+                <div class="guidance-body">
+                  @if (guidanceInOtherLang(r)) {
+                    <p class="guidance-langnote">
+                      <i class="bi bi-translate"></i>
+                      {{ i18n.t('results.guidance.otherLang') }}
+                    </p>
+                  }
+                  @for (block of guidanceBlocks(r.guidance); track $index) {
+                    @switch (block.kind) {
+                      @case ('heading') {
+                        <h4 class="guidance-section">{{ block.text }}</h4>
+                      }
+                      @case ('bullets') {
+                        <ul class="guidance-list">
+                          @for (item of block.items; track item) {
+                            <li><i class="bi bi-check2"></i><span>{{ item }}</span></li>
+                          }
+                        </ul>
+                      }
+                      @case ('note') {
+                        <p class="guidance-note"><i class="bi bi-info-circle"></i> {{ block.text }}</p>
+                      }
+                      @default {
+                        <p class="guidance-lead">{{ block.text }}</p>
+                      }
+                    }
+                  }
+                </div>
+              </section>
             }
+
+            @if (resourcesFor(r.finalStage); as links) {
+              @if (links.length) {
+                <section class="resources {{ toneFor(r.finalStage) }}">
+                  <header class="resources-head">
+                    <span class="resources-icon"><i class="bi bi-life-preserver"></i></span>
+                    <div>
+                      <span class="resources-eyebrow">{{ i18n.t('results.resources.eyebrow') }}</span>
+                      <h3 class="resources-title">{{ i18n.t('results.resources.title') }}</h3>
+                    </div>
+                  </header>
+
+                  <div class="resources-grid">
+                    @for (link of links; track link.id) {
+                      <a class="resource" [href]="link.url" target="_blank" rel="noopener noreferrer">
+                        <span class="resource-icon"><i class="bi {{ iconFor(link.kind) }}"></i></span>
+                        <span class="resource-body">
+                          <span class="resource-name">
+                            {{ link.title[i18n.lang()] }}
+                            <i class="bi bi-box-arrow-up-right resource-out"></i>
+                          </span>
+                          <span class="resource-desc">{{ link.description[i18n.lang()] }}</span>
+                          <span class="resource-tags">
+                            <span class="resource-tag">{{ i18n.t('results.resources.kind.' + link.kind) }}</span>
+                            <span class="resource-tag is-lang">{{ i18n.t('results.resources.site.' + link.siteLang) }}</span>
+                          </span>
+                        </span>
+                      </a>
+                    }
+                  </div>
+
+                  <p class="resources-note">
+                    <i class="bi bi-info-circle"></i>
+                    {{ i18n.t('results.resources.note') }}
+                  </p>
+                </section>
+              }
+            }
+
             @if (r.validatedAt) {
-              <p class="patient-muted">Reviewed on {{ r.validatedAt | date:'medium' }}.</p>
+              <p class="patient-muted">
+                {{ i18n.t('results.reviewedOn', { date: (r.validatedAt | date:'medium') ?? '' }) }}
+              </p>
             }
           </article>
         }

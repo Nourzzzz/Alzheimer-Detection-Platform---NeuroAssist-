@@ -1,7 +1,8 @@
 import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { QuestionnaireService } from '../../services/questionnaire';
-import { Answer, Question, QuestionnaireResult } from '../../models/questionnaire.model';
+import { Answer, Question, QuestionnaireResult, RiskBucket } from '../../models/questionnaire.model';
+import { I18nService } from '../../services/i18n';
 
 @Component({
   standalone: true,
@@ -13,6 +14,7 @@ import { Answer, Question, QuestionnaireResult } from '../../models/questionnair
 export class QuestionnairePageComponent implements OnInit {
   private readonly questionnaireService = inject(QuestionnaireService);
   private readonly router = inject(Router);
+  protected readonly i18n = inject(I18nService);
 
   protected readonly loading = signal(true);
   protected readonly loadError = signal<string | null>(null);
@@ -55,7 +57,7 @@ export class QuestionnairePageComponent implements OnInit {
       },
       error: () => {
         this.loading.set(false);
-        this.loadError.set("Impossible de charger le questionnaire pour le moment.");
+        this.loadError.set(this.i18n.t('quiz.loadError'));
       }
     });
   }
@@ -99,9 +101,13 @@ export class QuestionnairePageComponent implements OnInit {
       },
       error: () => {
         this.submitting.set(false);
-        this.submitError.set("Une erreur est survenue lors de l'envoi du questionnaire. Veuillez réessayer.");
+        this.submitError.set(this.i18n.t('patient.quiz.legacy.submitError'));
       }
     });
+  }
+
+  protected riskLabel(bucket: RiskBucket): string {
+    return this.i18n.t(`patient.quiz.risk.${bucket}`);
   }
 
   protected goHome(): void {

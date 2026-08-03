@@ -3,27 +3,27 @@
     <div class="brand-icon">N</div>
     <div class="brand-text">
       <h3>NeuroAssist</h3>
-      <span>Clinician Portal</span>
+      <span>{{ i18n.t('sidebar.portal') }}</span>
     </div>
     <button
       type="button"
       class="sidebar-collapse"
       (click)="sidebar.toggle()"
-      [title]="sidebar.collapsed() ? 'Expand sidebar' : 'Collapse sidebar'"
-      [attr.aria-label]="sidebar.collapsed() ? 'Expand sidebar' : 'Collapse sidebar'"
+      [title]="sidebar.collapsed() ? i18n.t('sidebar.expand') : i18n.t('sidebar.collapse')"
+      [attr.aria-label]="sidebar.collapsed() ? i18n.t('sidebar.expand') : i18n.t('sidebar.collapse')"
       [attr.aria-expanded]="!sidebar.collapsed()">
       <i class="bi" [class.bi-chevron-double-left]="!sidebar.collapsed()"
                     [class.bi-chevron-double-right]="sidebar.collapsed()"></i>
     </button>
   </div>
 
-  <div class="nav-section-label">Main</div>
+  <div class="nav-section-label">{{ i18n.t('sidebar.main') }}</div>
   <nav class="sidebar-nav">
-    @for (item of mainItems; track item.label) {
+    @for (item of mainItems; track item.labelKey) {
       <a
         [routerLink]="item.path"
         [queryParams]="item.queryParams ?? null"
-        [title]="item.label"
+        [title]="i18n.t(item.labelKey)"
         routerLinkActive="active"
         [routerLinkActiveOptions]="{
           paths: item.prefixMatch ? 'subset' : 'exact',
@@ -33,7 +33,7 @@
         }"
       >
         <span class="nav-icon"><i class="bi" [class]="item.icon"></i></span>
-        <span class="nav-label">{{ item.label }}</span>
+        <span class="nav-label">{{ i18n.t(item.labelKey) }}</span>
         @if (item.badge === 'pendingValidations' && notifications.pendingValidations() > 0) {
           <span class="nav-badge">{{ notifications.pendingValidations() }}</span>
         }
@@ -41,11 +41,13 @@
     }
   </nav>
 
-  <div class="nav-section-label">System</div>
+  <div class="sidebar-lang"><app-language-switcher /></div>
+
+  <div class="nav-section-label">{{ i18n.t('sidebar.system') }}</div>
   <nav class="sidebar-nav">
-    <a routerLink="/" class="back-link" title="Back to Home">
+    <a routerLink="/" class="back-link" [title]="i18n.t('sidebar.backHome')">
       <span class="nav-icon"><i class="bi bi-arrow-left-short"></i></span>
-      <span class="nav-label">Back to Home</span>
+      <span class="nav-label">{{ i18n.t('sidebar.backHome') }}</span>
     </a>
   </nav>
 </aside>

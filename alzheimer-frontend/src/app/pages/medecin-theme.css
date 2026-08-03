@@ -166,6 +166,7 @@ body {
    text reflows and briefly overflows during the 0.2s width transition. */
 .admin-sidebar { overflow-x: hidden; }
 .sidebar-brand .brand-text { min-width: 0; }
+.sidebar-lang { padding: 0.85rem 0.85rem 0.25rem; }
 .sidebar-brand h3,
 .sidebar-brand .brand-text span,
 .sidebar-nav a { white-space: nowrap; }
@@ -219,6 +220,7 @@ body {
 
   body.sidebar-collapsed .brand-text,
   body.sidebar-collapsed .nav-label,
+  body.sidebar-collapsed .sidebar-lang,
   body.sidebar-collapsed .nav-section-label { display: none; }
 
   body.sidebar-collapsed .sidebar-brand {
@@ -565,6 +567,15 @@ body {
   color: var(--heading-color);
 }
 
+/* Labels for the inputs that carry no placeholder of their own. */
+.edit-label {
+  display: block;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  margin-bottom: 0.3rem;
+}
+
 .activity-item {
   display: flex;
   align-items: flex-start;
@@ -726,6 +737,87 @@ body {
 .btn-validate { background: var(--success-color); }
 .btn-correct { background: var(--accent-color); }
 .btn-reject { background: var(--danger-color); }
+.btn-revise { background: var(--warning-color); }
+
+.report-head { display: flex; align-items: center; justify-content: space-between; gap: 1rem; margin-bottom: 0.85rem; }
+.report-head h2 { margin: 0; }
+
+.report-model {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.2rem 0.6rem;
+  border-radius: 999px;
+  background: var(--accent-tint);
+  color: var(--accent-color-dark);
+  font-size: 0.72rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.report-banner {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0 0 1rem;
+  padding: 0.6rem 0.85rem;
+  border-left: 3px solid var(--warning-color);
+  border-radius: 0 8px 8px 0;
+  background: var(--warning-bg);
+  color: var(--warning-color);
+  font-size: 0.79rem;
+  font-weight: 600;
+}
+
+.report-body { font-size: 0.93rem; line-height: 1.7; color: var(--text-secondary); }
+
+.report-section {
+  margin: 1.35rem 0 0.5rem;
+  padding-bottom: 0.3rem;
+  border-bottom: 1px solid var(--border-color);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--heading-color);
+}
+
+.report-section:first-child { margin-top: 0; }
+.report-para { margin: 0 0 0.75rem; }
+
+.report-list { list-style: none; margin: 0 0 0.75rem; padding: 0; display: flex; flex-direction: column; gap: 0.4rem; }
+.report-list li { display: flex; align-items: flex-start; gap: 0.4rem; }
+.report-list li i { color: var(--accent-color); flex-shrink: 0; font-size: 1.05rem; line-height: 1.4; }
+
+.revision-box {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-top: 1rem;
+  padding: 0.9rem 1rem;
+  border: 1px dashed var(--border-color);
+  border-radius: 10px;
+  background: var(--surface-alt);
+  font-size: 0.86rem;
+}
+
+.revision-box > div:first-child { flex: 1 1 260px; }
+.revision-box .revision-left { flex-basis: 100%; font-size: 0.78rem; }
+
+.revision-history { margin-top: 0.75rem; display: flex; flex-direction: column; gap: 0.75rem; }
+
+.revision-item {
+  border-left: 3px solid var(--warning-color);
+  background: var(--surface-alt);
+  border-radius: 0 8px 8px 0;
+  padding: 0.75rem 0.9rem;
+}
+
+.revision-head { display: flex; justify-content: space-between; gap: 0.75rem; flex-wrap: wrap; font-size: 0.8rem; }
+.revision-round { font-weight: 700; color: var(--warning-color); }
+.revision-feedback { margin: 0.4rem 0; font-size: 0.88rem; color: var(--text-secondary); }
+.revision-item summary { cursor: pointer; font-size: 0.82rem; color: var(--accent-color); }
 
 .idx-PENDING, .idx-INDEXING { background: var(--warning-bg); color: var(--warning-color); }
 .idx-INDEXED { background: var(--success-bg); color: var(--success-color); }

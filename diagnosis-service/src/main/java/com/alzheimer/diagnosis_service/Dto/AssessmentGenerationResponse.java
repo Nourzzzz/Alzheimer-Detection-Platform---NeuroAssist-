@@ -1,12 +1,14 @@
 package com.alzheimer.diagnosis_service.Dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.List;
+import java.util.Map;
 
 @Data
 @Builder
@@ -21,6 +23,11 @@ public class AssessmentGenerationResponse {
     private List<RagContext> ragContext;
 
     private String report;
+
+    /** Guidance text per language. Also accepts the older single-text form. */
+    @JsonProperty("patient_guidance")
+    @JsonDeserialize(using = GuidanceByLangDeserializer.class)
+    private Map<String, String> patientGuidance;
 
     @Data
     @Builder

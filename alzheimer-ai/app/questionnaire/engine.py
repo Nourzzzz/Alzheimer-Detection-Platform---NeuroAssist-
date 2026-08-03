@@ -1,6 +1,8 @@
 import json
 from pathlib import Path
 
+from app.questionnaire.llm_agent import DEFAULT_LANG, localized
+
 _TREE_PATH = Path(__file__).parent / "cognitive_tree.json"
 
 
@@ -109,7 +111,7 @@ def _score_by_scale(state: dict) -> dict:
     return totals
 
 
-def _findings_and_flags(state: dict) -> tuple[dict, list[str]]:
+def _findings_and_flags(state: dict, lang: str = DEFAULT_LANG) -> tuple[dict, list[str]]:
     by_domain: dict[str, list[str]] = {}
     red_flags: list[str] = []
     for ans in state["answers"]:
@@ -122,7 +124,7 @@ def _findings_and_flags(state: dict) -> tuple[dict, list[str]]:
             if opt.get(key):
                 by_domain.setdefault(section, []).append(opt[key])
         if opt.get("redFlag"):
-            red_flags.append(opt["redFlag"])
+            red_flags.append(localized(opt, "redFlag", lang))
     return by_domain, red_flags
 
 
@@ -143,19 +145,29 @@ def _domain_severity(domain_findings: list[str], section_id: str) -> str:
     return "severe"
 
 
-def _global_risk(scale_scores: dict) -> dict:
+_RISK_LABELS = {
+    "fr": {
+        "high": "Atteinte cognitive et fonctionnelle probable — évaluation approfondie recommandée",
+        "moderate": "Atteinte cognitive probable dans au moins un domaine — évaluation complémentaire recommandée",
+        "low": "Pas de signal net au dépistage — poursuivre la surveillance de routine",
+    },
+    "en": {
+        "high": "Probable cognitive and functional impairment — in-depth assessment recommended",
+        "moderate": "Probable cognitive impairment in at least one domain — further assessment recommended",
+        "low": "No clear signal on screening — continue routine monitoring",
+    },
+}
+
+
+def _global_risk(scale_scores: dict, lang: str = DEFAULT_LANG) -> dict:
     flagged = []
     for scale, score in scale_scores.items():
         cutoff = _TREE["scales"][scale]["cutoff"]
         if score >= cutoff:
             flagged.append(scale)
-    if len(flagged) >= 2:
-        level, label = "high", "Atteinte cognitive et fonctionnelle probable — évaluation approfondie recommandée"
-    elif len(flagged) == 1:
-        level, label = "moderate", "Atteinte cognitive probable dans au moins un domaine — évaluation complémentaire recommandée"
-    else:
-        level, label = "low", "Pas de signal net au dépistage — poursuivre la surveillance de routine"
-    return {"level": level, "label": label, "flaggedScales": flagged}
+    level = "high" if len(flagged) >= 2 else "moderate" if len(flagged) == 1 else "low"
+    labels = _RISK_LABELS.get(lang, _RISK_LABELS[DEFAULT_LANG])
+    return {"level": level, "label": labels[level], "flaggedScales": flagged}
 
 
 def _narrative(by_domain: dict, scale_scores: dict) -> str:
@@ -172,12 +184,13 @@ def _narrative(by_domain: dict, scale_scores: dict) -> str:
     return " ".join(sentences)
 
 
-def build_summary(state: dict, *, tree_version: str | None = None) -> dict:
+def build_summary(state: dict, *, tree_version: str | None = None,
+                  lang: str = DEFAULT_LANG) -> dict:
     if not is_finished(state):
         raise ValueError("cannot build a summary before the questionnaire is finished")
 
     scale_scores = _score_by_scale(state)
-    by_domain, red_flags = _findings_and_flags(state)
+    by_domain, red_flags = _findings_and_flags(state, lang)
 
     domains = []
     for section in _TREE["sections"]:
@@ -185,7 +198,7 @@ def build_summary(state: dict, *, tree_version: str | None = None) -> dict:
         findings = by_domain.get(sid, [])
         domains.append({
             "domain": sid,
-            "label": section["label"],
+            "label": localized(section, "label", lang),
             "severity": _domain_severity(findings, sid),
             "findings": findings,
         })
@@ -194,7 +207,7 @@ def build_summary(state: dict, *, tree_version: str | None = None) -> dict:
     for scale, score in scale_scores.items():
         info = _TREE["scales"][scale]
         scores[scale] = {
-            "label": info["label"],
+            "label": localized(info, "label", lang),
             "score": score,
             "max": info["max"],
             "cutoff": info["cutoff"],
@@ -205,7 +218,7 @@ def build_summary(state: dict, *, tree_version: str | None = None) -> dict:
         "treeVersion": tree_version or _TREE["version"],
         "questionsAsked": state["questionsAsked"],
         "scores": scores,
-        "globalRisk": _global_risk(scale_scores),
+        "globalRisk": _global_risk(scale_scores, lang),
         "domains": domains,
         "redFlags": _dedupe(red_flags),
         "narrative": _narrative(by_domain, scale_scores),

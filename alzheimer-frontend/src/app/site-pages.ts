@@ -1,8 +1,9 @@
-import { Component,ViewEncapsulation,signal } from '@angular/core';
+import { Component,ViewEncapsulation,inject,signal } from '@angular/core';
 import { Router,RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { AuthService } from './services/auth';
+import { I18nService } from './services/i18n';
 
 @Component({
   standalone: true,
@@ -12,34 +13,34 @@ import { AuthService } from './services/auth';
     <main class="main">
       <section class="section">
         <div class="container section-title" data-aos="fade-up">
-          <h2>About NeuroAssist</h2>
-          <p>A platform built around one goal: helping cognitive changes get noticed and reviewed sooner.</p>
+          <h2>{{ i18n.t('site.about.title') }}</h2>
+          <p>{{ i18n.t('site.about.subtitle') }}</p>
         </div>
         <div class="container" data-aos="fade-up" data-aos-delay="100">
           <div class="row align-items-center gy-5">
             <div class="col-lg-6">
-              <img src="assets/img/health/facilities-9.webp" alt="Healthcare team" class="img-fluid rounded-4 shadow-sm">
+              <img src="assets/img/health/facilities-9.webp" [alt]="i18n.t('site.about.imageAlt')" class="img-fluid rounded-4 shadow-sm">
             </div>
             <div class="col-lg-6">
-              <h3 class="mb-3">Early detection, backed by real care teams</h3>
-              <p>NeuroAssist pairs a short, accessible cognitive questionnaire with structured monitoring — so patients get more than a score, and clinicians get more than a spreadsheet.</p>
+              <h3 class="mb-3">{{ i18n.t('site.about.heading') }}</h3>
+              <p>{{ i18n.t('site.about.body') }}</p>
               <div class="row g-3 mt-3">
                 <div class="col-md-6">
                   <div class="p-4 rounded-4 bg-white shadow-sm h-100">
                     <i class="bi bi-shield-check fs-2 text-primary"></i>
-                    <h5 class="mt-3">Trusted Standards</h5>
-                    <p class="mb-0">Every result is reviewed by a clinician — never an automated diagnosis.</p>
+                    <h5 class="mt-3">{{ i18n.t('site.about.card1.title') }}</h5>
+                    <p class="mb-0">{{ i18n.t('site.about.card1.text') }}</p>
                   </div>
                 </div>
                 <div class="col-md-6">
                   <div class="p-4 rounded-4 bg-white shadow-sm h-100">
                     <i class="bi bi-people fs-2 text-primary"></i>
-                    <h5 class="mt-3">Two Roles, One Platform</h5>
-                    <p class="mb-0">Patients track their own results; clinicians manage their patient list in one place.</p>
+                    <h5 class="mt-3">{{ i18n.t('site.about.card2.title') }}</h5>
+                    <p class="mb-0">{{ i18n.t('site.about.card2.text') }}</p>
                   </div>
                 </div>
               </div>
-              <a routerLink="/contact" class="btn btn-primary mt-4">Talk To Our Team</a>
+              <a routerLink="/contact" class="btn btn-primary mt-4">{{ i18n.t('site.about.cta') }}</a>
             </div>
           </div>
         </div>
@@ -47,7 +48,9 @@ import { AuthService } from './services/auth';
     </main>
   `
 })
-export class AboutPageComponent {}
+export class AboutPageComponent {
+  protected readonly i18n = inject(I18nService);
+}
 
 @Component({
   standalone: true,
@@ -56,38 +59,38 @@ export class AboutPageComponent {}
     <main class="main">
       <section class="departments section">
         <div class="container section-title" data-aos="fade-up">
-          <h2>How We Support Cognitive Health</h2>
-          <p>Three connected areas that make up the NeuroAssist screening and monitoring pathway.</p>
+          <h2>{{ i18n.t('site.departments.title') }}</h2>
+          <p>{{ i18n.t('site.departments.subtitle') }}</p>
         </div>
         <div class="container" data-aos="fade-up" data-aos-delay="100">
           <div class="row g-5">
             <div class="col-lg-4 col-md-6">
               <div class="department-card">
                 <div class="department-icon"><i class="fas fa-clipboard-list"></i></div>
-                <div class="department-image"><img src="assets/img/health/cardiology-1.webp" alt="Cognitive Assessment" class="img-fluid"></div>
+                <div class="department-image"><img src="assets/img/health/cardiology-1.webp" [alt]="i18n.t('site.departments.item1.alt')" class="img-fluid"></div>
                 <div class="department-content">
-                  <h3>Cognitive Assessment</h3>
-                  <p>A short, structured questionnaire designed to surface early signs of memory and thinking changes.</p>
+                  <h3>{{ i18n.t('site.departments.item1.title') }}</h3>
+                  <p>{{ i18n.t('site.departments.item1.text') }}</p>
                 </div>
               </div>
             </div>
             <div class="col-lg-4 col-md-6">
               <div class="department-card">
                 <div class="department-icon"><i class="fas fa-brain"></i></div>
-                <div class="department-image"><img src="assets/img/health/neurology-4.webp" alt="Neurology Department" class="img-fluid"></div>
+                <div class="department-image"><img src="assets/img/health/neurology-4.webp" [alt]="i18n.t('site.departments.item2.alt')" class="img-fluid"></div>
                 <div class="department-content">
-                  <h3>Neurology</h3>
-                  <p>Screening pathways for neurological and cognitive changes, supported by structured data and expert review.</p>
+                  <h3>{{ i18n.t('site.departments.item2.title') }}</h3>
+                  <p>{{ i18n.t('site.departments.item2.text') }}</p>
                 </div>
               </div>
             </div>
             <div class="col-lg-4 col-md-6">
               <div class="department-card">
                 <div class="department-icon"><i class="fas fa-chart-line"></i></div>
-                <div class="department-image"><img src="assets/img/health/facilities-6.webp" alt="Patient Monitoring" class="img-fluid"></div>
+                <div class="department-image"><img src="assets/img/health/facilities-6.webp" [alt]="i18n.t('site.departments.item3.alt')" class="img-fluid"></div>
                 <div class="department-content">
-                  <h3>Patient Monitoring</h3>
-                  <p>Ongoing tracking of assessment results over time, giving care teams a clear view of how things evolve.</p>
+                  <h3>{{ i18n.t('site.departments.item3.title') }}</h3>
+                  <p>{{ i18n.t('site.departments.item3.text') }}</p>
                 </div>
               </div>
             </div>
@@ -97,7 +100,9 @@ export class AboutPageComponent {}
     </main>
   `
 })
-export class DepartmentsPageComponent {}
+export class DepartmentsPageComponent {
+  protected readonly i18n = inject(I18nService);
+}
 
 @Component({
   standalone: true,
@@ -106,47 +111,44 @@ export class DepartmentsPageComponent {}
     <main class="main">
       <section class="featured-services section">
         <div class="container section-title" data-aos="fade-up">
-          <h2>Services</h2>
-          <p>What patients and clinicians get from the NeuroAssist platform.</p>
+          <h2>{{ i18n.t('site.services.title') }}</h2>
+          <p>{{ i18n.t('site.services.subtitle') }}</p>
         </div>
         <div class="container" data-aos="fade-up" data-aos-delay="100">
           <div class="row g-4">
             <div class="col-lg-4 col-md-6">
               <div class="service-item h-100">
                 <div class="service-image">
-                  <img src="assets/img/health/neurology-4.webp" alt="MRI analysis" class="img-fluid">
+                  <img src="assets/img/health/neurology-4.webp" [alt]="i18n.t('site.services.item1.alt')" class="img-fluid">
                   <div class="service-overlay"><i class="fas fa-brain"></i></div>
                 </div>
                 <div class="service-content">
-                  <h3>AI-Assisted MRI Analysis</h3>
-                  <p>Brain MRI scans are classified by a deep-learning model, with a heatmap showing which regions
-                    drove the prediction.</p>
+                  <h3>{{ i18n.t('site.services.item1.title') }}</h3>
+                  <p>{{ i18n.t('site.services.item1.text') }}</p>
                 </div>
               </div>
             </div>
             <div class="col-lg-4 col-md-6">
               <div class="service-item h-100">
                 <div class="service-image">
-                  <img src="assets/img/health/consultation-4.webp" alt="Cognitive screening" class="img-fluid">
+                  <img src="assets/img/health/consultation-4.webp" [alt]="i18n.t('site.services.item2.alt')" class="img-fluid">
                   <div class="service-overlay"><i class="fas fa-clipboard-check"></i></div>
                 </div>
                 <div class="service-content">
-                  <h3>Adaptive Cognitive Screening</h3>
-                  <p>A conversational questionnaire that adjusts each question to the patient's previous answers,
-                    and can be revisited over time.</p>
+                  <h3>{{ i18n.t('site.services.item2.title') }}</h3>
+                  <p>{{ i18n.t('site.services.item2.text') }}</p>
                 </div>
               </div>
             </div>
             <div class="col-lg-4 col-md-6">
               <div class="service-item h-100">
                 <div class="service-image">
-                  <img src="assets/img/health/maternal-2.webp" alt="Doctor review" class="img-fluid">
+                  <img src="assets/img/health/maternal-2.webp" [alt]="i18n.t('site.services.item3.alt')" class="img-fluid">
                   <div class="service-overlay"><i class="fas fa-user-doctor"></i></div>
                 </div>
                 <div class="service-content">
-                  <h3>Doctor Review</h3>
-                  <p>Every AI-drafted finding reaches a real clinician, who validates or corrects it before anything
-                    is shared back with the patient.</p>
+                  <h3>{{ i18n.t('site.services.item3.title') }}</h3>
+                  <p>{{ i18n.t('site.services.item3.text') }}</p>
                 </div>
               </div>
             </div>
@@ -235,7 +237,9 @@ export class DepartmentsPageComponent {}
     }
   `]
 })
-export class ServicesPageComponent {}
+export class ServicesPageComponent {
+  protected readonly i18n = inject(I18nService);
+}
 
 @Component({
   standalone: true,
@@ -244,8 +248,8 @@ export class ServicesPageComponent {}
     <main class="main">
       <section class="find-a-doctor section">
         <div class="container section-title" data-aos="fade-up">
-          <h2>Care Team</h2>
-          <p>The clinicians behind the results your assessments get reviewed by.</p>
+          <h2>{{ i18n.t('site.doctors.title') }}</h2>
+          <p>{{ i18n.t('site.doctors.subtitle') }}</p>
         </div>
         <div class="container" data-aos="fade-up" data-aos-delay="100">
           <div class="row g-4">
@@ -254,8 +258,8 @@ export class ServicesPageComponent {}
                 <div class="doctor-image"><img src="assets/img/health/staff-2.webp" alt="Dr. Amanda Foster" class="img-fluid"></div>
                 <div class="doctor-content">
                   <h4>Dr. Amanda Foster</h4>
-                  <span class="specialty">Cognitive Health Specialist</span>
-                  <p>Focused on preventive screening, early intervention, and patient-centered care planning.</p>
+                  <span class="specialty">{{ i18n.t('site.doctors.d1.specialty') }}</span>
+                  <p>{{ i18n.t('site.doctors.d1.text') }}</p>
                 </div>
               </div>
             </div>
@@ -264,8 +268,8 @@ export class ServicesPageComponent {}
                 <div class="doctor-image"><img src="assets/img/health/staff-6.webp" alt="Dr. Marcus Johnson" class="img-fluid"></div>
                 <div class="doctor-content">
                   <h4>Dr. Marcus Johnson</h4>
-                  <span class="specialty">Neurology Expert</span>
-                  <p>Experienced in complex neurological assessments and long-term care coordination.</p>
+                  <span class="specialty">{{ i18n.t('site.doctors.d2.specialty') }}</span>
+                  <p>{{ i18n.t('site.doctors.d2.text') }}</p>
                 </div>
               </div>
             </div>
@@ -274,8 +278,8 @@ export class ServicesPageComponent {}
                 <div class="doctor-image"><img src="assets/img/health/staff-4.webp" alt="Dr. Rachel Williams" class="img-fluid"></div>
                 <div class="doctor-content">
                   <h4>Dr. Rachel Williams</h4>
-                  <span class="specialty">Geriatric Care</span>
-                  <p>Delivering family-centered support for older patients and their caregivers.</p>
+                  <span class="specialty">{{ i18n.t('site.doctors.d3.specialty') }}</span>
+                  <p>{{ i18n.t('site.doctors.d3.text') }}</p>
                 </div>
               </div>
             </div>
@@ -284,8 +288,8 @@ export class ServicesPageComponent {}
                 <div class="doctor-image"><img src="assets/img/health/staff-8.webp" alt="Dr. David Chen" class="img-fluid"></div>
                 <div class="doctor-content">
                   <h4>Dr. David Chen</h4>
-                  <span class="specialty">Memory Clinic Lead</span>
-                  <p>Specialized in reviewing borderline results and coordinating further evaluation when needed.</p>
+                  <span class="specialty">{{ i18n.t('site.doctors.d4.specialty') }}</span>
+                  <p>{{ i18n.t('site.doctors.d4.text') }}</p>
                 </div>
               </div>
             </div>
@@ -295,7 +299,9 @@ export class ServicesPageComponent {}
     </main>
   `
 })
-export class DoctorsPageComponent {}
+export class DoctorsPageComponent {
+  protected readonly i18n = inject(I18nService);
+}
 
 @Component({
   standalone: true,
@@ -304,15 +310,15 @@ export class DoctorsPageComponent {}
     <main class="main">
       <section class="section">
         <div class="container section-title" data-aos="fade-up">
-          <h2>Contact</h2>
-          <p>Questions about the platform, a patient's account, or a partnership? Reach out.</p>
+          <h2>{{ i18n.t('site.contact.title') }}</h2>
+          <p>{{ i18n.t('site.contact.subtitle') }}</p>
         </div>
         <div class="container" data-aos="fade-up" data-aos-delay="100">
           <div class="row g-5">
             <div class="col-lg-5">
               <div class="p-4 bg-white rounded-4 shadow-sm h-100">
-                <h4>Get In Touch</h4>
-                <p>Reach our team for account support, care-team enquiries, or partnership questions.</p>
+                <h4>{{ i18n.t('site.contact.getInTouch') }}</h4>
+                <p>{{ i18n.t('site.contact.getInTouchText') }}</p>
                 <div class="mt-4">
                   <p><i class="bi bi-geo-alt text-primary me-2"></i> 123 Wellness Avenue, Care District, NY 10012</p>
                   <p><i class="bi bi-telephone text-primary me-2"></i> +1 (555) 987-6543</p>
@@ -323,11 +329,11 @@ export class DoctorsPageComponent {}
             <div class="col-lg-7">
               <div class="p-4 bg-white rounded-4 shadow-sm">
                 <div class="row g-3">
-                  <div class="col-md-6"><input class="form-control" placeholder="Your name"></div>
-                  <div class="col-md-6"><input class="form-control" placeholder="Email address"></div>
-                  <div class="col-12"><input class="form-control" placeholder="Subject"></div>
-                  <div class="col-12"><textarea class="form-control" rows="6" placeholder="How can we help?"></textarea></div>
-                  <div class="col-12"><button class="btn btn-primary">Send Message</button></div>
+                  <div class="col-md-6"><input class="form-control" [placeholder]="i18n.t('site.contact.form.name')"></div>
+                  <div class="col-md-6"><input class="form-control" [placeholder]="i18n.t('site.contact.form.email')"></div>
+                  <div class="col-12"><input class="form-control" [placeholder]="i18n.t('site.contact.form.subject')"></div>
+                  <div class="col-12"><textarea class="form-control" rows="6" [placeholder]="i18n.t('site.contact.form.message')"></textarea></div>
+                  <div class="col-12"><button class="btn btn-primary">{{ i18n.t('site.contact.form.send') }}</button></div>
                 </div>
               </div>
             </div>
@@ -337,7 +343,9 @@ export class DoctorsPageComponent {}
     </main>
   `
 })
-export class ContactPageComponent {}
+export class ContactPageComponent {
+  protected readonly i18n = inject(I18nService);
+}
 
 @Component({
   standalone: true,
@@ -551,30 +559,30 @@ export class ContactPageComponent {}
         <div>
           <h2>NeuroAssist</h2>
           <p>
-            Welcome to the secure administrative and clinical platform for early Alzheimer's detection and ongoing cognitive tracking.
+            {{ i18n.t('site.signIn.brand.text') }}
           </p>
         </div>
-        
+
         <div class="auth-brand-features">
           <div class="feature-item">
             <div class="feature-icon"><i class="bi bi-shield-lock"></i></div>
-            <span>Secure Medical Environment</span>
+            <span>{{ i18n.t('site.signIn.feature1') }}</span>
           </div>
           <div class="feature-item">
             <div class="feature-icon"><i class="bi bi-graph-up-arrow"></i></div>
-            <span>Real-time Patient Monitoring</span>
+            <span>{{ i18n.t('site.signIn.feature2') }}</span>
           </div>
           <div class="feature-item">
             <div class="feature-icon"><i class="bi bi-people"></i></div>
-            <span>Seamless Doctor-Patient Coordination</span>
+            <span>{{ i18n.t('site.signIn.feature3') }}</span>
           </div>
         </div>
       </div>
 
       <div class="auth-form-container">
-        <h3>Sign In</h3>
+        <h3>{{ i18n.t('site.signIn.title') }}</h3>
         <p class="subtitle">
-          Enter your credentials to access your secure portal.
+          {{ i18n.t('site.signIn.subtitle') }}
         </p>
 
         @if (errorMessage()) {
@@ -585,11 +593,11 @@ export class ContactPageComponent {}
         }
 
         <div class="form-group">
-          <label>Email Address</label>
+          <label>{{ i18n.t('site.signIn.email') }}</label>
           <input
             class="form-control"
             type="email"
-            placeholder="name@example.com"
+            [placeholder]="i18n.t('site.signIn.emailPlaceholder')"
             [value]="email()"
             (input)="email.set($any($event.target).value)"
             (keyup.enter)="login()"
@@ -597,7 +605,7 @@ export class ContactPageComponent {}
         </div>
 
         <div class="form-group">
-          <label>Password</label>
+          <label>{{ i18n.t('site.signIn.password') }}</label>
           <input
             class="form-control"
             type="password"
@@ -612,25 +620,25 @@ export class ContactPageComponent {}
           <div class="form-check">
             <input class="form-check-input" type="checkbox" id="remember">
             <label class="form-check-label" for="remember">
-              Remember me
+              {{ i18n.t('site.signIn.rememberMe') }}
             </label>
           </div>
-          <a href="#">Forgot password?</a>
+          <a href="#">{{ i18n.t('site.signIn.forgotPassword') }}</a>
         </div>
 
         <button
           class="btn-submit"
           (click)="login()"
           [disabled]="loading()">
-          {{ loading() ? 'Signing In...' : 'Sign In' }}
+          {{ loading() ? i18n.t('site.signIn.submitting') : i18n.t('site.signIn.submit') }}
         </button>
 
         <p class="signup-prompt">
-          Don't have an account? <a routerLink="/register">Create one</a>
+          {{ i18n.t('site.signIn.noAccount') }} <a routerLink="/register">{{ i18n.t('site.signIn.createOne') }}</a>
         </p>
 
         <a routerLink="/" class="back-to-home">
-          ← Back to homepage
+          {{ i18n.t('site.signIn.backHome') }}
         </a>
       </div>
     </div>
@@ -638,6 +646,8 @@ export class ContactPageComponent {}
   `
 })
 export class SignInPageComponent {
+
+  protected readonly i18n = inject(I18nService);
 
   email    = signal('');
   password = signal('');
@@ -651,7 +661,7 @@ export class SignInPageComponent {
 
   login(): void {
     if (!this.email() || !this.password()) {
-      this.errorMessage.set('Please fill in all fields');
+      this.errorMessage.set(this.i18n.t('site.signIn.error.emptyFields'));
       return;
     }
 
@@ -675,9 +685,9 @@ export class SignInPageComponent {
       error: (err) => {
         this.loading.set(false);
         if (err.status === 0) {
-          this.errorMessage.set('Server is unreachable');
+          this.errorMessage.set(this.i18n.t('site.signIn.error.serverUnreachable'));
         } else {
-          this.errorMessage.set(err.error?.message || 'Invalid email or password');
+          this.errorMessage.set(err.error?.message || this.i18n.t('site.signIn.error.invalidCredentials'));
         }
       }
     });

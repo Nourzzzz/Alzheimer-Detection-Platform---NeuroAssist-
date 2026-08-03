@@ -2,6 +2,7 @@ import { Component, OnInit, ViewEncapsulation, computed, inject, signal } from '
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../../services/auth';
 import { AdminService } from '../../../services/admin';
+import { I18nService } from '../../../services/i18n';
 import { DoctorAdmin, PatientAdmin } from '../../../models/admin.model';
 
 @Component({
@@ -14,6 +15,7 @@ import { DoctorAdmin, PatientAdmin } from '../../../models/admin.model';
 })
 export class AdminDashboardPageComponent implements OnInit {
   protected readonly auth = inject(AuthService);
+  protected readonly i18n = inject(I18nService);
   private readonly adminService = inject(AdminService);
   private readonly router = inject(Router);
 

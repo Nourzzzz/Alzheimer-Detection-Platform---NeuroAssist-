@@ -29,6 +29,11 @@ public class AssessmentDetailDto {
     private String generatedReport;
     private String editedReport;
 
+    private String patientGuidance;
+    private String editedGuidance;
+    private List<AIAssessment.Revision> revisions;
+    private int revisionsRemaining;
+
     private String validationStatus;
     private String correctedStage;
     private String doctorComment;

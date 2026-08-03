@@ -37,7 +37,8 @@ public class MriService {
     private final ClinicalRecordRepository clinicalRecordRepository;
     private final com.alzheimer.diagnosis_service.Client.QuestionnaireServiceClient questionnaireServiceClient;
 
-    public AIAssessment uploadAndAnalyze(String patientEmail, String doctorEmail, MultipartFile file, String clinicalNote) {
+    public AIAssessment uploadAndAnalyze(String patientEmail, String doctorEmail, MultipartFile file,
+                                        String clinicalNote, String lang) {
         boolean missingClinicalRecord = !clinicalRecordRepository.existsByPatientEmail(patientEmail);
         boolean missingCognitiveQuestionnaire = isCognitiveQuestionnaireMissing(patientEmail);
         if (missingClinicalRecord || missingCognitiveQuestionnaire) {
@@ -96,7 +97,7 @@ public class MriService {
                 .build();
         assessment = aiAssessmentRepository.save(assessment);
 
-        return assessmentPipelineService.runPostCnnPipeline(assessment, clinicalNote);
+        return assessmentPipelineService.runPostCnnPipeline(assessment, clinicalNote, lang);
     }
 
     private boolean isCognitiveQuestionnaireMissing(String patientEmail) {
@@ -117,11 +118,11 @@ public class MriService {
                 .toList();
     }
 
-    public List<PatientAssessmentView> patientResults(String patientEmail) {
+    public List<PatientAssessmentView> patientResults(String patientEmail, String lang) {
         return aiAssessmentRepository
                 .findByPatientEmailAndValidationStatusInOrderByCreatedAtDesc(patientEmail, PATIENT_VISIBLE_STATUSES)
                 .stream()
-                .map(this::toPatientView)
+                .map(a -> toPatientView(a, lang))
                 .toList();
     }
 
@@ -172,34 +173,24 @@ public class MriService {
                 .build();
     }
 
-    public PatientAssessmentView toPatientView(AIAssessment a) {
+    public PatientAssessmentView toPatientView(AIAssessment a, String lang) {
         boolean reviewed = PATIENT_VISIBLE_STATUSES.contains(a.getValidationStatus());
         String finalStage = null;
-        String report = null;
+        AIAssessment.ResolvedGuidance guidance = null;
         if (reviewed && a.getValidationStatus() != ValidationStatus.REJECTED) {
             finalStage = a.getCorrectedStage() != null ? a.getCorrectedStage() : a.getStage();
-            report = a.getEditedReport() != null ? a.getEditedReport() : a.getGeneratedReport();
+            guidance = a.resolveGuidance(lang);
         }
         return PatientAssessmentView.builder()
                 .id(a.getId())
                 .validationStatus(a.getValidationStatus().name())
-                .message(patientMessage(a.getValidationStatus()))
                 .finalStage(finalStage)
                 .doctorComment(reviewed ? a.getDoctorComment() : null)
-                .report(report)
+                .guidance(guidance == null ? null : guidance.text())
+                .guidanceLang(guidance == null ? null : guidance.lang())
                 .hasGradCam(reviewed && a.getGradCamImagePath() != null)
                 .createdAt(a.getCreatedAt())
                 .validatedAt(a.getValidatedAt())
                 .build();
-    }
-
-    private String patientMessage(ValidationStatus status) {
-        return switch (status) {
-            case NOT_READY, PENDING_VALIDATION ->
-                    "Your MRI has been analyzed and is awaiting validation by your doctor.";
-            case VALIDATED -> "Your result has been validated by your doctor.";
-            case CORRECTED -> "Your result has been reviewed and adjusted by your doctor.";
-            case REJECTED -> "Your doctor reviewed this scan and did not validate the AI assessment.";
-        };
     }
 }

@@ -9,22 +9,21 @@
               <div class="auth-brand">
                 <h2>NeuroAssist</h2>
                 <p class="mt-3">
-                  Create your patient account to take the cognitive assessment
-                  and track your results over time.
+                  {{ i18n.t('patient.register.brandText') }}
                 </p>
                 <div class="mt-4">
-                  <p><i class="bi bi-shield-lock me-2"></i> Secure space</p>
-                  <p><i class="bi bi-graph-up-arrow me-2"></i> Real-time tracking</p>
-                  <p><i class="bi bi-people me-2"></i> Doctors and patients</p>
+                  <p><i class="bi bi-shield-lock me-2"></i> {{ i18n.t('patient.register.feature.secure') }}</p>
+                  <p><i class="bi bi-graph-up-arrow me-2"></i> {{ i18n.t('patient.register.feature.tracking') }}</p>
+                  <p><i class="bi bi-people me-2"></i> {{ i18n.t('patient.register.feature.community') }}</p>
                 </div>
               </div>
             </div>
 
             <div class="col-lg-7">
               <div class="auth-form">
-                <h3>Create Account</h3>
+                <h3>{{ i18n.t('patient.register.title') }}</h3>
                 <p class="text-muted">
-                  Fill in your details to get started.
+                  {{ i18n.t('patient.register.subtitle') }}
                 </p>
 
                 @if (errorMessage()) {
@@ -34,66 +33,66 @@
                 <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
                   <div class="row g-3 mt-1">
                     <div class="col-md-6">
-                      <label class="form-label" for="prenom">First Name</label>
+                      <label class="form-label" for="prenom">{{ i18n.t('patient.register.firstName') }}</label>
                       <input id="prenom" type="text" class="form-control" formControlName="prenom">
                       @if (form.controls.prenom.invalid && form.controls.prenom.touched) {
-                        <small class="field-error">First name is required (minimum 2 characters).</small>
+                        <small class="field-error">{{ i18n.t('patient.register.firstName.error') }}</small>
                       }
                     </div>
                     <div class="col-md-6">
-                      <label class="form-label" for="nom">Last Name</label>
+                      <label class="form-label" for="nom">{{ i18n.t('patient.register.lastName') }}</label>
                       <input id="nom" type="text" class="form-control" formControlName="nom">
                       @if (form.controls.nom.invalid && form.controls.nom.touched) {
-                        <small class="field-error">Last name is required (minimum 2 characters).</small>
+                        <small class="field-error">{{ i18n.t('patient.register.lastName.error') }}</small>
                       }
                     </div>
 
                     <div class="col-md-6">
-                      <label class="form-label" for="email">Email</label>
+                      <label class="form-label" for="email">{{ i18n.t('patient.register.email') }}</label>
                       <input id="email" type="email" class="form-control" formControlName="email">
                       @if (form.controls.email.invalid && form.controls.email.touched) {
-                        <small class="field-error">A valid email address is required.</small>
+                        <small class="field-error">{{ i18n.t('patient.register.email.error') }}</small>
                       }
                     </div>
                     <div class="col-md-6">
-                      <label class="form-label" for="password">Password</label>
+                      <label class="form-label" for="password">{{ i18n.t('patient.register.password') }}</label>
                       <input id="password" type="password" class="form-control" formControlName="password">
                       @if (form.controls.password.invalid && form.controls.password.touched) {
-                        <small class="field-error">Password must be at least 8 characters long.</small>
+                        <small class="field-error">{{ i18n.t('patient.register.password.error') }}</small>
                       }
                     </div>
 
                     <div class="col-md-6">
-                      <label class="form-label" for="telephone">Phone</label>
+                      <label class="form-label" for="telephone">{{ i18n.t('patient.register.phone') }}</label>
                       <input id="telephone" type="tel" class="form-control" formControlName="telephone">
                       @if (form.controls.telephone.invalid && form.controls.telephone.touched) {
-                        <small class="field-error">Phone number is required.</small>
+                        <small class="field-error">{{ i18n.t('patient.register.phone.error') }}</small>
                       }
                     </div>
                     <div class="col-md-6">
-                      <label class="form-label" for="dateNaissance">Date of Birth</label>
+                      <label class="form-label" for="dateNaissance">{{ i18n.t('patient.register.birthDate') }}</label>
                       <input id="dateNaissance" type="date" class="form-control" formControlName="dateNaissance">
                       @if (form.controls.dateNaissance.invalid && form.controls.dateNaissance.touched) {
-                        <small class="field-error">Date of birth is required.</small>
+                        <small class="field-error">{{ i18n.t('patient.register.birthDate.error') }}</small>
                       }
                     </div>
 
                     <div class="col-md-6">
-                      <label class="form-label" for="genre">Gender</label>
+                      <label class="form-label" for="genre">{{ i18n.t('patient.register.gender') }}</label>
                       <select id="genre" class="form-select" formControlName="genre">
-                        <option value="" disabled>Select...</option>
-                        <option value="Female">Female</option>
-                        <option value="Male">Male</option>
-                        <option value="Other">Other</option>
+                        <option value="" disabled>{{ i18n.t('patient.register.gender.select') }}</option>
+                        <option value="Female">{{ i18n.t('patient.register.gender.female') }}</option>
+                        <option value="Male">{{ i18n.t('patient.register.gender.male') }}</option>
+                        <option value="Other">{{ i18n.t('patient.register.gender.other') }}</option>
                       </select>
                       @if (form.controls.genre.invalid && form.controls.genre.touched) {
-                        <small class="field-error">Please select a gender.</small>
+                        <small class="field-error">{{ i18n.t('patient.register.gender.error') }}</small>
                       }
                     </div>
                     <div class="col-md-6">
-                      <label class="form-label" for="referringDoctorEmail">Referring Doctor <span class="optional-tag">Optional</span></label>
+                      <label class="form-label" for="referringDoctorEmail">{{ i18n.t('patient.register.doctor') }} <span class="optional-tag">{{ i18n.t('common.optional') }}</span></label>
                       <select id="referringDoctorEmail" class="form-select" formControlName="referringDoctorEmail">
-                        <option value="">— No doctor —</option>
+                        <option value="">{{ i18n.t('patient.register.doctor.none') }}</option>
                         @for (doctor of doctors(); track doctor.email) {
                           <option [value]="doctor.email">{{ doctor.prenom }} {{ doctor.nom }} @if (doctor.specialite) { ({{ doctor.specialite }}) }</option>
                         }
@@ -105,13 +104,13 @@
                         class="btn btn-primary w-100 py-3"
                         type="submit"
                         [disabled]="submitting()">
-                        {{ submitting() ? 'Creating account...' : 'Create Account' }}
+                        {{ submitting() ? i18n.t('patient.register.submitting') : i18n.t('patient.register.submit') }}
                       </button>
                     </div>
 
                     <div class="col-12 text-center">
                       <a routerLink="/sign-in" class="text-muted">
-                        Already have an account? Sign in
+                        {{ i18n.t('patient.register.haveAccount') }}
                       </a>
                     </div>
                   </div>

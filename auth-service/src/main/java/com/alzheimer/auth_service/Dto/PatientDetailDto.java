@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Data
@@ -20,7 +21,12 @@ public class PatientDetailDto {
     private String telephone;
     private String adresse;
     private String genre;
-    private LocalDateTime dateNaissance;
+    /**
+     * A date of birth, not a timestamp. It must serialise the same way
+     * {@code UpdatePatientRequest} expects to read it, otherwise the value this
+     * endpoint returns cannot be sent back to it.
+     */
+    private LocalDate dateNaissance;
     private String groupeSanguin;
     private String antecedentsMedicaux;
     private String referringDoctorEmail;

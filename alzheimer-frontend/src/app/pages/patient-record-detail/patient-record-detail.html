@@ -5,7 +5,7 @@
   <header class="admin-topbar">
     <button class="topbar-toggle"><i class="bi bi-list"></i></button>
     <div class="topbar-workspace">
-      <span class="workspace-label">Workspace</span>
+      <span class="workspace-label">{{ i18n.t('medecin.topbar.workspace') }}</span>
       <span class="workspace-name">Alzheimer Platform</span>
     </div>
   </header>
@@ -13,27 +13,27 @@
   <main class="admin-main">
 
     @if (loading()) {
-      <p class="text-muted mb-0" style="font-size:0.86rem;">Loading...</p>
+      <p class="text-muted mb-0" style="font-size:0.86rem;">{{ i18n.t('common.loading') }}</p>
     } @else if (patient(); as p) {
 
       <div class="d-flex justify-content-between align-items-start flex-wrap gap-3 mb-4">
         <div class="page-header">
-          <span class="page-section-label">Patient Record</span>
+          <span class="page-section-label">{{ i18n.t('medecin.record.eyebrow') }}</span>
           <h2 class="dashboard-title">{{ p.prenom }} {{ p.nom }}</h2>
           <p class="page-subtitle">
             {{ p.email }}
             @if (p.status === 'ARCHIVED') {
-              <span class="badge badge-info" style="margin-left:0.5rem;">Archived</span>
+              <span class="badge badge-info" style="margin-left:0.5rem;">{{ i18n.t('medecin.record.archived') }}</span>
             }
           </p>
         </div>
         <div class="page-actions">
           <a class="btn-primary" [routerLink]="['/patients', p.email, 'mri-upload']">
-            <i class="bi bi-file-earmark-medical-fill"></i> Upload MRI
+            <i class="bi bi-file-earmark-medical-fill"></i> {{ i18n.t('medecin.action.uploadMri') }}
           </a>
           <button class="btn-secondary" [disabled]="archiving()" (click)="toggleArchive()">
-            @if (p.status === 'ARCHIVED') { <span><i class="bi bi-box-arrow-up"></i> Unarchive</span> }
-            @else { <span><i class="bi bi-archive"></i> Archive</span> }
+            @if (p.status === 'ARCHIVED') { <span><i class="bi bi-box-arrow-up"></i> {{ i18n.t('medecin.record.unarchive') }}</span> }
+            @else { <span><i class="bi bi-archive"></i> {{ i18n.t('medecin.record.archive') }}</span> }
           </button>
         </div>
       </div>
@@ -43,22 +43,23 @@
           <div class="card">
             <div class="card-header-row">
               <div>
-                <span class="card-label">Profile</span>
-                <h4 class="card-title">Patient Information</h4>
+                <span class="card-label">{{ i18n.t('medecin.record.profile.eyebrow') }}</span>
+                <h4 class="card-title">{{ i18n.t('medecin.record.profile.title') }}</h4>
               </div>
               @if (!editing()) {
-                <button class="btn-secondary" (click)="startEdit()"><i class="bi bi-pencil"></i> Edit</button>
+                <button class="btn-secondary" (click)="startEdit()"><i class="bi bi-pencil"></i> {{ i18n.t('medecin.record.edit') }}</button>
               }
             </div>
 
             @if (!editing()) {
               <div class="row g-3">
-                <div class="col-6"><div class="mini-stat"><small>Phone</small><strong>{{ p.telephone || '—' }}</strong></div></div>
-                <div class="col-6"><div class="mini-stat"><small>Gender</small><strong>{{ p.genre || '—' }}</strong></div></div>
-                <div class="col-6"><div class="mini-stat"><small>Blood type</small><strong>{{ p.groupeSanguin || '—' }}</strong></div></div>
-                <div class="col-6"><div class="mini-stat"><small>Registered</small><strong>{{ p.createdAt | date:'MM/dd/yyyy' }}</strong></div></div>
-                <div class="col-12"><div class="mini-stat"><small>Address</small><strong>{{ p.adresse || '—' }}</strong></div></div>
-                <div class="col-12"><div class="mini-stat"><small>Medical history</small><strong>{{ p.antecedentsMedicaux || '—' }}</strong></div></div>
+                <div class="col-6"><div class="mini-stat"><small>{{ i18n.t('medecin.field.phone') }}</small><strong>{{ p.telephone || '—' }}</strong></div></div>
+                <div class="col-6"><div class="mini-stat"><small>{{ i18n.t('medecin.table.gender') }}</small><strong>{{ p.genre || '—' }}</strong></div></div>
+                <div class="col-6"><div class="mini-stat"><small>{{ i18n.t('medecin.field.birthDate') }}</small><strong>{{ p.dateNaissance ? (p.dateNaissance | date:'MM/dd/yyyy') : '—' }}</strong></div></div>
+                <div class="col-6"><div class="mini-stat"><small>{{ i18n.t('medecin.field.bloodType') }}</small><strong>{{ p.groupeSanguin || '—' }}</strong></div></div>
+                <div class="col-6"><div class="mini-stat"><small>{{ i18n.t('medecin.field.registered') }}</small><strong>{{ p.createdAt | date:'MM/dd/yyyy' }}</strong></div></div>
+                <div class="col-6"><div class="mini-stat"><small>{{ i18n.t('medecin.field.address') }}</small><strong>{{ p.adresse || '—' }}</strong></div></div>
+                <div class="col-12"><div class="mini-stat"><small>{{ i18n.t('medecin.clinical.medicalHistory') }}</small><strong>{{ p.antecedentsMedicaux || '—' }}</strong></div></div>
               </div>
             } @else {
               @if (saveError()) {
@@ -66,41 +67,58 @@
               }
               <div class="row g-3">
                 <div class="col-6">
-                  <input type="text" placeholder="First name" [value]="editForm().prenom"
+                  <input type="text" [placeholder]="i18n.t('medecin.field.firstName')" [value]="editForm().prenom"
                          (input)="updateField('prenom', $any($event.target).value)"
                          style="width:100%; padding:0.55rem 0.8rem; border:1px solid var(--border-color); border-radius:8px;">
                 </div>
                 <div class="col-6">
-                  <input type="text" placeholder="Last name" [value]="editForm().nom"
+                  <input type="text" [placeholder]="i18n.t('medecin.field.lastName')" [value]="editForm().nom"
                          (input)="updateField('nom', $any($event.target).value)"
                          style="width:100%; padding:0.55rem 0.8rem; border:1px solid var(--border-color); border-radius:8px;">
                 </div>
                 <div class="col-6">
-                  <input type="text" placeholder="Phone" [value]="editForm().telephone ?? ''"
+                  <input type="text" [placeholder]="i18n.t('medecin.field.phone')" [value]="editForm().telephone ?? ''"
                          (input)="updateField('telephone', $any($event.target).value)"
                          style="width:100%; padding:0.55rem 0.8rem; border:1px solid var(--border-color); border-radius:8px;">
                 </div>
                 <div class="col-6">
-                  <input type="text" placeholder="Blood type" [value]="editForm().groupeSanguin ?? ''"
+                  <input type="text" [placeholder]="i18n.t('medecin.field.bloodType')" [value]="editForm().groupeSanguin ?? ''"
                          (input)="updateField('groupeSanguin', $any($event.target).value)"
                          style="width:100%; padding:0.55rem 0.8rem; border:1px solid var(--border-color); border-radius:8px;">
                 </div>
+                <div class="col-6">
+                  <label class="edit-label" for="edit-birth">{{ i18n.t('medecin.field.birthDate') }}</label>
+                  <input id="edit-birth" type="date" [value]="editForm().dateNaissance ?? ''"
+                         (input)="updateField('dateNaissance', $any($event.target).value)"
+                         style="width:100%; padding:0.55rem 0.8rem; border:1px solid var(--border-color); border-radius:8px;">
+                </div>
+                <div class="col-6">
+                  <label class="edit-label" for="edit-gender">{{ i18n.t('medecin.table.gender') }}</label>
+                  <select id="edit-gender" [value]="editForm().genre ?? ''"
+                          (change)="updateField('genre', $any($event.target).value)"
+                          style="width:100%; padding:0.55rem 0.8rem; border:1px solid var(--border-color); border-radius:8px;">
+                    <option value="">{{ i18n.t('patient.register.gender.select') }}</option>
+                    <option value="Female">{{ i18n.t('patient.register.gender.female') }}</option>
+                    <option value="Male">{{ i18n.t('patient.register.gender.male') }}</option>
+                    <option value="Other">{{ i18n.t('patient.register.gender.other') }}</option>
+                  </select>
+                </div>
                 <div class="col-12">
-                  <input type="text" placeholder="Address" [value]="editForm().adresse ?? ''"
+                  <input type="text" [placeholder]="i18n.t('medecin.field.address')" [value]="editForm().adresse ?? ''"
                          (input)="updateField('adresse', $any($event.target).value)"
                          style="width:100%; padding:0.55rem 0.8rem; border:1px solid var(--border-color); border-radius:8px;">
                 </div>
                 <div class="col-12">
-                  <textarea placeholder="Medical history" rows="3" [value]="editForm().antecedentsMedicaux ?? ''"
+                  <textarea [placeholder]="i18n.t('medecin.clinical.medicalHistory')" rows="3" [value]="editForm().antecedentsMedicaux ?? ''"
                             (input)="updateField('antecedentsMedicaux', $any($event.target).value)"
                             style="width:100%; padding:0.55rem 0.8rem; border:1px solid var(--border-color); border-radius:8px;"></textarea>
                 </div>
               </div>
               <div class="mt-3 d-flex gap-2">
                 <button class="btn-primary" [disabled]="saving()" (click)="saveEdit()">
-                  @if (saving()) { <span>Saving...</span> } @else { <span>Save</span> }
+                  @if (saving()) { <span>{{ i18n.t('common.saving') }}</span> } @else { <span>{{ i18n.t('common.save') }}</span> }
                 </button>
-                <button class="btn-secondary" (click)="editing.set(false)">Cancel</button>
+                <button class="btn-secondary" (click)="editing.set(false)">{{ i18n.t('common.cancel') }}</button>
               </div>
             }
           </div>
@@ -110,23 +128,23 @@
           <div class="card">
             <div class="card-header-row">
               <div>
-                <span class="card-label">Imaging</span>
-                <h4 class="card-title">MRI / AI Assessment History</h4>
+                <span class="card-label">{{ i18n.t('medecin.record.imaging.eyebrow') }}</span>
+                <h4 class="card-title">{{ i18n.t('medecin.record.imaging.title') }}</h4>
               </div>
             </div>
 
             @if (history().length === 0) {
-              <p class="text-muted mb-0" style="font-size:0.86rem;">No MRI assessment yet for this patient.</p>
+              <p class="text-muted mb-0" style="font-size:0.86rem;">{{ i18n.t('medecin.record.imaging.empty') }}</p>
             } @else {
               <div class="table-responsive">
                 <table class="admin-table">
                   <thead>
                     <tr>
-                      <th>Date</th>
-                      <th>Stage</th>
-                      <th>Confidence</th>
-                      <th>Risk score</th>
-                      <th>Status</th>
+                      <th>{{ i18n.t('medecin.table.date') }}</th>
+                      <th>{{ i18n.t('medecin.table.stage') }}</th>
+                      <th>{{ i18n.t('medecin.queue.col.confidence') }}</th>
+                      <th>{{ i18n.t('review.riskScore') }}</th>
+                      <th>{{ i18n.t('review.status') }}</th>
                     </tr>
                   </thead>
                   <tbody>

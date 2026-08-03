@@ -2,7 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { API_BASE_URL } from './api-config';
-import { CognitiveLatestSummary, CognitiveTurn } from '../models/cognitive.model';
+import { CognitiveCompletionStatus, CognitiveLatestSummary, CognitiveTurn } from '../models/cognitive.model';
 
 @Injectable({ providedIn: 'root' })
 export class CognitiveQuestionnaireService {
@@ -18,8 +18,8 @@ export class CognitiveQuestionnaireService {
     return this.http.post<CognitiveTurn>(`${this.patientUrl}/${sessionId}/answer`, { answer });
   }
 
-  latestForMe(): Observable<CognitiveLatestSummary> {
-    return this.http.get<CognitiveLatestSummary>(`${this.patientUrl}/latest`);
+  latestForMe(): Observable<CognitiveCompletionStatus> {
+    return this.http.get<CognitiveCompletionStatus>(`${this.patientUrl}/latest`);
   }
 
   latestForPatient(email: string): Observable<CognitiveLatestSummary> {

@@ -16,9 +16,11 @@ export interface KnowledgeDocument {
   uploadedAt: string;
 }
 
-export const KNOWLEDGE_CATEGORIES: { value: KnowledgeCategory; label: string }[] = [
-  { value: 'GUIDELINE', label: 'Clinical guideline' },
-  { value: 'RESEARCH_PAPER', label: 'Research paper' },
-  { value: 'PROTOCOL', label: 'Protocol' },
-  { value: 'OTHER', label: 'Other' },
+// Carries a translation key rather than a literal, so the dropdown follows the
+// active language like the rest of the console.
+export const KNOWLEDGE_CATEGORIES: { value: KnowledgeCategory; labelKey: string }[] = [
+  { value: 'GUIDELINE', labelKey: 'medecin.kb.category.guideline' },
+  { value: 'RESEARCH_PAPER', labelKey: 'medecin.kb.category.research' },
+  { value: 'PROTOCOL', labelKey: 'medecin.kb.category.protocol' },
+  { value: 'OTHER', labelKey: 'medecin.kb.category.other' },
 ];

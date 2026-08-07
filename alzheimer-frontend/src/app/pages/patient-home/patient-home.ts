@@ -29,4 +29,5 @@ export class PatientHomePageComponent implements OnInit {
       error: () => this.loading.set(false)
     });
   }
+
 }

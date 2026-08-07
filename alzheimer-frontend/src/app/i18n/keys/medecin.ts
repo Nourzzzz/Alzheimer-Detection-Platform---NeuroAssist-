@@ -24,7 +24,6 @@ export const medecinFr: Record<string, string> = {
   'review.extraction.unavailable': 'Aucune extraction clinique disponible.',
   'review.rag.title': 'Contexte médical retrouvé (RAG)',
   'review.rag.none': 'Aucune connaissance indexée ne correspond à ce cas.',
-  'review.report.title': 'Rapport généré par IA',
   'review.report.none': 'Aucun rapport généré.',
   'review.revisions.show': "Afficher l'historique des révisions ({n})",
   'review.revisions.hide': "Masquer l'historique des révisions ({n})",
@@ -95,6 +94,24 @@ export const medecinFr: Record<string, string> = {
   'medecin.field.address': 'Adresse',
   'medecin.field.registered': 'Inscrit le',
   'medecin.field.birthDate': 'Date de naissance',
+
+  // ── Doctor: consultation timeline ──
+  'medecin.visits.eyebrow': 'Historique du dossier',
+  'medecin.visits.title': 'Suivi des consultations',
+  'medecin.visits.new': 'Nouvelle consultation',
+  'medecin.visits.empty':
+    "Aucune consultation enregistrée. Créez-en une pour documenter l'état clinique du patient — c'est ce texte que l'IA exploitera lors de la prochaine analyse.",
+  'medecin.visits.reason': 'Motif de la consultation',
+  'medecin.visits.reasonPlaceholder': 'Consultation de suivi, bilan mémoire…',
+  'medecin.visits.date': 'Date',
+  'medecin.visits.save': 'Enregistrer la consultation',
+  'medecin.visits.saveFailed': "L'enregistrement de la consultation a échoué.",
+  'medecin.visits.hint':
+    "L'analyse IA s'appuie sur la consultation la plus récente. Rédigez en anglais et en phrases complètes : c'est ce qui permet l'extraction des symptômes, traitements et antécédents.",
+  'medecin.visits.assessmentCount': '{n} analyse(s)',
+  'medecin.visits.unfiled': 'Analyses non rattachées',
+  'medecin.visits.unfiledHint':
+    'Analyses réalisées avant la mise en place du suivi par consultation.',
 
   // ── Doctor: clinical record form ──
   'medecin.clinical.eyebrow': 'Dossier clinique',
@@ -293,7 +310,6 @@ export const medecinEn: Record<string, string> = {
   'review.extraction.unavailable': 'No clinical extraction available.',
   'review.rag.title': 'Retrieved medical context (RAG)',
   'review.rag.none': 'No indexed medical knowledge matched this case.',
-  'review.report.title': 'AI-generated report',
   'review.report.none': 'No report generated.',
   'review.revisions.show': 'Show revision history ({n})',
   'review.revisions.hide': 'Hide revision history ({n})',
@@ -363,6 +379,24 @@ export const medecinEn: Record<string, string> = {
   'medecin.field.address': 'Address',
   'medecin.field.registered': 'Registered',
   'medecin.field.birthDate': 'Date of birth',
+
+  // ── Doctor: consultation timeline ──
+  'medecin.visits.eyebrow': 'File history',
+  'medecin.visits.title': 'Consultation history',
+  'medecin.visits.new': 'New consultation',
+  'medecin.visits.empty':
+    'No consultation recorded yet. Create one to document the clinical picture — this is the text the AI will use for the next assessment.',
+  'medecin.visits.reason': 'Reason for the visit',
+  'medecin.visits.reasonPlaceholder': 'Follow-up visit, memory assessment…',
+  'medecin.visits.date': 'Date',
+  'medecin.visits.save': 'Save consultation',
+  'medecin.visits.saveFailed': 'Saving the consultation failed.',
+  'medecin.visits.hint':
+    'The AI assessment uses the most recent consultation. Write in English and in full sentences: that is what makes symptom, treatment and history extraction work.',
+  'medecin.visits.assessmentCount': '{n} assessment(s)',
+  'medecin.visits.unfiled': 'Unfiled assessments',
+  'medecin.visits.unfiledHint':
+    'Assessments produced before the file was organised into consultations.',
 
   // ── Doctor: clinical record form ──
   'medecin.clinical.eyebrow': 'Clinical file',

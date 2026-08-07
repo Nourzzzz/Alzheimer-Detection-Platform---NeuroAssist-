@@ -3,8 +3,14 @@ import { DatePipe, DecimalPipe } from '@angular/common';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { PatientService } from '../../services/patient';
 import { MriService } from '../../services/mri';
+import { ConsultationService } from '../../services/consultation';
 import { PatientDetail, UpdatePatientRequest } from '../../models/patient.model';
 import { AiAssessment } from '../../models/mri.model';
+import {
+  Consultation,
+  ConsultationAssessment,
+  ConsultationRequest,
+} from '../../models/consultation.model';
 import { MedecinSidebarComponent } from '../../components/medecin-sidebar/medecin-sidebar';
 import { I18nService } from '../../services/i18n';
 
@@ -20,6 +26,7 @@ export class PatientRecordDetailPageComponent implements OnInit {
   private readonly route = inject(ActivatedRoute);
   private readonly patientService = inject(PatientService);
   private readonly mriService = inject(MriService);
+  private readonly consultationService = inject(ConsultationService);
   protected readonly i18n = inject(I18nService);
 
   protected readonly patientId = this.route.snapshot.paramMap.get('id') ?? '';
@@ -34,8 +41,69 @@ export class PatientRecordDetailPageComponent implements OnInit {
 
   protected readonly archiving = signal(false);
 
+  protected readonly visits = signal<Consultation[]>([]);
+  protected readonly unfiled = signal<ConsultationAssessment[]>([]);
+  protected readonly composingVisit = signal(false);
+  protected readonly savingVisit = signal(false);
+  protected readonly visitError = signal<string | null>(null);
+  protected readonly visitDate = signal('');
+  protected readonly visitForm = signal<ConsultationRequest>({ reason: '' });
+
   ngOnInit(): void {
     this.reload();
+  }
+
+  private loadVisits(email: string): void {
+    this.consultationService.timeline(email).subscribe({
+      next: (visits) => this.visits.set(visits),
+      error: () => {}
+    });
+    this.consultationService.unfiled(email).subscribe({
+      next: (list) => this.unfiled.set(list),
+      error: () => {}
+    });
+  }
+
+  protected startVisit(): void {
+    this.visitForm.set({ reason: '' });
+    this.visitDate.set(new Date().toISOString().slice(0, 10));
+    this.visitError.set(null);
+    this.composingVisit.set(true);
+  }
+
+  protected updateVisit(field: keyof ConsultationRequest, value: string): void {
+    this.visitForm.update((f) => ({ ...f, [field]: value }));
+  }
+
+  protected saveVisit(): void {
+    const patient = this.patient();
+    if (!patient) return;
+
+    const form = this.visitForm();
+    const blankToNull = (v: string | undefined) => (v && v.trim() ? v.trim() : undefined);
+    const day = this.visitDate();
+
+    this.savingVisit.set(true);
+    this.visitError.set(null);
+    this.consultationService.create(patient.email, {
+      reason: form.reason.trim(),
+      // The visit date carries no time of day; midnight keeps it a plain date.
+      occurredAt: day ? `${day}T00:00:00` : undefined,
+      symptoms: blankToNull(form.symptoms),
+      medicalHistory: blankToNull(form.medicalHistory),
+      treatments: blankToNull(form.treatments),
+      observations: blankToNull(form.observations)
+    }).subscribe({
+      next: () => {
+        this.savingVisit.set(false);
+        this.composingVisit.set(false);
+        this.loadVisits(patient.email);
+      },
+      error: (err) => {
+        this.savingVisit.set(false);
+        this.visitError.set(err?.error?.message ?? this.i18n.t('medecin.visits.saveFailed'));
+      }
+    });
   }
 
   private reload(): void {
@@ -48,6 +116,7 @@ export class PatientRecordDetailPageComponent implements OnInit {
           next: (history) => this.history.set(history),
           error: () => {}
         });
+        this.loadVisits(patient.email);
       },
       error: () => this.loading.set(false)
     });

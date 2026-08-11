@@ -31,6 +31,9 @@
           <a class="btn-primary" [routerLink]="['/patients', p.email, 'mri-upload']">
             <i class="bi bi-file-earmark-medical-fill"></i> {{ i18n.t('medecin.action.uploadMri') }}
           </a>
+          <a class="btn-secondary" [routerLink]="['/patients', patientId, 'gps']">
+            <i class="bi bi-geo-alt-fill"></i> {{ i18n.t('medecin.action.gps') }}
+          </a>
           <button class="btn-secondary" [disabled]="archiving()" (click)="toggleArchive()">
             @if (p.status === 'ARCHIVED') { <span><i class="bi bi-box-arrow-up"></i> {{ i18n.t('medecin.record.unarchive') }}</span> }
             @else { <span><i class="bi bi-archive"></i> {{ i18n.t('medecin.record.archive') }}</span> }
@@ -106,6 +109,30 @@
                 <div class="col-12">
                   <input type="text" [placeholder]="i18n.t('medecin.field.address')" [value]="editForm().adresse ?? ''"
                          (input)="updateField('adresse', $any($event.target).value)"
+                         style="width:100%; padding:0.55rem 0.8rem; border:1px solid var(--border-color); border-radius:8px;">
+                </div>
+                <div class="col-12">
+                  <p class="edit-section">{{ i18n.t('medecin.contact.title') }}</p>
+                  <p class="visit-hint" style="margin-top:0;">
+                    <i class="bi bi-info-circle"></i> {{ i18n.t('medecin.contact.hint') }}
+                  </p>
+                </div>
+                <div class="col-6">
+                  <label class="edit-label" for="edit-contact-name">{{ i18n.t('medecin.contact.name') }}</label>
+                  <input id="edit-contact-name" type="text" [value]="editForm().contactUrgenceNom ?? ''"
+                         (input)="updateField('contactUrgenceNom', $any($event.target).value)"
+                         style="width:100%; padding:0.55rem 0.8rem; border:1px solid var(--border-color); border-radius:8px;">
+                </div>
+                <div class="col-6">
+                  <label class="edit-label" for="edit-contact-link">{{ i18n.t('medecin.contact.relationship') }}</label>
+                  <input id="edit-contact-link" type="text" [value]="editForm().contactUrgenceLien ?? ''"
+                         (input)="updateField('contactUrgenceLien', $any($event.target).value)"
+                         style="width:100%; padding:0.55rem 0.8rem; border:1px solid var(--border-color); border-radius:8px;">
+                </div>
+                <div class="col-12">
+                  <label class="edit-label" for="edit-contact-mail">{{ i18n.t('medecin.contact.email') }}</label>
+                  <input id="edit-contact-mail" type="email" [value]="editForm().contactUrgenceEmail ?? ''"
+                         (input)="updateField('contactUrgenceEmail', $any($event.target).value)"
                          style="width:100%; padding:0.55rem 0.8rem; border:1px solid var(--border-color); border-radius:8px;">
                 </div>
                 <div class="col-12">

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Android refuses cleartext HTTP since API 28. The gateway is served over
+    plain HTTP in development, so an exception is needed - but scoped to the
+    development hosts only, rather than opening the whole app with
+    android:usesCleartextTraffic="true".
+
+    Every other destination keeps requiring HTTPS, which is what we want the
+    day this app talks to a deployed gateway.
+-->
+<network-security-config>
+    <domain-config cleartextTrafficPermitted="true">
+        <!-- Emulator alias for the host machine's loopback interface. -->
+        <domain includeSubdomains="false">10.0.2.2</domain>
+        <!-- The web view itself, when Capacitor serves over http. -->
+        <domain includeSubdomains="false">localhost</domain>
+        <!--
+            Physical device on the same network: add this machine's LAN address,
+            for example
+            <domain includeSubdomains="false">192.168.1.10</domain>
+        -->
+    </domain-config>
+</network-security-config>

@@ -1,0 +1,119 @@
+.mygps-map {
+  height: 400px;
+  margin-top: 1.25rem;
+  border-radius: 14px;
+  border: 1px solid #e2e8f0;
+  overflow: hidden;
+  z-index: 0;
+}
+
+.mygps-card {
+  background: #fff;
+  border-radius: 18px;
+  box-shadow: 0 10px 30px rgba(17, 35, 68, 0.07);
+  padding: 1.6rem 2rem;
+}
+
+.mygps-state {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1.1rem;
+}
+
+.mygps-state strong { display: block; color: #0f172a; font-size: 1rem; }
+
+.mygps-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #94a3b8;
+  flex-shrink: 0;
+}
+
+.mygps-state.is-on .mygps-dot {
+  background: #16a34a;
+  animation: mygps-pulse 1.6s ease-in-out infinite;
+}
+
+@keyframes mygps-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(22, 163, 74, 0.5); }
+  50% { box-shadow: 0 0 0 7px rgba(22, 163, 74, 0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mygps-state.is-on .mygps-dot { animation: none; }
+}
+
+.mygps-count { font-size: 0.8rem; color: #64748b; }
+
+.mygps-demo-toggle {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 1.1rem;
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: #334155;
+  cursor: pointer;
+}
+
+.mygps-demo-actions { display: flex; gap: 0.6rem; margin-top: 0.9rem; flex-wrap: wrap; }
+
+.mygps-stop {
+  padding: 0.75rem 1.5rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  background: #fff;
+  font-weight: 700;
+  color: #334155;
+  cursor: pointer;
+}
+
+.mygps-stop:disabled { opacity: 0.5; cursor: default; }
+
+.mygps-note,
+.mygps-notice {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.4rem;
+  margin: 1rem 0 0;
+  font-size: 0.8rem;
+  line-height: 1.5;
+  color: #64748b;
+}
+
+.mygps-notice {
+  margin: 0 0 1rem;
+  padding: 0.7rem 0.9rem;
+  border-radius: 10px;
+  background: #f1f5f9;
+}
+
+.mygps-result {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  margin-top: 1rem;
+  padding: 0.7rem 0.9rem;
+  border-radius: 10px;
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  color: #166534;
+  font-size: 0.86rem;
+}
+
+.mygps-result.is-outside { background: #fffbeb; border-color: #fde68a; color: #92400e; }
+.mygps-result.is-alert { background: #fef2f2; border-color: #fecaca; color: #991b1b; }
+.mygps-time { margin-left: auto; opacity: 0.75; font-variant-numeric: tabular-nums; }
+
+.mygps-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-top: 1.25rem;
+  color: #2563eb;
+  font-size: 0.9rem;
+  text-decoration: none;
+}

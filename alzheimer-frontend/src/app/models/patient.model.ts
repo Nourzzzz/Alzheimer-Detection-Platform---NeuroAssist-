@@ -22,6 +22,9 @@ export interface PatientDetail {
   dateNaissance?: string;
   groupeSanguin?: string;
   antecedentsMedicaux?: string;
+  contactUrgenceNom?: string;
+  contactUrgenceEmail?: string;
+  contactUrgenceLien?: string;
   referringDoctorEmail?: string;
   status: AccountStatus;
   createdAt: string;
@@ -49,4 +52,8 @@ export interface UpdatePatientRequest {
   dateNaissance?: string;
   groupeSanguin?: string;
   antecedentsMedicaux?: string;
+  /** Relative warned when the patient leaves their safe zone. */
+  contactUrgenceNom?: string;
+  contactUrgenceEmail?: string;
+  contactUrgenceLien?: string;
 }

@@ -1,0 +1,161 @@
+.gps-map {
+  height: 460px;
+  border-radius: 12px;
+  border: 1px solid var(--border-color);
+  overflow: hidden;
+  /* Leaflet panes sit at z-index 400+; without this they climb over the sidebar. */
+  z-index: 0;
+}
+
+/* The four facts a doctor checks first, above the fold and before the map. */
+.gps-strip {
+  display: flex;
+  align-items: center;
+  gap: 1.75rem;
+  flex-wrap: wrap;
+  margin-bottom: 1rem;
+  padding: 0.9rem 1.25rem;
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  background: var(--surface-color);
+}
+
+.gps-strip-item { display: flex; flex-direction: column; gap: 0.15rem; }
+
+.gps-strip-label {
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.gps-strip-item strong {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 1rem;
+  color: #166534;
+}
+
+.gps-strip-item.is-outside strong { color: #991b1b; }
+.gps-strip-item.is-empty strong,
+.gps-strip-muted { color: var(--text-muted) !important; font-weight: 600; }
+.gps-strip-item + .gps-strip-item strong { color: var(--heading-color); }
+.gps-strip-alert { color: #991b1b !important; }
+.gps-strip-action { margin-left: auto; }
+
+.gps-warning {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  margin-bottom: 1rem;
+  padding: 0.7rem 0.9rem;
+  border-radius: 10px;
+  background: #fffbeb;
+  border: 1px solid #fde68a;
+  color: #92400e;
+  font-size: 0.86rem;
+}
+
+.gps-warning a { color: #92400e; font-weight: 700; }
+
+.gps-legend {
+  display: flex;
+  gap: 1.25rem;
+  flex-wrap: wrap;
+  margin-top: 0.8rem;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+.gps-legend span { display: inline-flex; align-items: center; gap: 0.4rem; }
+
+.gps-swatch {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.gps-swatch.is-home { background: #0f4c81; }
+.gps-swatch.is-patient { background: #dc2626; }
+.gps-swatch.is-zone { background: rgba(15, 76, 129, 0.15); border: 1px solid #0f4c81; }
+
+.gps-matches {
+  list-style: none;
+  margin: 0.5rem 0 0;
+  padding: 0;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.gps-matches button {
+  display: block;
+  width: 100%;
+  padding: 0.5rem 0.7rem;
+  border: none;
+  background: none;
+  text-align: left;
+  font-size: 0.82rem;
+  color: var(--heading-color);
+  cursor: pointer;
+}
+
+.gps-matches button:hover { background: var(--surface-alt); }
+.gps-matches li + li button { border-top: 1px solid var(--border-color); }
+
+.gps-presets { display: flex; gap: 0.4rem; margin-top: 0.6rem; flex-wrap: wrap; }
+
+.gps-presets button {
+  padding: 0.25rem 0.7rem;
+  border: 1px solid var(--border-color);
+  border-radius: 999px;
+  background: var(--surface-color);
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  cursor: pointer;
+}
+
+.gps-presets button.is-active {
+  border-color: var(--accent-color);
+  background: var(--accent-tint);
+  color: var(--accent-color-dark);
+}
+
+.gps-selftest { margin-top: 1.1rem; padding-top: 0.9rem; border-top: 1px solid var(--border-color); }
+
+.gps-selftest-result {
+  margin: 0.7rem 0 0;
+  padding: 0.5rem 0.75rem;
+  border-radius: 8px;
+  background: #f0fdf4;
+  color: #166534;
+  font-size: 0.82rem;
+  line-height: 1.45;
+}
+
+.gps-selftest-result.is-outside { background: #fffbeb; color: #92400e; }
+.gps-selftest-result.is-alert { background: #fef2f2; color: #991b1b; }
+
+.gps-alert-list { max-height: 320px; overflow-y: auto; }
+
+.gps-facts { margin: 0; display: grid; grid-template-columns: auto 1fr; gap: 0.35rem 0.9rem; }
+.gps-facts dt { font-size: 0.75rem; font-weight: 700; color: var(--text-muted); }
+.gps-facts dd { margin: 0; font-size: 0.84rem; color: var(--heading-color); }
+
+.gps-alert {
+  padding: 0.7rem 0;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.gps-alert:last-child { border-bottom: none; }
+.gps-alert-head { display: flex; align-items: center; justify-content: space-between; gap: 0.75rem; }
+.gps-alert p { margin: 0.35rem 0 0; font-size: 0.85rem; color: var(--heading-color); }
+.gps-alert-meta { font-size: 0.76rem; color: var(--text-muted); }
+
+/* A long walk produces hundreds of fixes; cap the height instead of pushing the page down. */
+.gps-table { max-height: 420px; overflow-y: auto; }

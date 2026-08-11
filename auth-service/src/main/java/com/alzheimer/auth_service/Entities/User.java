@@ -38,6 +38,11 @@ public class User {
     private String antecedentsMedicaux;
     private String nomMedecinReferent;
 
+    /** Relative warned when the patient leaves their safe zone. */
+    private String contactUrgenceNom;
+    private String contactUrgenceEmail;
+    private String contactUrgenceLien;
+
     private String referringDoctorEmail;
 
     private AccountStatus status;

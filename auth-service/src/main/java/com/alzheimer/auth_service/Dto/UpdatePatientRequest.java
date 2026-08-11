@@ -2,6 +2,7 @@ package com.alzheimer.auth_service.Dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
@@ -26,4 +27,9 @@ public class UpdatePatientRequest {
 
     private String groupeSanguin;
     private String antecedentsMedicaux;
+
+    private String contactUrgenceNom;
+    @Email(message = "The emergency contact email is not valid")
+    private String contactUrgenceEmail;
+    private String contactUrgenceLien;
 }

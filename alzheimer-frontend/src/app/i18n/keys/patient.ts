@@ -13,6 +13,40 @@ export const patientFr: Record<string, string> = {
   'patient.status.text':
     "Vos réponses ont bien été transmises à votre médecin. Elles ne constituent pas un résultat : seul votre médecin peut les interpréter et vous les restituer.",
   'patient.status.action': 'Voir mes résultats validés',
+  'patient.gps.title': 'Suivi de sécurité',
+  'patient.gps.text':
+    'Partagez votre position pour que vos proches soient prévenus si vous vous éloignez de chez vous.',
+  'patient.gps.action': 'Ouvrir',
+
+  // ── Suivi GPS patient ──
+  'mygps.title': 'Suivi de sécurité',
+  'mygps.subtitle':
+    'Partagez votre position pour que votre proche soit prévenu si vous quittez votre zone habituelle.',
+  'mygps.noZone':
+    "Votre médecin n'a pas encore défini de zone de sécurité. Vos positions sont enregistrées, mais aucune sortie ne peut être détectée.",
+  'mygps.state.on': 'Suivi actif',
+  'mygps.state.off': 'Suivi arrêté',
+  'mygps.state.demo': 'Simulation en cours',
+  'mygps.sent': '{n} position(s) transmise(s)',
+  'mygps.start': 'Activer le suivi GPS',
+  'mygps.stop': 'Arrêter le suivi',
+  'mygps.note': "Votre position n'est transmise que tant que cette page reste ouverte.",
+  'mygps.demo.label': 'Mode démonstration',
+  'mygps.demo.start': 'Démarrer la simulation',
+  'mygps.demo.stop': 'Arrêter la simulation',
+  'mygps.demo.note':
+    "La simulation part de votre domicile et s'en éloigne progressivement. Elle emprunte exactement le même chemin serveur que le GPS réel.",
+  'mygps.error.unsupported': 'Votre navigateur ne permet pas la géolocalisation.',
+  'mygps.error.denied': "Vous avez refusé l'accès à votre position.",
+  'mygps.error.unavailable': 'Votre position est indisponible pour le moment.',
+  'mygps.error.noZone': 'Aucune zone de sécurité définie : la simulation ne peut pas démarrer.',
+  'mygps.error.send': "L'envoi de votre position a échoué.",
+  'mygps.msg.noZone':
+    "Position enregistrée. Votre médecin n'a pas encore défini de zone de sécurité.",
+  'mygps.msg.inside': 'Vous êtes dans votre zone habituelle.',
+  'mygps.msg.outsideAgain':
+    "Vous êtes hors de votre zone. Votre proche a déjà été prévenu il y a peu.",
+  'mygps.msg.alerted': "Vous êtes sorti(e) de votre zone : votre proche vient d'être prévenu.",
 
   // ── Patient results ──
   'results.title': 'Mes résultats',
@@ -145,6 +179,38 @@ export const patientEn: Record<string, string> = {
   'patient.status.text':
     'Your answers have been sent to your doctor. They are not a result: only your doctor can interpret them and share them with you.',
   'patient.status.action': 'View my reviewed results',
+  'patient.gps.title': 'Safety tracking',
+  'patient.gps.text': 'Share your position so your relative is warned if you move away from home.',
+  'patient.gps.action': 'Open',
+
+  // ── Patient GPS tracking ──
+  'mygps.title': 'Safety tracking',
+  'mygps.subtitle': 'Share your position so your relative is warned if you leave your usual area.',
+  'mygps.noZone':
+    'Your doctor has not defined a safe zone yet. Your positions are recorded, but no exit can be detected.',
+  'mygps.state.on': 'Tracking on',
+  'mygps.state.off': 'Tracking off',
+  'mygps.state.demo': 'Simulation running',
+  'mygps.sent': '{n} position(s) sent',
+  'mygps.start': 'Start GPS tracking',
+  'mygps.stop': 'Stop tracking',
+  'mygps.note': 'Your position is only sent while this page stays open.',
+  'mygps.demo.label': 'Demonstration mode',
+  'mygps.demo.start': 'Start simulation',
+  'mygps.demo.stop': 'Stop simulation',
+  'mygps.demo.note':
+    'The simulation starts from your home and moves away gradually. It uses exactly the same server path as the real GPS.',
+  'mygps.error.unsupported': 'Your browser does not support geolocation.',
+  'mygps.error.denied': 'You declined access to your position.',
+  'mygps.error.unavailable': 'Your position is unavailable right now.',
+  'mygps.error.noZone': 'No safe zone defined: the simulation cannot start.',
+  'mygps.error.send': 'Sending your position failed.',
+  'mygps.msg.noZone':
+    'Position recorded. Your doctor has not defined a safe zone yet.',
+  'mygps.msg.inside': 'You are inside your usual area.',
+  'mygps.msg.outsideAgain':
+    'You are outside your area. Your relative was already warned a moment ago.',
+  'mygps.msg.alerted': 'You have left your area: your relative has just been warned.',
 
   // ── Patient results ──
   'results.title': 'My results',

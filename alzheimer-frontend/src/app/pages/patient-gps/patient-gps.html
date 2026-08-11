@@ -1,0 +1,288 @@
+<div class="admin-shell">
+
+  <app-medecin-sidebar />
+
+  <header class="admin-topbar">
+    <button class="topbar-toggle"><i class="bi bi-list"></i></button>
+    <div class="topbar-workspace">
+      <span class="workspace-label">{{ i18n.t('medecin.topbar.workspace') }}</span>
+      <span class="workspace-name">Alzheimer Platform</span>
+    </div>
+  </header>
+
+  <main class="admin-main">
+    <div class="d-flex justify-content-between align-items-start flex-wrap gap-3 mb-4">
+      <div class="page-header">
+        <span class="page-section-label">{{ i18n.t('gps.eyebrow') }}</span>
+        <h2 class="dashboard-title">{{ patientName() || patientId }}</h2>
+        @if (contactEmail(); as mail) {
+          <p class="page-subtitle">{{ i18n.t('gps.contactIs', { email: mail }) }}</p>
+        }
+      </div>
+      <div class="page-actions">
+        <a class="btn-secondary" [routerLink]="['/patients', patientId]">
+          <i class="bi bi-arrow-left"></i> {{ i18n.t('gps.backToRecord') }}
+        </a>
+      </div>
+    </div>
+
+    @if (error()) {
+      <p class="patient-error" style="margin-bottom:1rem;">{{ error() }}</p>
+    }
+
+    @if (!contactEmail()) {
+      <p class="gps-warning">
+        <i class="bi bi-exclamation-triangle-fill"></i>
+        {{ i18n.t('gps.noContact') }}
+        <a [routerLink]="['/patients', patientId]">{{ i18n.t('gps.noContact.action') }}</a>
+      </p>
+    }
+
+    <!-- Status strip: the three facts a doctor checks first, before the map. -->
+    <div class="gps-strip">
+      <div class="gps-strip-item" [class.is-outside]="lastPosition()?.insideSafeZone === false"
+           [class.is-empty]="!lastPosition()">
+        <span class="gps-strip-label">{{ i18n.t('gps.strip.status') }}</span>
+        @if (lastPosition(); as p) {
+          <strong>
+            <i class="bi" [class.bi-check-circle-fill]="p.insideSafeZone !== false"
+               [class.bi-exclamation-triangle-fill]="p.insideSafeZone === false"></i>
+            {{ p.insideSafeZone === false ? i18n.t('gps.position.outside') : i18n.t('gps.position.inside') }}
+          </strong>
+        } @else {
+          <strong class="gps-strip-muted">{{ i18n.t('gps.strip.noData') }}</strong>
+        }
+      </div>
+
+      <div class="gps-strip-item">
+        <span class="gps-strip-label">{{ i18n.t('gps.strip.distance') }}</span>
+        <strong>
+          @if (lastPosition()?.distanceFromCentre !== null && lastPosition()) {
+            {{ lastPosition()!.distanceFromCentre | number:'1.0-0' }} m / {{ radius() }} m
+          } @else { — }
+        </strong>
+      </div>
+
+      <div class="gps-strip-item">
+        <span class="gps-strip-label">{{ i18n.t('gps.strip.lastSeen') }}</span>
+        <strong>
+          @if (lastPosition(); as p) { {{ p.timestamp | date:'dd/MM HH:mm:ss' }} } @else { — }
+        </strong>
+      </div>
+
+      <div class="gps-strip-item">
+        <span class="gps-strip-label">{{ i18n.t('gps.strip.alerts') }}</span>
+        <strong [class.gps-strip-alert]="alerts().length > 0">{{ alerts().length }}</strong>
+      </div>
+
+      <button class="btn-secondary gps-strip-action" (click)="refreshPositions()">
+        <i class="bi bi-arrow-clockwise"></i> {{ i18n.t('gps.refresh') }}
+      </button>
+    </div>
+
+    <div class="row g-3">
+      <!-- Map first and full width: it is what the doctor actually reads. -->
+      <div class="col-12">
+        <div class="card">
+          <div class="card-header-row">
+            <div>
+              <span class="card-label">{{ i18n.t('gps.map.eyebrow') }}</span>
+              <h4 class="card-title">{{ i18n.t('gps.map.title') }}</h4>
+            </div>
+            <div class="gps-legend">
+              <span><i class="gps-swatch is-home"></i> {{ i18n.t('gps.legend.home') }}</span>
+              <span><i class="gps-swatch is-zone"></i> {{ i18n.t('gps.legend.zone') }}</span>
+              <span><i class="gps-swatch is-patient"></i> {{ i18n.t('gps.legend.patient') }}</span>
+            </div>
+          </div>
+
+          <p class="visit-hint"><i class="bi bi-info-circle"></i> {{ i18n.t('gps.map.help') }}</p>
+
+          <div #map class="gps-map"></div>
+        </div>
+      </div>
+
+      <div class="col-lg-4">
+        <div class="card">
+          <div class="card-header-row">
+            <div>
+              <span class="card-label">{{ i18n.t('gps.zone.eyebrow') }}</span>
+              <h4 class="card-title">{{ i18n.t('gps.zone.title') }}</h4>
+            </div>
+          </div>
+
+          <label class="edit-label" for="gps-address">{{ i18n.t('gps.zone.address') }}</label>
+          <div class="d-flex gap-2">
+            <input id="gps-address" type="text" class="visit-input"
+                   [value]="address()" (input)="address.set($any($event.target).value)"
+                   (keyup.enter)="search()"
+                   [placeholder]="i18n.t('gps.zone.addressPlaceholder')">
+            <button class="btn-secondary" [disabled]="searching()" (click)="search()">
+              <i class="bi bi-search"></i>
+            </button>
+          </div>
+
+          @if (matches().length) {
+            <ul class="gps-matches">
+              @for (m of matches(); track m.displayName) {
+                <li><button type="button" (click)="pick(m)">{{ m.displayName }}</button></li>
+              }
+            </ul>
+          }
+
+          <label class="edit-label mt-3" for="gps-radius">
+            {{ i18n.t('gps.zone.radius', { n: radius() }) }}
+          </label>
+          <input id="gps-radius" type="range" min="50" max="2000" step="50" class="w-100"
+                 [value]="radius()" (input)="setRadius($any($event.target).value)">
+          <div class="gps-presets">
+            @for (r of [100, 200, 500, 1000]; track r) {
+              <button type="button" [class.is-active]="radius() === r"
+                      (click)="setRadius(r.toString())">{{ r }} m</button>
+            }
+          </div>
+
+          <button class="btn-primary mt-3 w-100" [disabled]="saving()" (click)="saveZone()">
+            @if (saving()) { <span>{{ i18n.t('common.saving') }}</span> }
+            @else { <span>{{ i18n.t('gps.zone.save') }}</span> }
+          </button>
+        </div>
+      </div>
+
+      <div class="col-lg-4">
+        <div class="card">
+          <div class="card-header-row">
+            <div>
+              <span class="card-label">{{ i18n.t('gps.position.eyebrow') }}</span>
+              <h4 class="card-title">{{ i18n.t('gps.position.title') }}</h4>
+            </div>
+          </div>
+
+          @if (lastPosition(); as p) {
+            <dl class="gps-facts">
+              <dt>{{ i18n.t('gps.position.at') }}</dt>
+              <dd>{{ p.timestamp | date:'dd/MM/yyyy HH:mm:ss' }}</dd>
+              <dt>{{ i18n.t('gps.position.coords') }}</dt>
+              <dd>{{ p.latitude | number:'1.5-5' }}, {{ p.longitude | number:'1.5-5' }}</dd>
+              @if (p.distanceFromCentre !== null) {
+                <dt>{{ i18n.t('gps.position.distance') }}</dt>
+                <dd>{{ p.distanceFromCentre | number:'1.0-0' }} m</dd>
+              }
+              <dt>{{ i18n.t('gps.position.source') }}</dt>
+              <dd>{{ p.source }}</dd>
+            </dl>
+          } @else {
+            <p class="text-muted" style="font-size:0.86rem;">{{ i18n.t('gps.position.none') }}</p>
+          }
+
+          <div class="gps-selftest">
+            <p class="edit-section" style="border-top:none;padding-top:0;">
+              {{ i18n.t('gps.selftest.title') }}
+            </p>
+            <p class="visit-hint" style="margin-top:0;">
+              <i class="bi bi-info-circle"></i> {{ i18n.t('gps.selftest.hint') }}
+            </p>
+            <button class="btn-secondary w-100" [disabled]="locating()" (click)="useMyPosition()">
+              @if (locating()) { <span>{{ i18n.t('gps.selftest.locating') }}</span> }
+              @else { <span><i class="bi bi-crosshair"></i> {{ i18n.t('gps.selftest.action') }}</span> }
+            </button>
+            @if (selfTest(); as r) {
+              <p class="gps-selftest-result" [class.is-outside]="!r.insideSafeZone"
+                 [class.is-alert]="r.alertRaised">
+                {{ statusMessage(r) }}
+              </p>
+            }
+          </div>
+        </div>
+      </div>
+
+      <div class="col-lg-4">
+        <div class="card">
+          <div class="card-header-row">
+            <div>
+              <span class="card-label">{{ i18n.t('gps.alerts.eyebrow') }}</span>
+              <h4 class="card-title">{{ i18n.t('gps.alerts.title') }}</h4>
+            </div>
+          </div>
+
+          @if (alerts().length === 0) {
+            <p class="text-muted mb-0" style="font-size:0.86rem;">{{ i18n.t('gps.alerts.empty') }}</p>
+          } @else {
+            <div class="gps-alert-list">
+              @for (a of alerts(); track a.id) {
+                <div class="gps-alert">
+                  <div class="gps-alert-head">
+                    <strong>{{ a.timestamp | date:'dd/MM HH:mm' }}</strong>
+                    @if (a.emailSent) {
+                      <span class="badge badge-success">{{ i18n.t('gps.alerts.sent') }}</span>
+                    } @else {
+                      <span class="badge badge-warning" [title]="a.deliveryNote ?? ''">
+                        {{ i18n.t('gps.alerts.notSent') }}
+                      </span>
+                    }
+                  </div>
+                  <p>{{ a.message }}</p>
+                  @if (a.notifiedEmail) {
+                    <span class="gps-alert-meta">{{ a.notifiedEmail }}</span>
+                  }
+                </div>
+              }
+            </div>
+          }
+        </div>
+      </div>
+
+      <div class="col-12">
+        <div class="card">
+          <div class="card-header-row">
+            <div>
+              <span class="card-label">{{ i18n.t('gps.history.eyebrow') }}</span>
+              <h4 class="card-title">{{ i18n.t('gps.history.title', { n: history().length }) }}</h4>
+            </div>
+          </div>
+
+          @if (history().length === 0) {
+            <p class="text-muted mb-0" style="font-size:0.86rem;">{{ i18n.t('gps.history.empty') }}</p>
+          } @else {
+            <div class="table-responsive gps-table">
+              <table class="admin-table">
+                <thead>
+                  <tr>
+                    <th>{{ i18n.t('gps.position.at') }}</th>
+                    <th>{{ i18n.t('gps.position.coords') }}</th>
+                    <th>{{ i18n.t('gps.position.distance') }}</th>
+                    <th>{{ i18n.t('review.status') }}</th>
+                    <th>{{ i18n.t('gps.position.source') }}</th>
+                    <th></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @for (p of history(); track p.id) {
+                    <tr>
+                      <td>{{ p.timestamp | date:'dd/MM/yyyy HH:mm:ss' }}</td>
+                      <td>{{ p.latitude | number:'1.5-5' }}, {{ p.longitude | number:'1.5-5' }}</td>
+                      <td>{{ p.distanceFromCentre !== null ? (p.distanceFromCentre | number:'1.0-0') + ' m' : '—' }}</td>
+                      <td>
+                        @if (p.insideSafeZone === false) {
+                          <span class="badge badge-danger">{{ i18n.t('gps.position.outside') }}</span>
+                        } @else {
+                          <span class="badge badge-success">{{ i18n.t('gps.position.inside') }}</span>
+                        }
+                      </td>
+                      <td>{{ p.source }}</td>
+                      <td>
+                        <button class="medecin-link" (click)="focus(p)">
+                          <i class="bi bi-crosshair"></i>
+                        </button>
+                      </td>
+                    </tr>
+                  }
+                </tbody>
+              </table>
+            </div>
+          }
+        </div>
+      </div>
+    </div>
+  </main>
+</div>

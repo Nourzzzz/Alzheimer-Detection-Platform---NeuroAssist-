@@ -1,0 +1,14 @@
+# Lance auth-service avec les identifiants SMTP.
+#
+# Copiez ce fichier en "run-auth.ps1", remplacez le mot de passe, puis lancez :
+#     ./run-auth.ps1
+#
+# run-auth.ps1 est ignore par git : le mot de passe reste sur votre machine.
+# Le mot de passe attendu est un "mot de passe d'application" Google
+# (16 caracteres), pas celui de votre compte.
+
+$env:MAIL_USERNAME       = "nzouaghi15@gmail.com"
+$env:MAIL_PASSWORD       = "COLLEZ_ICI_LE_MOT_DE_PASSE_APPLICATION"
+$env:GEOFENCING_MAIL_FROM = "nzouaghi15@gmail.com"
+
+./mvnw.cmd spring-boot:run

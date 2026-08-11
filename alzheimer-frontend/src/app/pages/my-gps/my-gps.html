@@ -1,0 +1,85 @@
+<section class="patient-page">
+  <div class="patient-container">
+    <header class="patient-header">
+      <h1>{{ i18n.t('mygps.title') }}</h1>
+      <p>{{ i18n.t('mygps.subtitle') }}</p>
+    </header>
+
+    @if (error()) {
+      <p class="patient-error" style="margin-bottom:1rem;">{{ error() }}</p>
+    }
+
+    @if (!zone()) {
+      <p class="mygps-notice">
+        <i class="bi bi-info-circle"></i> {{ i18n.t('mygps.noZone') }}
+      </p>
+    }
+
+    <div class="mygps-card">
+      <div class="mygps-state" [class.is-on]="tracking() || demoRunning()">
+        <span class="mygps-dot"></span>
+        <div>
+          <strong>
+            @if (demoRunning()) { {{ i18n.t('mygps.state.demo') }} }
+            @else if (tracking()) { {{ i18n.t('mygps.state.on') }} }
+            @else { {{ i18n.t('mygps.state.off') }} }
+          </strong>
+          @if (sentCount() > 0) {
+            <span class="mygps-count">{{ i18n.t('mygps.sent', { n: sentCount() }) }}</span>
+          }
+        </div>
+      </div>
+
+      @if (!demoMode()) {
+        <button class="cta-btn" (click)="toggleTracking()">
+          @if (tracking()) { {{ i18n.t('mygps.stop') }} } @else { {{ i18n.t('mygps.start') }} }
+        </button>
+      }
+
+      <label class="mygps-demo-toggle">
+        <input type="checkbox" [checked]="demoMode()"
+               (change)="toggleDemoMode($any($event.target).checked)">
+        <span>{{ i18n.t('mygps.demo.label') }}</span>
+      </label>
+
+      @if (demoMode()) {
+        <div class="mygps-demo-actions">
+          <button class="cta-btn" [disabled]="demoRunning()" (click)="startDemo()">
+            <i class="bi bi-play-fill"></i> {{ i18n.t('mygps.demo.start') }}
+          </button>
+          <button class="mygps-stop" [disabled]="!demoRunning()" (click)="stopDemo()">
+            <i class="bi bi-stop-fill"></i> {{ i18n.t('mygps.demo.stop') }}
+          </button>
+        </div>
+        <p class="mygps-note">
+          <i class="bi bi-info-circle"></i> {{ i18n.t('mygps.demo.note') }}
+        </p>
+      } @else {
+        <p class="mygps-note">
+          <i class="bi bi-info-circle"></i> {{ i18n.t('mygps.note') }}
+        </p>
+      }
+    </div>
+
+    @if (last(); as r) {
+      <div class="mygps-result" [class.is-outside]="!r.insideSafeZone" [class.is-alert]="r.alertRaised">
+        <strong>
+          @if (r.alertRaised) { <i class="bi bi-exclamation-triangle-fill"></i> }
+          @else if (!r.insideSafeZone) { <i class="bi bi-geo-alt-fill"></i> }
+          @else { <i class="bi bi-check-circle-fill"></i> }
+          @if (r.safeZoneDefined) {
+            {{ r.distanceFromCentre | number:'1.0-0' }} m / {{ r.radius }} m
+          }
+        </strong>
+        <span>{{ statusMessage(r) }}</span>
+        <span class="mygps-time">{{ r.timestamp | date:'HH:mm:ss' }}</span>
+      </div>
+    }
+
+    <div #map class="mygps-map"></div>
+
+    <a class="mygps-back" routerLink="/home">
+      <i class="bi bi-arrow-left"></i> {{ i18n.t('quiz.backHome') }}
+    </a>
+  </div>
+</section>

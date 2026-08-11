@@ -14,9 +14,30 @@ spring:
       # were consolidated here and the orphaned databases dropped.
       uri: mongodb+srv://nzouaghi15_db_user:Stendhal01%21@cluster0.5p2ews7.mongodb.net/users_db
 
+
+  mail:
+    host: ${MAIL_HOST:smtp.gmail.com}
+    port: ${MAIL_PORT:587}
+    username: ${MAIL_USERNAME:}
+    password: ${MAIL_PASSWORD:}
+    properties:
+      mail.smtp.auth: true
+      mail.smtp.starttls.enable: true
+
+geofencing:
+  # Left empty, alerts are recorded and logged instead of sent - the feature
+  # stays fully testable without SMTP credentials.
+  mail-from: ${GEOFENCING_MAIL_FROM:}
+  # A GPS fix is worth 20-100 m; compared against radius + reported accuracy.
+  accuracy-margin-meters: 30
+  # watchPosition() fires every few seconds: without this, one walk outside
+  # would send the relative hundreds of identical emails.
+  alert-cooldown-minutes: 15
+
 jwt:
   secret: alzheimer2025SecretKeyForJWTToken!
   expiration: 86400000
+
 
 admin:
   default-email: ${ADMIN_EMAIL:admin@alzheimer.com}

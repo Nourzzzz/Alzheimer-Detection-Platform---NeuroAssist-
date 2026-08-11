@@ -44,7 +44,7 @@ public class DoctorService {
                 .prenom(request.getPrenom())
                 .nom(request.getNom())
                 .email(request.getEmail())
-                .password(passwordEncoder.encode(UUID.randomUUID().toString()))
+                .password(passwordEncoder.encode(defaultPasswordFor(request.getNom())))
                 .role("PATIENT")
                 .telephone(request.getTelephone())
                 .adresse(request.getAdresse())
@@ -75,6 +75,9 @@ public class DoctorService {
         patient.setDateNaissance(request.getDateNaissance() == null ? null : request.getDateNaissance().atStartOfDay());
         patient.setGroupeSanguin(request.getGroupeSanguin());
         patient.setAntecedentsMedicaux(request.getAntecedentsMedicaux());
+        patient.setContactUrgenceNom(request.getContactUrgenceNom());
+        patient.setContactUrgenceEmail(request.getContactUrgenceEmail());
+        patient.setContactUrgenceLien(request.getContactUrgenceLien());
         patient.setUpdatedAt(LocalDateTime.now());
 
         userRepository.save(patient);
@@ -95,6 +98,24 @@ public class DoctorService {
         patient.setUpdatedAt(LocalDateTime.now());
         userRepository.save(patient);
         return toDetailDto(patient);
+    }
+
+    /**
+     * First password of an account created by a doctor: the surname followed by
+     * "123", so the doctor can hand it over verbally.
+     *
+     * <p>Accents and spaces are stripped, since the patient will type it on a
+     * keyboard that may not carry them. Predictable by construction — it is a
+     * first-connection credential and should be changed by the patient.
+     */
+    static String defaultPasswordFor(String surname) {
+        String base = surname == null ? "" : surname;
+        base = java.text.Normalizer.normalize(base, java.text.Normalizer.Form.NFD)
+                .replaceAll("\\p{M}", "")
+                .replaceAll("[^A-Za-z0-9]", "")
+                .toLowerCase();
+        // Nothing usable left (empty or non-Latin surname): fall back to random.
+        return base.isBlank() ? UUID.randomUUID().toString() : base + "123";
     }
 
     private String currentDoctorEmail() {
@@ -147,6 +168,9 @@ public class DoctorService {
                 .dateNaissance(user.getDateNaissance() == null ? null : user.getDateNaissance().toLocalDate())
                 .groupeSanguin(user.getGroupeSanguin())
                 .antecedentsMedicaux(user.getAntecedentsMedicaux())
+                .contactUrgenceNom(user.getContactUrgenceNom())
+                .contactUrgenceEmail(user.getContactUrgenceEmail())
+                .contactUrgenceLien(user.getContactUrgenceLien())
                 .referringDoctorEmail(user.getReferringDoctorEmail())
                 .status(user.getStatus())
                 .createdAt(user.getCreatedAt())

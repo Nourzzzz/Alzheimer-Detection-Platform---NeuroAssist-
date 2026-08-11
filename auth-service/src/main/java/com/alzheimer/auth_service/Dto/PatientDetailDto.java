@@ -29,6 +29,11 @@ public class PatientDetailDto {
     private LocalDate dateNaissance;
     private String groupeSanguin;
     private String antecedentsMedicaux;
+
+    private String contactUrgenceNom;
+    private String contactUrgenceEmail;
+    private String contactUrgenceLien;
+
     private String referringDoctorEmail;
     private AccountStatus status;
     private LocalDateTime createdAt;

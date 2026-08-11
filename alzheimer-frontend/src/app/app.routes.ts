@@ -51,6 +51,14 @@ export const routes: Routes = [
     canActivate: [medecinGuard]
   },
   {
+    // Lazy on both GPS pages: Leaflet is only needed here and would otherwise
+    // weigh on every other page's initial load.
+    path: 'patients/:id/gps',
+    loadComponent: () =>
+      import('./pages/patient-gps/patient-gps').then((m) => m.PatientGpsPageComponent),
+    canActivate: [medecinGuard]
+  },
+  {
     path: 'patients/:email/mri-upload',
     component: MriUploadPageComponent,
     canActivate: [medecinGuard]
@@ -69,6 +77,11 @@ export const routes: Routes = [
   {
     path: 'questionnaire',
     component: CognitiveQuestionnairePageComponent,
+    canActivate: [patientGuard]
+  },
+  {
+    path: 'my-gps',
+    loadComponent: () => import('./pages/my-gps/my-gps').then((m) => m.MyGpsPageComponent),
     canActivate: [patientGuard]
   },
   {

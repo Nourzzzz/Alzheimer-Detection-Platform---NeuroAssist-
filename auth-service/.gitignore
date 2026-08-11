@@ -31,3 +31,6 @@ build/
 
 ### VS Code ###
 .vscode/
+
+# Script de lancement local : contient des identifiants SMTP.
+run-auth.ps1

@@ -144,7 +144,10 @@ export class PatientRecordDetailPageComponent implements OnInit {
       genre: p.genre,
       dateNaissance: this.toDateOnly(p.dateNaissance),
       groupeSanguin: p.groupeSanguin,
-      antecedentsMedicaux: p.antecedentsMedicaux
+      antecedentsMedicaux: p.antecedentsMedicaux,
+      contactUrgenceNom: p.contactUrgenceNom,
+      contactUrgenceEmail: p.contactUrgenceEmail,
+      contactUrgenceLien: p.contactUrgenceLien
     });
     this.saveError.set(null);
     this.editing.set(true);
@@ -167,7 +170,10 @@ export class PatientRecordDetailPageComponent implements OnInit {
       genre: blankToNull(f.genre),
       dateNaissance: this.toDateOnly(f.dateNaissance),
       groupeSanguin: blankToNull(f.groupeSanguin),
-      antecedentsMedicaux: blankToNull(f.antecedentsMedicaux)
+      antecedentsMedicaux: blankToNull(f.antecedentsMedicaux),
+      contactUrgenceNom: blankToNull(f.contactUrgenceNom),
+      contactUrgenceEmail: blankToNull(f.contactUrgenceEmail),
+      contactUrgenceLien: blankToNull(f.contactUrgenceLien)
     };
   }
 
